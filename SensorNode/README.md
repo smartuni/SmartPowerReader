@@ -2,6 +2,22 @@
 
 This program is run on the sensor node.
 
+## Ablauf first setup
+
+Explains the process of setting up a new sensor node
+
+1. Sensor connected to network
+2. Sensor send POST request to pi (using DODAG root address) at /register to register itself
+  - any relevant data can be send here as payload
+3. RPI ACK (empty response, etc..)
+  - the IP of the sensor will be saved
+  - admin click on sensor from webui
+    + send a packet to the sensor node to trigger the configuration mode
+    + LED will blink in configuration mode, admin can now identify which
+sensor this is and set location through web UI
+4. After finish configuration, RPI send OBSERVE request to sensor at /value
+5. Sensor sends sensor value to RPI at every defined interval
+
 ## How to run
 
 1. Clone the `smartuni/SmartPowerReader` from Github:
