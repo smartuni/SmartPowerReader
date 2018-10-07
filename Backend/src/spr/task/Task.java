@@ -27,6 +27,11 @@ public class Task implements Saveable
 		mPayload = p;
 	}
 	
+	public String getTask( ) { return mTask; }
+	public long getSession( ) { return mSession; }
+	@SuppressWarnings("unchecked")
+	public <T> T getPayload( ) { return (T) mPayload; }
+	
 	@Override
 	public int hashCode( )
 	{

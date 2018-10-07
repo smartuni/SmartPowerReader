@@ -12,18 +12,13 @@ public class Backbone<T> extends BaseBroker<T>
 {
 	private final List<Handler<T>> mHandlers;
 	
-	public Backbone(Broker<T> def)
+	public Backbone( )
 	{
 		super(ID);
 		
-		if(def == null)
-			throw new NullPointerException();
-		
 		mHandlers = new LinkedList<>();
 		
-		mHandlers.add(new Handler<>(msg -> true, def));
-		
-		LOG.log(Severity.INFO, "Started new backbone with broker %s as default", def.getID());
+		LOG.log(Severity.INFO, "Started new backbone");
 	}
 	
 	public Backbone<T> register(Predicate<Message<T>> f, Broker<T> cb)
@@ -44,9 +39,13 @@ public class Backbone<T> extends BaseBroker<T>
 			{
 				h.callback.accept(msg);
 				
-				break;
+				return;
 			}
 		}
+		
+		LOG.log(Severity.ERROR, "Can't route message %s!", msg);
+		
+		throw new IllegalStateException(msg.toString());
 	}
 	
 	private static class Handler<T>

@@ -10,12 +10,14 @@ import spr.net.LoggingConsumer;
 public class Node<T> implements Identifiable, Gateway<T>, Consumer<Message<T>>
 {
 	private final String mID;
+	private final Address mSelf;
 	private Consumer<Message<T>> mServer, mClient;
 	
 	public Node(String id) { this(id, new LoggingConsumer<>()); }
 	public Node(String id, Consumer<Message<T>> def)
 	{
 		mID = id;
+		mSelf = new LocalAddress(mID);
 		mServer = mClient = def;
 	}
 	
@@ -42,7 +44,7 @@ public class Node<T> implements Identifiable, Gateway<T>, Consumer<Message<T>>
 	@Override
 	public void send(Address to, T msg)
 	{
-		mServer.accept(new Message<>(new LocalAddress(mID), to, msg));
+		mServer.accept(new Message<>(mSelf, to, msg));
 	}
 
 	@Override
