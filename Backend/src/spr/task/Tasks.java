@@ -26,6 +26,15 @@ public final class Tasks
 			private Status( ) { }
 		}
 		
+		public static final class Report
+		{
+			public static final String REQUEST = "system.report.request";
+			public static final String STATUS = "system.report.status";
+		}
+		
+		public static final String STARTUP = "system.start";
+		public static final String SHUTDOWN = "system.shutdown";
+		
 		private System( ) { }
 	}
 	

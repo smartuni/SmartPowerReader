@@ -36,18 +36,25 @@ public class LocalBroker<T> extends BaseBroker<T>
 		if(!(msg.getRecipient() instanceof LocalAddress))
 			throw new IllegalArgumentException(msg.toString());
 		
-		String id = ((LocalAddress) msg.getRecipient()).getID();
-		Node<T> r = mNodes.get(id);
-		
-		if(r != null)
+		if(msg.getRecipient().equals(LocalAddress.BROADCAST))
 		{
-			LOG.log("%s", msg.toString());
-			
-			r.accept(msg);
+			mNodes.values().stream().forEach(n -> n.accept(msg));
 		}
 		else
 		{
-			LOG.log(Severity.ERROR, "Attempted to send message to unknown node %s! [%s]", id, msg.toString());
+			String id = ((LocalAddress) msg.getRecipient()).getID();
+			Node<T> r = mNodes.get(id);
+			
+			if(r != null)
+			{
+				LOG.log("%s", msg.toString());
+				
+				r.accept(msg);
+			}
+			else
+			{
+				LOG.log(Severity.ERROR, "Attempted to send message to unknown node %s! [%s]", id, msg.toString());
+			}
 		}
 	}
 
