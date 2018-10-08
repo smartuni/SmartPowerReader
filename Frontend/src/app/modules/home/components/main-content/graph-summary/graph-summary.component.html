@@ -1,0 +1,15 @@
+<div *ngIf="!isLoading" class="row mt-5 mb-3">
+  <ngx-charts-line-chart
+    [view]="view"
+    [results]="results"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [xAxisTickFormatting] = "xFormat">
+  </ngx-charts-line-chart>
+</div>
+

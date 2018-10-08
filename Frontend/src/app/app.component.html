@@ -1,0 +1,20 @@
+<app-header xmlns="http://www.w3.org/1999/html"></app-header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+<app-footer></app-footer>
+
+
+<!-- Custom modal setup -->
+<div id="modal-wrapper" class="modal-wrapper">
+  <div id="modal-background" class="modal-background" (click)="closeModal()" style="visibility: hidden"></div>
+
+  <div class="d-flex align-items-center justify-content-center h-100 modal-subwrapper">
+    <div id="modal-container" style="visibility: hidden">
+      <button type="button" class="close" (click)="closeModal()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+</div>
+

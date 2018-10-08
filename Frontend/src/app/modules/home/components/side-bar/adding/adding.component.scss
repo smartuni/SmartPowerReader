@@ -1,0 +1,51 @@
+.header {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+  width: 650px;
+  .first-column {
+    width: 400px;
+    .input-group-prepend {
+      width: 90px !important;
+    }
+    .input-form {
+      width: 275px;
+    }
+  }
+
+  .second-column {
+    .form-control {
+      width: 150px;
+    }
+  }
+}
+
+.form-control {
+  border-radius: 0.25rem !important;
+}
+
+.cancel-button {
+  background-color: #cc1c35;
+  color: white;
+}
+
+.save-button {
+  background-color: #009688;
+  color: white;
+}
+
+button {
+  width: 100px;
+  height: 35px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 0 0.75rem #e4e4e4;
+}
+
+
+
+
