@@ -15,7 +15,8 @@ Explains the process of setting up a new sensor node
     + send a packet to the sensor node to trigger the configuration mode
     + LED will blink in configuration mode, admin can now identify which
 sensor this is and set location through web UI
-4. After finish configuration, RPI send OBSERVE request to sensor at /value
+4. After finish configuration, RPI send request to /start to signal the
+sensor node to start sending data
 5. Sensor sends sensor value to RPI at every defined interval
 
 ## How to run
