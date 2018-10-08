@@ -25,7 +25,7 @@ public class Message<T> implements Saveable
 	
 	public Address getSender( ) { return mSender; }
 	public Address getRecipient( ) { return mRecipient; }
-	public T getPayload( ) { return mPayload; }
+	public T getContent( ) { return mPayload; }
 	
 	@Override
 	@Saver

@@ -11,6 +11,8 @@ import spr.net.common.Address;
 @Container
 public class LocalAddress implements Address, Saveable
 {
+	public static final LocalAddress BROADCAST = new LocalAddress("*");
+	
 	private final String mID;
 	
 	public LocalAddress(String id)
