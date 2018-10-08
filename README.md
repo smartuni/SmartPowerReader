@@ -2,7 +2,7 @@
 ### RIOT im Internet of Things - Bachelor Project (WS 18/19)
 
 #### Abstract
-Smart Power Reader ist ein IoT zentrisches Netzwerk, das ueber intelligente Stromzaehler
+Smart Power Reader ist ein IoT zentrisches Netzwerk, das ueber intelligente Stromzähler
 statistische Daten ueber den Stromverbrauch verschiedener Geraete sammelt, anschaulich aufbereitet
 und ueber einen Web-Server zur Verfuegung stellt.
 
