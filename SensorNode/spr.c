@@ -49,10 +49,10 @@ static char blink_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF
 static msg_t blink_queue[BLINK_QUEUE_SIZE];
 
 /* CoAP resources */
-static coap_resource_t _resources[] = {
+static const coap_resource_t _resources[] = {
+    { "/config", COAP_GET | COAP_PUT, _config_handler, NULL },
     { "/interval", COAP_GET | COAP_PUT, _interval_handler, NULL },
     { "/start", COAP_GET, _start_handler, NULL },
-    { "/config", COAP_GET | COAP_PUT, _config_handler, NULL },
 };
 
 static gcoap_listener_t _listener = {
