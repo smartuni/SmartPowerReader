@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {SensorService} from '../../../services/sensor.service';
 import {Sensor} from '../../../../../core/interfaces/sensor.interface';
 import {formatDate} from '@angular/common';
@@ -8,22 +8,20 @@ import {formatDate} from '@angular/common';
   templateUrl: './graph-summary.component.html',
   styleUrls: ['./graph-summary.component.scss']
 })
-export class GraphSummaryComponent implements OnInit {
+export class GraphSummaryComponent implements OnInit, AfterViewInit {
   results: Sensor[];
   isLoading: boolean;
 
-  view = [1200, 400];
   showXAxis = true;
   showYAxis = true;
   showLegend = true;
   showXAxisLabel = true;
   xAxisLabel = 'Number';
   showYAxisLabel = true;
-  autoScale = true;
   yAxisLabel = 'Color Value';
-  tooltipDisabled = true;
-  monthName = new Intl.DateTimeFormat('en-us', {month: 'short'});
-  weekdayName = new Intl.DateTimeFormat('en-us', {weekday: 'short'});
+  roundDomains = true;
+  autoScale = true;
+  xAxisTicks = [];
 
   constructor(private sensorService: SensorService) {
   }
@@ -32,6 +30,14 @@ export class GraphSummaryComponent implements OnInit {
     this.isLoading = true;
     this.sensorService.getAllSensorsData().subscribe(data => {
       this.results = data;
+      for (let i = 0; i < data.length; i++) {
+        data[i].series.forEach(val => {
+          const date = formatDate(new Date(val.name), 'MMM dd', 'en');
+          if (!this.xAxisTicks.includes(date))
+            this.xAxisTicks.push(date);
+        });
+        console.log(this.xAxisTicks);
+      }
       this.isLoading = false;
     });
   }
@@ -40,7 +46,19 @@ export class GraphSummaryComponent implements OnInit {
     // where e - value of tick by default
     // console.log(this);
     // now you have access to your component variables
-    return formatDate(new Date(e), 'MM-dd HH:MM:ss', 'en');
+    return formatDate(new Date(e), 'MMM dd HH:MM:ss', 'en');
+  };
+
+
+  ngAfterViewInit(): void {
+    setTimeout(_ => {
+      window.dispatchEvent(new Event('resize'));
+    }); // BUGFIX:
   }
+
+
+  dateTickFormatting = (e) => {
+    return new Date(e).toLocaleString('de-DE');
+  };
 
 }

@@ -72,12 +72,12 @@ export class MockHttpApi {
       name: 'Computer',
       series: [
         {
-          'value': 3871,
-          'name': '2016-09-17T16:40:52.535Z'
-        },
-        {
           'value': 6429,
           'name': '2016-09-16T13:58:06.918Z'
+        },
+        {
+          'value': 3871,
+          'name': '2016-09-17T16:40:52.535Z'
         },
         {
           'value': 5480,
@@ -98,12 +98,12 @@ export class MockHttpApi {
       name: 'Tivi',
       series: [
         {
-          'value': 4922,
-          'name': '2016-09-17T16:40:52.535Z'
-        },
-        {
           'value': 2359,
           'name': '2016-09-16T13:58:06.918Z'
+        },
+        {
+          'value': 4922,
+          'name': '2016-09-17T16:40:52.535Z'
         },
         {
           'value': 4964,
@@ -124,12 +124,12 @@ export class MockHttpApi {
       name: 'Laptop',
       series: [
         {
-          'value': 4700,
-          'name': '2016-09-17T16:40:52.535Z'
-        },
-        {
           'value': 2685,
           'name': '2016-09-16T13:58:06.918Z'
+        },
+        {
+          'value': 4700,
+          'name': '2016-09-17T16:40:52.535Z'
         },
         {
           'value': 6600,
@@ -150,12 +150,12 @@ export class MockHttpApi {
       name: 'Xbox',
       series: [
         {
-          'value': 3189,
-          'name': '2016-09-17T16:40:52.535Z'
-        },
-        {
           'value': 4645,
           'name': '2016-09-16T13:58:06.918Z'
+        },
+        {
+          'value': 3189,
+          'name': '2016-09-17T16:40:52.535Z'
         },
         {
           'value': 5132,
@@ -176,12 +176,12 @@ export class MockHttpApi {
       name: 'Refrigerator',
       series: [
         {
-          'value': 3465,
-          'name': '2016-09-17T16:40:52.535Z'
-        },
-        {
           'value': 4453,
           'name': '2016-09-16T13:58:06.918Z'
+        },
+        {
+          'value': 3465,
+          'name': '2016-09-17T16:40:52.535Z'
         },
         {
           'value': 2337,

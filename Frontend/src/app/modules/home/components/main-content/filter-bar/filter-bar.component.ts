@@ -1,9 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import { FormControl, FormGroup} from '@angular/forms';
 import {Folder} from '../../../../../core/interfaces/folder.interface';
 import {formatDate} from '@angular/common';
-import {toDate} from '@angular/common/src/i18n/format_date';
-import {addDays, addMonths, addWeeks, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
+import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
 
 
 @Component({
@@ -42,10 +41,6 @@ export class FilterBarComponent implements OnInit {
         startTime: new FormControl('00:00'),
         endTime: new FormControl('23:59')
       }
-      // , {
-      //   validators: [this.matchValue],
-      //   updateOn: 'blur'
-      // }
     );
     this.deviceList.push('Parent');
     this.deviceList.push('child1');
@@ -70,7 +65,6 @@ export class FilterBarComponent implements OnInit {
   onSubmit() {
 
   }
-
 
   selectDate(offset: number = 0) {
     const date = this.convertDateToHashMap(addDays(new Date(), offset));
