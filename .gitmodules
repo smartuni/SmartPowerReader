@@ -1,0 +1,4 @@
+[submodule "SensorNode/RIOT"]
+	path = SensorNode/RIOT
+	url = https://github.com/RIOT-OS/RIOT.git
+	branch = 2018.07-branch
