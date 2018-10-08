@@ -29,16 +29,14 @@
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
 static uint32_t interval = SPR_INTERVAL;
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
     { "/interval", COAP_GET | COAP_PUT, _interval_handler, NULL },
-    { "/start", COAP_GET, _start_handler, NULL },
-    { "/config", COAP_GET, COAP_PUT, _config_handler, NULL },
+    { "/value", COAP_GET, _value_handler, NULL },
 };
 
 static gcoap_listener_t _listener = {
@@ -149,33 +147,18 @@ static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void
     return -1;
 }
 
-static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
+static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void)pdu;
     (void)buf;
     (void)len;
     (void)ctx;
 
-    /** for GET **/
-    /* return configuration status (0 - not configured, 1 - being configured
-     * 2 - configured) */
+    /* read sensor value and write to buffer */
+    // ...
 
-    /** for PUT **/
-    /* blink LED to signal which sensor node is being configured */
-
-    return -1;
-}
-
-static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
-{
-    (void)pdu;
-    (void)buf;
-    (void)len;
-    (void)ctx;
-
-    /* start thread to send values to RPI */
-
-    /* send ACK response */
+    /* sleep for `interval` */
+    xtimer_sleep(interval);
 
     return -1;
 }
@@ -190,4 +173,9 @@ void spr_init(void)
 
     /* Register Basisstation */
     //...
+
+    /* Wait configuration from Backend */
+    //...
+
+    /* Configuration finished, wait OBSERVE request from Basisstation */
 }
