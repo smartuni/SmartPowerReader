@@ -1,0 +1,31 @@
+@import '../../../assets/styles/variables';
+
+
+.avatar {
+  height: 50px;
+  width: 50px;
+}
+
+.nav-item {
+  padding-left: 15px;
+}
+
+.logo {
+  margin-right: 10px;
+}
+
+.buttonFooter {
+  position: sticky;
+  bottom: 20px;
+  right: 20px;
+}
+
+footer{
+  border-top: 1px solid #e4e4e4;
+  height: $footer_height;
+  padding: 20px 10px;
+  a{
+    text-decoration: none;
+    color: #333;
+  }
+}

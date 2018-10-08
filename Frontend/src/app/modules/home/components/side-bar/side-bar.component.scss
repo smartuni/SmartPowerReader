@@ -1,0 +1,19 @@
+@import '../../../../../assets/styles/variables';
+
+.sidebar-wrapper {
+  height: calc(#{$page_height} - #{$header_height} - #{$footer_height});
+  border-right: 1px solid #e4e4e4;
+}
+
+.add-button {
+  background-color: #009688;
+  border-radius: 100%;
+  padding: 5px 13px;
+  color: white;
+}
+
+.row {
+  margin-left: 10px;
+}
+
+
