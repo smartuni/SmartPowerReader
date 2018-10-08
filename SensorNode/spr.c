@@ -29,14 +29,14 @@
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
 static uint32_t interval = SPR_INTERVAL;
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
     { "/interval", COAP_GET | COAP_PUT, _interval_handler, NULL },
-    { "/value", COAP_GET, _value_handler, NULL },
+    { "/start", COAP_GET, _start_handler, NULL },
 };
 
 static gcoap_listener_t _listener = {
@@ -147,18 +147,16 @@ static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void
     return -1;
 }
 
-static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
+static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void)pdu;
     (void)buf;
     (void)len;
     (void)ctx;
 
-    /* read sensor value and write to buffer */
-    // ...
+    /* start thread to send values to RPI */
 
-    /* sleep for `interval` */
-    xtimer_sleep(interval);
+    /* send ACK response */
 
     return -1;
 }
