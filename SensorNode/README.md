@@ -23,10 +23,10 @@ sensor this is and set location through web UI
 1. Clone the `smartuni/SmartPowerReader` from Github:
 
 NOTE: We are using upstream RIOT as submodule here. So make sure to pass 
-`--recursive-submodules` to the `git clone` command.
+`--recursive` to the `git clone` command.
 
 ```Shell
-git clone --recurse-submodules https://github.com/chaconinc/MainProject
+git clone --recursive https://github.com/smartuni/SmartPowerReader.git
 ```
 
 2. Make sure to have all the dependencies required to build and flash a
