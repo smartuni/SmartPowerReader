@@ -296,6 +296,7 @@ static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
     (void)ctx;
 
     /* start thread to send values to RPI */
+    (void)send_data;
 
     /* send ACK response */
 
@@ -335,6 +336,7 @@ int gcoap_cli_cmd(int argc, char **argv)
         if (strcmp(argv[1], method_codes[i]) == 0) {
             code_pos = i;
         }
+    }
     if (code_pos == -1) {
         goto end;
     }
