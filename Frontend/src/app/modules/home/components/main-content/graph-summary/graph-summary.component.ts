@@ -10,7 +10,7 @@ import {formatDate} from '@angular/common';
 })
 export class GraphSummaryComponent implements OnInit, AfterViewInit {
   results: Sensor[];
-  isLoading: boolean;
+  isLoading = true;
 
   showXAxis = true;
   showYAxis = true;
@@ -21,7 +21,9 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
   yAxisLabel = 'Color Value';
   roundDomains = true;
   autoScale = true;
-  xAxisTicks = [];
+  ticks = [];
+  indexTicks = [];
+  simpleTicks = [];
 
   constructor(private sensorService: SensorService) {
   }
@@ -30,16 +32,30 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.sensorService.getAllSensorsData().subscribe(data => {
       this.results = data;
-      for (let i = 0; i < data.length; i++) {
-        data[i].series.forEach(val => {
-          const date = formatDate(new Date(val.name), 'MMM dd', 'en');
-          if (!this.xAxisTicks.includes(date))
-            this.xAxisTicks.push(date);
-        });
-        console.log(this.xAxisTicks);
-      }
+      let count = 0;
+      // for (let i = 0; i < data.length; i++) {
+      data[0].series.forEach(val => {
+        const date = formatDate(new Date(val.name), 'MMM dd', 'en');
+
+        if (!this.ticks.includes(val.name)) {
+          this.ticks.push(val.name);
+        }
+
+        if (!this.simpleTicks.includes(date)) {
+          this.simpleTicks.push(JSON.parse(JSON.stringify(date)));
+          this.indexTicks.push(+JSON.parse(JSON.stringify(count)));
+        }
+
+        count++;
+      });
+      // }
+
       this.isLoading = false;
     });
+    this.indexTicks = JSON.parse(JSON.stringify( this.indexTicks));
+    console.log('outside index', this.indexTicks);
+    console.log('outside simple', this.simpleTicks);
+    console.log('outside full', this.ticks);
   }
 
   xFormat = (e) => {
@@ -47,7 +63,7 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     // console.log(this);
     // now you have access to your component variables
     return formatDate(new Date(e), 'MMM dd HH:MM:ss', 'en');
-  };
+  }
 
 
   ngAfterViewInit(): void {
@@ -59,6 +75,22 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
 
   dateTickFormatting = (e) => {
     return new Date(e).toLocaleString('de-DE');
-  };
+  }
+
+  axisFormat(val) {
+    // console.log('index', this.indexTicks);
+    // console.log('simple', this.simpleTicks);
+    // console.log('ticks', this.ticks);
+
+    // const index = this.ticks.indexOf(val);
+    // const i = this.indexTicks.includes(index);
+    // console.log(val, index, i);
+    // if (this.indexTicks.includes(this.ticks.indexOf(val) )) {
+      return formatDate(new Date(val), 'MMM dd', 'en');
+    // } else {
+    //   return '';
+    // }
+  }
+
 
 }
