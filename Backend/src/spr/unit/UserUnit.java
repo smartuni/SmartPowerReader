@@ -1,9 +1,6 @@
 package spr.unit;
 
-import dave.json.JsonArray;
-import dave.json.JsonObject;
-import dave.json.JsonString;
-import dave.json.JsonValue;
+import dave.json.PrettyPrinter;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.LocalAddress;
@@ -21,10 +18,6 @@ public class UserUnit extends BaseUnit
 		super(g);
 		
 		mRunning = false;
-
-		registerMessageHandler(Tasks.System.Status.QUERY, this::handleStatus);
-		
-		registerMessageHandler(Tasks.System.Report.STATUS, this::handleInfo);
 	}
 	
 	public boolean isRunning( ) { return mRunning; }
@@ -53,21 +46,10 @@ public class UserUnit extends BaseUnit
 		}
 	}
 	
-	private void handleStatus(Message<Task> p)
+	@Override
+	public void accept(Message<Task> p)
 	{
-		JsonValue status = new JsonString("active");
-		
-		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.System.Status.INFO, status));
-	}
-	
-	private void handleInfo(Message<Task> p)
-	{
-		JsonArray status = p.getContent().getPayload();
-		
-		status.stream().forEach(v -> {
-			JsonObject json = (JsonObject) v;
-			
-			System.out.println(json.getString("id") + ": " + json.get("status"));
-		});
+		System.out.println("From " + p.getSender().getID() + " received:");
+		System.out.println(p.getContent().save().toString(new PrettyPrinter()));
 	}
 }
