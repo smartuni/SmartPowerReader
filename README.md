@@ -11,3 +11,10 @@ und ueber einen Web-Server zur Verfuegung stellt.
 * René Herthel ([rene.herthel@haw-hamburg.de](mailto:rene.herthel@haw-hamburg.de))
 * Hong Hai Le ([honghai.le@haw-hamburg.de](mailto:honghai.le@haw-hamburg.de))
 * Daniel Kessener ([daniel.kessener@haw-hamburg.de](mailto:daniel.kessener@haw-hamburg.de))
+
+#### Hardware
+
+- Raspberry Pi
+- OpenLabs 802.15.4 radio
+- samr21-xpro
+- Sensor zur Messung
