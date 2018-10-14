@@ -38,6 +38,8 @@ public class SystemUnit extends BaseUnit
 			new Task(Tasks.Timer.Schedule.PERIODIC, newSession(),
 				new TimerUnit.FutureTask(FUTURE_ID,
 					new Task(TASK_TRIGGER_QUERY, newSession()), QUERY_DELTA)));
+		
+		queryStatus();
 	}
 	
 	private void handleStatus(Message<Task> p)
@@ -66,7 +68,12 @@ public class SystemUnit extends BaseUnit
 		mStati.put(id, json);
 	}
 	
-	public void handleTrigger(Message<Task> p)
+	private void handleTrigger(Message<Task> p)
+	{
+		queryStatus();
+	}
+	
+	private void queryStatus( )
 	{
 		getNode().send(LocalAddress.BROADCAST, new Task(Tasks.System.Status.QUERY, newSession()));
 	}
