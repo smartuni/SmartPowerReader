@@ -2,6 +2,7 @@ package spr.unit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import dave.json.Container;
 import dave.json.JsonBuilder;
@@ -11,7 +12,6 @@ import dave.json.JsonValue;
 import dave.json.Loader;
 import dave.json.Saveable;
 import dave.json.Saver;
-import dave.util.Producer;
 import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.task.Task;
@@ -21,10 +21,10 @@ import spr.util.persistance.Storage;
 
 public class LocalDatabaseUnit extends BaseUnit
 {
-	private final Producer<Storage> mCallback;
+	private final Function<String, Storage> mCallback;
 	private final Map<String, Storage> mDatabase;
 	
-	public LocalDatabaseUnit(Producer<Storage> f, Node<Task> g)
+	public LocalDatabaseUnit(Function<String, Storage> f, Node<Task> g)
 	{
 		super(g);
 		
@@ -44,7 +44,7 @@ public class LocalDatabaseUnit extends BaseUnit
 		
 		if(s == null)
 		{
-			mDatabase.put(d.id, s = mCallback.produce());
+			mDatabase.put(d.id, s = mCallback.apply(d.id));
 		}
 		
 		s.store(new DataPoint(d.timestamp, d.value));

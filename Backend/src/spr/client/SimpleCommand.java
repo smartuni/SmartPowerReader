@@ -1,4 +1,4 @@
-package spr.net.client;
+package spr.client;
 
 import dave.util.command.Command;
 import dave.util.command.ParseException;

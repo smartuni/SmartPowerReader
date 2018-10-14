@@ -9,7 +9,7 @@ import dave.util.command.ParseException;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.LocalAddress;
-import spr.net.client.SimpleCommand;
+import spr.client.SimpleCommand;
 import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.task.Task;
