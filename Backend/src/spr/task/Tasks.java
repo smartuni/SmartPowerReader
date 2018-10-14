@@ -38,5 +38,16 @@ public final class Tasks
 		private System( ) { }
 	}
 	
+	public static final class Database
+	{
+		public static final String STORE = "database.store";
+		public static final String RETRIEVE = "database.retrieve";
+		public static final String DELIVER = "database.deliver";
+		public static final String UNKNOWN = "database.unknown";
+		public static final String DELETE = "database.delete";
+		
+		private Database( ) { }
+	}
+	
 	private Tasks( ) { }
 }

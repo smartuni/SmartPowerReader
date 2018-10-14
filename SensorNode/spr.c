@@ -20,147 +20,200 @@
 #include "od.h"
 #include "fmt.h"
 #include "xtimer.h"
+#include "thread.h"
+#include "saul_reg.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
 #define SPR_INTERVAL (15)       /* Default 15 seconds*/
 
-static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
-                          sock_udp_ep_t *remote);
+#define SPR_NOT_CONFIGURED      (0)
+#define SPR_CONFIGURING         (1)
+#define SPR_CONFIGURED          (2)
+
+#define BLINK_QUEUE_SIZE        (8)
+
+#define LED_NUM         (0)
+
+extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
+
 static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
 static uint32_t interval = SPR_INTERVAL;
+static uint8_t config_status = 0;
+
+static kernel_pid_t blink_pid;
+static char blink_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
+static msg_t blink_queue[BLINK_QUEUE_SIZE];
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
+    { "/config", COAP_GET | COAP_PUT, _config_handler, NULL },
     { "/interval", COAP_GET | COAP_PUT, _interval_handler, NULL },
-    { "/value", COAP_GET, _value_handler, NULL },
+    { "/start", COAP_GET, _start_handler, NULL },
 };
 
 static gcoap_listener_t _listener = {
-    &_resources[0],
+    (coap_resource_t *)&_resources[0],
     sizeof(_resources) / sizeof(_resources[0]),
     NULL
 };
 
-/*
- * Response callback.
- */
-static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
-                          sock_udp_ep_t *remote)
+static void *blink_light(void *arg)
 {
-    (void)remote;       /* not interested in the source currently */
+    (void)arg;
 
-    if (req_state == GCOAP_MEMO_TIMEOUT) {
-        printf("gcoap: timeout for msg ID %02u\n", coap_get_id(pdu));
-        return;
-    }
-    else if (req_state == GCOAP_MEMO_ERR) {
-        printf("gcoap: error in response\n");
-        return;
+    msg_t msg;
+    msg.content.value = 1;
+
+    /* Value to turn LED on/off */
+    phydat_t on, off;
+    memset(&on, 0, sizeof(on));
+    memset(&off, 0, sizeof(off));
+    on.val[0] = 1;
+    off.val[0] = 0;
+
+    /* get LED from SAUL */
+    saul_reg_t *led;
+    led = saul_reg_find_nth(LED_NUM);
+
+    msg_init_queue(blink_queue, BLINK_QUEUE_SIZE);
+
+    int continue_loop = 1;
+    while (continue_loop) {
+        /* turn LED on and off */
+        saul_reg_write(led, &on);
+        xtimer_sleep(1);
+        saul_reg_write(led, &off);
+        xtimer_sleep(1);
+
+        msg_try_receive(&msg);
+        continue_loop = msg.content.value;
     }
 
-    char *class_str = (coap_get_code_class(pdu) == COAP_CLASS_SUCCESS)
-                            ? "Success" : "Error";
-    printf("gcoap: response %s, code %1u.%02u", class_str,
-                                                coap_get_code_class(pdu),
-                                                coap_get_code_detail(pdu));
-    if (pdu->payload_len) {
-        if (pdu->content_type == COAP_FORMAT_TEXT
-                || pdu->content_type == COAP_FORMAT_LINK
-                || coap_get_code_class(pdu) == COAP_CLASS_CLIENT_FAILURE
-                || coap_get_code_class(pdu) == COAP_CLASS_SERVER_FAILURE) {
-            /* Expecting diagnostic payload in failure cases */
-            printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
-                                                          (char *)pdu->payload);
-        }
-        else {
-            printf(", %u bytes\n", pdu->payload_len);
-            od_hex_dump(pdu->payload, pdu->payload_len, OD_WIDTH_DEFAULT);
-        }
-    }
-    else {
-        printf(", empty payload\n");
-    }
+    return NULL;
 }
 
-static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
+static void *send_data(void *arg)
 {
-    ipv6_addr_t addr;
-    size_t bytes_sent;
-    sock_udp_ep_t remote;
+    (void)arg;
+    (void)interval;
 
-    remote.family = AF_INET6;
-
-    /* parse for interface */
-    int iface = ipv6_addr_split_iface(addr_str);
-    if (iface == -1) {
-        if (gnrc_netif_numof() == 1) {
-            /* assign the single interface found in gnrc_netif_numof() */
-            remote.netif = (uint16_t)gnrc_netif_iter(NULL)->pid;
-        }
-        else {
-            remote.netif = SOCK_ADDR_ANY_NETIF;
-        }
-    }
-    else {
-        if (gnrc_netif_get_by_pid(iface) == NULL) {
-            puts("gcoap_cli: interface not valid");
-            return 0;
-        }
-        remote.netif = iface;
-    }
-
-    /* parse destination address */
-    if (ipv6_addr_from_str(&addr, addr_str) == NULL) {
-        puts("gcoap_cli: unable to parse destination address");
-        return 0;
-    }
-    if ((remote.netif == SOCK_ADDR_ANY_NETIF) && ipv6_addr_is_link_local(&addr)) {
-        puts("gcoap_cli: must specify interface for link local target");
-        return 0;
-    }
-    memcpy(&remote.addr.ipv6[0], &addr.u8[0], sizeof(addr.u8));
-
-    /* parse port */
-    remote.port = atoi(port_str);
-    if (remote.port == 0) {
-        puts("gcoap_cli: unable to parse destination port");
-        return 0;
-    }
-
-    bytes_sent = gcoap_req_send2(buf, len, &remote, _resp_handler);
-    if (bytes_sent > 0) {
-    }
-    return bytes_sent;
+    return NULL;
 }
 
 static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
-    (void)pdu;
-    (void)buf;
-    (void)len;
     (void)ctx;
+
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+
+    switch (method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            /* write the response buffer with the request count value */
+            size_t payload_len = fmt_u16_dec((char *)pdu->payload, interval);
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+
+        case COAP_PUT: {
+            /* Limit interval value only to 5 digit (e.g. 15000)
+             * Reserve space for 5 digit interval value + \0 */
+            char payload[6] = { 0 };
+            memcpy(payload, (char *)pdu->payload, pdu->payload_len);
+            interval = (uint8_t)strtoul(payload, NULL, 10);
+
+            if (pdu->payload_len <= 5) {
+                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
+            }
+            else {
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+        }
+    }
 
     return -1;
 }
 
 static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
+    (void)ctx;
+
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+
+    switch (method_flag) {
+        case COAP_GET:
+            /* return configuration status
+             * 0 - not configured, 1 - being configured
+             * 2 - configured */
+
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            /* write the response buffer with the request count value */
+            size_t payload_len = fmt_u16_dec((char *)pdu->payload, config_status);
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+
+        case COAP_PUT: {
+            char payload[3] = { 0 };
+            memcpy(payload, (char *)pdu->payload, pdu->payload_len);
+            config_status = (uint8_t)strtoul(payload, NULL, 10);
+
+            if (config_status == SPR_NOT_CONFIGURED || config_status == SPR_CONFIGURED) {
+                    /* stop thread blink_light */
+                    msg_t msg;
+                    msg.content.value = 0;
+                    int ret = msg_try_send(&msg, blink_pid);
+                    if (ret == 0) {
+                        puts("Receiver queue full");
+                    }
+                    else if (ret < 0) {
+                        puts("ERROR: invalid PID");
+                    }
+            }
+            else if (config_status == SPR_CONFIGURING) {
+                    /* start thread blink_ligth LED to signal which sensor node is being configured */
+                    blink_pid = thread_create(blink_stack, sizeof(blink_stack),
+                            THREAD_PRIORITY_MAIN - 1, 0, blink_light, NULL, "blink");
+            }
+            else {
+                /* value not valid */
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+
+            if (pdu->payload_len <= 2) {
+                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
+            }
+            else {
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+        }
+    }
+
+    return -1;
+}
+
+static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
+{
     (void)pdu;
     (void)buf;
     (void)len;
     (void)ctx;
 
-    /* read sensor value and write to buffer */
-    // ...
+    /* start thread to send values to RPI */
+    (void)send_data;
 
-    /* sleep for `interval` */
-    xtimer_sleep(interval);
+    /* send ACK response */
 
     return -1;
+}
+
+static void _register(void)
+{
+    (void)send;
 }
 
 void spr_init(void)
@@ -172,10 +225,5 @@ void spr_init(void)
     //...
 
     /* Register Basisstation */
-    //...
-
-    /* Wait configuration from Backend */
-    //...
-
-    /* Configuration finished, wait OBSERVE request from Basisstation */
+    (void)_register;
 }
