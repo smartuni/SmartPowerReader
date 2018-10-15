@@ -63,11 +63,11 @@
 #include <math.h>
 
 #include "periph/adc.h"
-#include "ct_sensor.h"
+#include "measuring/ct_sensor.h"
 #include "fmt.h"
 
 #define DEBUG_SAMPLING          (0)
-#define DEBUG_CURRENT_PRIMARY   (0)
+#define DEBUG_CURRENT_PRIMARY   (1)
 #define DEBUG_CURRENT_SECONDARY (0)
 
 #define FLOAT_PRECISION         (2)
@@ -107,6 +107,10 @@ static inline float _voltage(ct_parameter_t * param)
 
     /* Remove the offset from the sample, so can calc with negative numbers. */
     sample = sample - param->adc_offset;
+
+    if (sample < 4 && sample > -4) {
+        sample = 0;
+    }
 
     /* Convert the sample (adc-counts) into a value of voltage. */
     voltage = (param->v_ref / param->adc_count) * sample;

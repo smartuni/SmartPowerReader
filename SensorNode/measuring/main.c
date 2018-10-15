@@ -32,7 +32,7 @@ int main(void)
     param.v_ref = 3.3;
     param.r_burden = 110;
     param.turns = 2000;
-    param.samples = 20; // The number of iterations of the for-loop.
+    param.samples = 32; // The number of iterations of the for-loop.
 
     /* Init the adc using riot abstraction layer. */
     init_adc(line, res);
