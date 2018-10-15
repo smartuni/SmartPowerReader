@@ -39,7 +39,8 @@
 extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
 
 static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
 static uint32_t interval = SPR_INTERVAL;
 static uint8_t config_status = 0;
@@ -138,7 +139,7 @@ static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void
     return -1;
 }
 
-static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
+static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void)ctx;
 
