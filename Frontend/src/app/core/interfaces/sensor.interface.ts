@@ -7,3 +7,4 @@ export interface Sensor {
   frequencyUnit?: string;
   series: any;
 }
+

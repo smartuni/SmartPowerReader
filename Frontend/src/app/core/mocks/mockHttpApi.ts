@@ -1,5 +1,4 @@
 import {Sensor} from '../interfaces/sensor.interface';
-import {Folder} from '../interfaces/folder.interface';
 
 export class MockHttpApi {
 
@@ -57,14 +56,14 @@ export class MockHttpApi {
   //
   // ];
 
-  private static computer: Sensor = {
-    id: 'computer1',
-    name: 'Computer',
-    folderName: 'MyCompany',
-    frequency: '5',
-    frequencyUnit: 's' ,
-    series: ''
-  };
+  // private static computer: Sensor = {
+  //   id: 'computer1',
+  //   name: 'Computer',
+  //   folderName: 'MyCompany',
+  //   frequency: '5',
+  //   frequencyUnit: 's' ,
+  //   series: ''
+  // };
 
   private static sensors: Sensor[] = [
     {
