@@ -2,6 +2,8 @@ package spr.unit;
 
 import dave.json.JsonArray;
 import dave.json.JsonObject;
+import dave.util.command.Argument.Type;
+import dave.util.command.CommandBuilder;
 import dave.util.command.Engine;
 import dave.util.command.ParseException;
 import dave.util.log.Logger;
@@ -15,6 +17,8 @@ import spr.task.Tasks;
 
 public class UserUnit extends BaseUnit
 {
+	private static interface RemoteCommand { void execute(String ip, int port); }
+	
 	private final Engine mCommands;
 	private boolean mRunning;
 	
@@ -29,11 +33,19 @@ public class UserUnit extends BaseUnit
 		mCommands.add(new SimpleCommand("stop", "broadcasts 'stop' message", this::runStop));
 		mCommands.add(new SimpleCommand("status", "collects system status", this::runStatus));
 		mCommands.add(new SimpleCommand("help", "lists all commands with info", this::runHelp));
+		mCommands.add((new CommandBuilder<RemoteCommand>("remote", "connects to remote and sends status request", this::runRemote)
+				.add("ip", Type.STRING)
+				.add("port", Type.INT)
+				.build()));
 
 		registerMessageHandler(Tasks.System.Report.STATUS, this::handleInfo);
 	}
 	
 	public boolean isRunning( ) { return mRunning; }
+	
+	private void runRemote(String ip, int port)
+	{
+	}
 	
 	private void runStart( )
 	{
