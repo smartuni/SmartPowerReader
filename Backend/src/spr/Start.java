@@ -9,6 +9,7 @@ import dave.util.log.Spacer;
 import spr.unit.SystemBuilder;
 import spr.unit.SystemBuilder.DistributedNetwork;
 import spr.unit.SystemBuilder.BaseModule;
+import spr.unit.SystemBuilder.NetworkModule;
 
 public class Start
 {
@@ -21,6 +22,7 @@ public class Start
 		
 		(new SystemBuilder(new DistributedNetwork()))
 			.install(new BaseModule())
+			.install(new NetworkModule(TCP_PORT))
 			.run();
 		
 		ShutdownService.INSTANCE.shutdown();
@@ -28,5 +30,5 @@ public class Start
 		System.exit(0);
 	}
 	
-	public static final int TCP_PORT = 0;
+	public static final int TCP_PORT = 9900;
 }

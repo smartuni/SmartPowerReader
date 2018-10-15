@@ -20,6 +20,18 @@ public class Backbone<T> extends BaseBroker<T>
 		
 		LOG.log(Severity.INFO, "Started new backbone");
 	}
+
+	@Override
+	public void start( )
+	{
+		mHandlers.forEach(h -> h.callback.start());
+	}
+
+	@Override
+	public void stop( )
+	{
+		mHandlers.forEach(h -> h.callback.stop());
+	}
 	
 	public Backbone<T> register(Predicate<Message<T>> f, Broker<T> cb)
 	{

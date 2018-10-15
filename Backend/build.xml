@@ -1,0 +1,35 @@
+<project name="Backend" default="compile">
+	<property name="src.dir" value="src" />
+	<property name="bin.dir" value="bin" />
+	<property name="jar.dir" value="release" />
+	<property name="lib.dir" value="libs" />
+	<property name="main.class" value="spr.Start" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}/" includes="*.jar" />
+	</path>
+
+	<target name="compile">
+		<mkdir dir="${bin.dir}/" />
+		<javac srcdir="${src.dir}/" destdir="${bin.dir}/" classpathref="classpath" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}/" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${bin.dir}/" />
+	</target>
+
+	<target name="run" depends="jar">
+		<java classname="${main.class}">
+			<classpath>
+				<path refid="classpath" />
+				<path location="${jar.dir}/${ant.project.name}.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="clean">
+		<delete dir="${bin.dir}/" />
+	</target>
+</project>
+
