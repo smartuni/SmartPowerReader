@@ -1,7 +1,15 @@
 package spr.unit;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+
 import dave.json.JsonArray;
 import dave.json.JsonObject;
+import dave.json.JsonValue;
+import dave.json.PrettyPrinter;
+import dave.net.server.Connection;
+import dave.net.server.TCPConnection;
 import dave.util.command.Argument.Type;
 import dave.util.command.CommandBuilder;
 import dave.util.command.Engine;
@@ -45,6 +53,24 @@ public class UserUnit extends BaseUnit
 	
 	private void runRemote(String ip, int port)
 	{
+		try
+		{
+			Connection c = new TCPConnection(new Socket(InetAddress.getByName(ip), port));
+			Message<Task> req = new Message<>(LocalAddress.BROADCAST, Units.SYSTEM, new Task(Tasks.System.Report.REQUEST, 99));
+			
+			c.send(req.save());
+			
+			JsonValue rep = c.receive();
+			
+			System.out.println("Received: ");
+			System.out.println(rep.toString(new PrettyPrinter()));
+			
+			c.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	private void runStart( )
