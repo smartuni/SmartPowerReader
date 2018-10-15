@@ -27,4 +27,6 @@ public class Start
 		
 		System.exit(0);
 	}
+	
+	public static final int TCP_PORT = 0;
 }

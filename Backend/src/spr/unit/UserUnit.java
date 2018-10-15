@@ -2,8 +2,6 @@ package spr.unit;
 
 import dave.json.JsonArray;
 import dave.json.JsonObject;
-import dave.json.JsonString;
-import dave.json.JsonValue;
 import dave.util.command.Engine;
 import dave.util.command.ParseException;
 import dave.util.log.Logger;
@@ -32,7 +30,6 @@ public class UserUnit extends BaseUnit
 		mCommands.add(new SimpleCommand("status", "collects system status", this::runStatus));
 		mCommands.add(new SimpleCommand("help", "lists all commands with info", this::runHelp));
 
-		registerMessageHandler(Tasks.System.Status.QUERY, this::handleStatus);
 		registerMessageHandler(Tasks.System.Report.STATUS, this::handleInfo);
 	}
 	
@@ -79,13 +76,6 @@ public class UserUnit extends BaseUnit
 			System.out.println("Execution error: " + e.getMessage());
 			Logger.DEFAULT.log(Severity.WARNING, "Command exec error: %s!", e.getMessage());
 		}
-	}
-	
-	private void handleStatus(Message<Task> p)
-	{
-		JsonValue status = new JsonString("active");
-		
-		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.System.Status.INFO, status));
 	}
 	
 	private void handleInfo(Message<Task> p)

@@ -26,8 +26,6 @@ public class TimerUnit extends BaseUnit
 		mAsync = Executors.newSingleThreadScheduledExecutor();
 		mBacklog = ConcurrentHashMap.newKeySet();
 		
-		registerMessageHandler(Tasks.System.Status.QUERY, this::handleStatus);
-		
 		registerMessageHandler(Tasks.Timer.Schedule.PERIODIC, this::handleSchedulePeriodic);
 		registerMessageHandler(Tasks.Timer.Schedule.ONE_SHOT, this::handleScheduleOneshot);
 		registerMessageHandler(Tasks.Timer.Schedule.REMOVE, this::handleScheduleRemove);
@@ -39,11 +37,10 @@ public class TimerUnit extends BaseUnit
 		mAsync.shutdownNow();
 	}
 	
-	private void handleStatus(Message<Task> p)
+	@Override
+	protected JsonValue getStatus( )
 	{
-		JsonValue status = (new JsonBuilder()).putInt("size", mBacklog.size()).toJSON();
-		
-		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.System.Status.INFO, status));
+		return (new JsonBuilder()).putInt("size", mBacklog.size()).toJSON();
 	}
 
 	private void handleSchedulePeriodic(Message<Task> p)

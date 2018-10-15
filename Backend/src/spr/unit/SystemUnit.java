@@ -26,7 +26,6 @@ public class SystemUnit extends BaseUnit
 
 		registerMessageHandler(Tasks.System.Report.REQUEST, this::handleStatusRequest);
 		
-		registerMessageHandler(Tasks.System.Status.QUERY, this::handleStatus);
 		registerMessageHandler(Tasks.System.Status.INFO, this::handleStatusInfo);
 		registerMessageHandler(TASK_TRIGGER_QUERY, this::handleTrigger);
 	}
@@ -42,11 +41,10 @@ public class SystemUnit extends BaseUnit
 		queryStatus();
 	}
 	
-	private void handleStatus(Message<Task> p)
+	@Override
+	protected JsonValue getStatus( )
 	{
-		JsonValue status = (new JsonBuilder()).putInt("count", mStati.size()).toJSON();
-		
-		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.System.Status.INFO, status));
+		return (new JsonBuilder()).putInt("count", mStati.size()).toJSON();
 	}
 	
 	private void handleStatusRequest(Message<Task> p)

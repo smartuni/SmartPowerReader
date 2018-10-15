@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import dave.json.JsonString;
+import dave.json.JsonValue;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.common.Node;
@@ -25,6 +27,7 @@ public class BaseUnit implements Unit
 
 		registerMessageHandler(Tasks.System.STARTUP, m -> onStart());
 		registerMessageHandler(Tasks.System.SHUTDOWN, m -> onStop());
+		registerMessageHandler(Tasks.System.Status.QUERY, this::handleReport);
 	}
 	
 	public Node<Task> getNode( ) { return mNode; }
@@ -33,6 +36,12 @@ public class BaseUnit implements Unit
 	protected void onStop( ) { }
 	
 	protected long newSession( ) { return mSession++; }
+	protected JsonValue getStatus( ) { return new JsonString("present"); }
+	
+	protected void handleReport(Message<Task> p)
+	{
+		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.System.Status.INFO, getStatus()));
+	}
 	
 	protected void registerMessageHandler(String task, Consumer<Message<Task>> cb)
 	{

@@ -10,6 +10,7 @@ public final class Units
 		public static final String TIMER = "timer";
 		public static final String DATABASE = "database";
 		public static final String USER = "user";
+		public static final String CONNECTION = "connection";
 		
 		private IDs( ) { }
 	}
