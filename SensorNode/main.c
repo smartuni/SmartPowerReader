@@ -12,8 +12,11 @@
  */
 
 #include <stdio.h>
-#include "msg.h"
 
+#include "periph/adc.h"
+#include "measuring/ct_sensor.h"
+
+#include "msg.h"
 #include "net/gcoap.h"
 #include "kernel_types.h"
 #include "shell.h"
@@ -33,6 +36,9 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
+    /* Initialize the adc on line 0 with 12 bit resolution. */
+    init_adc(0, ADC_RES_12BIT);
+
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     spr_init();

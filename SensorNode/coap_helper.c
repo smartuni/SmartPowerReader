@@ -10,6 +10,11 @@
 #include "od.h"
 #include "fmt.h"
 
+#include "measuring/ct_sensor.h"
+
+ct_parameter_t ct_param;
+ct_i_data_t ct_i_data;
+
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 /*
@@ -108,28 +113,37 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
 
 int testsend_cmd(int argc, char **argv)
 {
+    (void)argc;
+
+    ct_param.adc_count = 1 << 12;              // e.g.: 1 << 12 = 4096
+    ct_param.adc_offset = ct_param.adc_count >> 1; // e.g.: 4096 >> 1 = 2048
+    ct_param.v_ref = 3.3;
+    ct_param.r_burden = 110;
+    ct_param.turns = 2000;
+    ct_param.samples = 32; // The number of iterations of the for-loop.
+
     /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
     uint8_t buf[GCOAP_PDU_BUF_SIZE];
     coap_pkt_t pdu;
-    size_t len;
-
-    if (argc == 1) {
-        /* show help for main commands */
-        goto end;
-    }
+    size_t len = 0;
 
     /* parse options */
     int apos          = 1;               /* position of address argument */
     unsigned msg_type = COAP_TYPE_NON;
 
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_PUT, "/value");
-	/* measure current here and get len */
+  /* measure current here and get len */
+        ct_measure_current(&ct_param, &ct_i_data);
+        ct_dump_current(&ct_i_data);
 
-        memcpy(pdu.payload, CURRENT, CURRENT_LENGTH);
+        len = fmt_float((char*)buf, ct_i_data.current, 2);
+        printf("len = %i", len);
+
+
+        memcpy(pdu.payload, buf, len);
         coap_hdr_set_type(pdu.hdr, msg_type);
 
-
-        len = gcoap_finish(&pdu, CURRENT_LEN, COAP_FORMAT_TEXT);
+        len = gcoap_finish(&pdu, len, COAP_FORMAT_TEXT);
 
         printf("gcoap_cli: sending msg ID %u, %u bytes\n", coap_get_id(&pdu),
                (unsigned) len);
