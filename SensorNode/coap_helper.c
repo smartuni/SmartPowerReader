@@ -61,7 +61,49 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
 
 /* Use to send message to remote client/server using CoAP */
 size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
-{
+{ipv6_addr_t addr;
+    size_t bytes_sent;
+    sock_udp_ep_t remote;
+    remote.family = AF_INET6;
+    /* parse for interface */
+    int iface = ipv6_addr_split_iface(addr_str);
+    if (iface == -1) {
+        if (gnrc_netif_numof() == 1) {
+            /* assign the single interface found in gnrc_netif_numof() */
+            remote.netif = (uint16_t)gnrc_netif_iter(NULL)->pid;
+        }
+        else {
+            remote.netif = SOCK_ADDR_ANY_NETIF;
+        }
+    }
+    else {
+        if (gnrc_netif_get_by_pid(iface) == NULL) {
+            puts("gcoap_cli: interface not valid");
+            return 0;
+        }
+        remote.netif = iface;
+    }
+    /* parse destination address */
+    if (ipv6_addr_from_str(&addr, addr_str) == NULL) {
+        puts("gcoap_cli: unable to parse destination address");
+        return 0;
+    }
+    if ((remote.netif == SOCK_ADDR_ANY_NETIF) && ipv6_addr_is_link_local(&addr)) {
+        puts("gcoap_cli: must specify interface for link local target");
+        return 0;
+    }
+    memcpy(&remote.addr.ipv6[0], &addr.u8[0], sizeof(addr.u8));
+    /* parse port */
+    remote.port = atoi(port_str);
+    if (remote.port == 0) {
+        puts("gcoap_cli: unable to parse destination port");
+        return 0;
+    }
+    bytes_sent = gcoap_req_send2(buf, len, &remote, _resp_handler);
+    if (bytes_sent > 0) {
+    }
+    return bytes_sent;
+}
 
 int testsend_cmd(int argc, char **argv)
 {
