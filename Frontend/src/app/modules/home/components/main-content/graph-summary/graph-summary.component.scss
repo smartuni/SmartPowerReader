@@ -1,0 +1,11 @@
+@import '../../../../../../assets/styles/variables';
+
+.graph-wrapper {
+  overflow: scroll;
+  height: calc(#{$page_height} - #{$header_height} - #{$footer_height} - 100px);
+  ngx-charts-legend {
+    margin-left: 20px !important;
+  }
+
+
+}
