@@ -1,5 +1,6 @@
 package spr.unit;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import dave.util.Distributor;
 import dave.util.io.SevereIOException;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
+import spr.client.SimpleStorage;
 import spr.net.Backbone;
 import spr.net.FakeBroker;
 import spr.net.LocalBroker;
@@ -57,6 +59,8 @@ public class SystemBuilder
 	{
 		if(!mUnits.contains(u))
 			throw new IllegalArgumentException("Does not contain " + u.getNode().getID() + "!");
+		
+		mNodes.deregister(u.getNode().getID());
 		
 		u.getNode().setServer(old -> (msg -> {}));
 		
@@ -110,6 +114,7 @@ public class SystemBuilder
 		{
 			builder.install(new SystemUnit(new Node<>(Units.IDs.SYSTEM)));
 			builder.install(new TimerUnit(new Node<>(Units.IDs.TIMER)));
+			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File(id + ".bin")), new Node<>(Units.IDs.DATABASE)));
 		}
 	}
 	

@@ -59,7 +59,7 @@ public class Start
 		{
 			Arguments a = parser.parse(args);
 
-			if(a.hasMainArgument() && !a.getMainArgument().isEmpty()) // TODO fix hasMainArgument
+			if(a.hasMainArgument())
 				throw new IllegalArgumentException("Unexpected main argument: " + a.getMainArgument());
 			
 			if(a.hasArgument(o_port))

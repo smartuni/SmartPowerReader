@@ -29,6 +29,16 @@ public class LocalBroker<T> extends BaseBroker<T>
 		
 		return this;
 	}
+	
+	public LocalBroker<T> deregister(String id)
+	{
+		if(mNodes.remove(id) == null)
+			throw new IllegalArgumentException("Unknown node " + id);
+		
+		LOG.log(Severity.INFO, "Deregistered node %s", id);
+		
+		return this;
+	}
 
 	@Override
 	public void accept(Message<T> msg)
