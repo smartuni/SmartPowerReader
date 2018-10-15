@@ -21,11 +21,13 @@
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
+extern int testsend_cmd(int argc, char **argv);
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void spr_init(void);
 
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
+    { "testsend", "test send data", testsend_cmd },
     { NULL, NULL, NULL }
 };
 

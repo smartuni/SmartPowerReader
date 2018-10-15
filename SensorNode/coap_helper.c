@@ -106,6 +106,39 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
     return bytes_sent;
 }
 
+int testsend_cmd(int argc, char **argv)
+{
+    /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    coap_pkt_t pdu;
+    size_t len;
+
+    if (argc == 1) {
+        /* show help for main commands */
+        goto end;
+    }
+
+    /* parse options */
+    int apos          = 1;               /* position of address argument */
+    unsigned msg_type = COAP_TYPE_NON;
+
+        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_PUT, "/value");
+	/* measure current here and get len */
+
+        memcpy(pdu.payload, CURRENT, CURRENT_LENGTH);
+        coap_hdr_set_type(pdu.hdr, msg_type);
+
+
+        len = gcoap_finish(&pdu, CURRENT_LEN, COAP_FORMAT_TEXT);
+
+        printf("gcoap_cli: sending msg ID %u, %u bytes\n", coap_get_id(&pdu),
+               (unsigned) len);
+        if (!send(&buf[0], len, argv[apos], argv[apos+1])) {
+            puts("gcoap_cli: msg send failed");
+        }
+
+        return 0;
+}
 /*
  * This is only used for debugging through the shell.*/
 int gcoap_cli_cmd(int argc, char **argv)
