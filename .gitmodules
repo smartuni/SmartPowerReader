@@ -1,6 +1,6 @@
-[submodule "SensorNode/RIOT"]
-	path = SensorNode/RIOT
-	url = https://github.com/RIOT-OS/RIOT.git
 [submodule "Backend/libs/californium"]
 	path = Backend/libs/californium
 	url = https://github.com/eclipse/californium.git
+[submodule "SensorNode/RIOT"]
+	path = SensorNode/RIOT
+	url = https://github.com/RIOT-OS/RIOT.git
