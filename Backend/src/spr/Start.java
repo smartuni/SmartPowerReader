@@ -29,28 +29,38 @@ public class Start
 		
 		ShutdownService.INSTANCE.register(LogBase.INSTANCE::stop);
 		
-		Configuration<Params> options = parseArguments(args);
-		
-		(new SystemBuilder(new DistributedNetwork()))
-			.install(new BaseModule())
-			.install(new NetworkModule((int) options.get(Params.TCP_PORT)))
-			.run();
+		try
+		{
+			Configuration<Params> options = parseArguments(args);
+			
+			(new SystemBuilder(new DistributedNetwork()))
+				.install(new BaseModule())
+				.install(new NetworkModule((int) options.get(Params.TCP_PORT)))
+				.run();
+		}
+		catch(Throwable e)
+		{
+			e.printStackTrace();
+		}
 		
 		ShutdownService.INSTANCE.shutdown();
 		
 		System.exit(0);
 	}
 	
-	private static Configuration<Params> parseArguments(String[] args)
+	private static Configuration<Params> parseArguments(String[] args) throws ParseException
 	{
 		Configuration<Params> opts = new OptionHash<>();
 		
-		Option o_port = (new OptionBuilder("port")).setShortcut("p").build();
+		Option o_port = (new OptionBuilder("port")).setShortcut("p").hasValue(true).build();
 		Parser parser = new Parser(o_port);
 		
 		try
 		{
 			Arguments a = parser.parse(args);
+
+			if(a.hasMainArgument() && !a.getMainArgument().isEmpty()) // TODO fix hasMainArgument
+				throw new IllegalArgumentException("Unexpected main argument: " + a.getMainArgument());
 			
 			if(a.hasArgument(o_port))
 			{
@@ -62,6 +72,8 @@ public class Start
 			Logger.DEFAULT.log(Severity.FATAL, "Invalid arguments: %s!", e.getMessage());
 			
 			System.err.println(e.getMessage());
+
+			throw e;
 		}
 		
 		return opts;
