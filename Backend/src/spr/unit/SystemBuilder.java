@@ -130,8 +130,6 @@ public class SystemBuilder
 			try
 			{
 				Server s = Server.createTCPServer(mPort, c -> {
-					System.out.println("New connection!");
-
 					synchronized(this)
 					{
 						Unit u = new ConnectionUnit(c, uu -> builder.uninstall(uu), new Node<>(Units.IDs.CONNECTION + "-" + (mNext++)));

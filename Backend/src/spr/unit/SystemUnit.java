@@ -8,7 +8,6 @@ import dave.json.JsonBuilder;
 import dave.json.JsonCollectors;
 import dave.json.JsonObject;
 import dave.json.JsonValue;
-import dave.json.PrettyPrinter;
 
 import spr.net.LocalAddress;
 import spr.net.common.Node;
@@ -32,14 +31,6 @@ public class SystemUnit extends BaseUnit
 		registerMessageHandler(TASK_TRIGGER_QUERY, this::handleTrigger);
 	}
 
-	@Override
-	public void accept(Message<Task> p)
-	{
-//		System.out.println(p.save().toString(new PrettyPrinter()));
-
-		super.accept(p);
-	}
-	
 	@Override
 	protected void onStart( )
 	{
