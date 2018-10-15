@@ -22,7 +22,7 @@ public class Start
 		
 		(new SystemBuilder(new DistributedNetwork()))
 			.install(new BaseModule())
-			.install(new NetworkModule(TCP_PORT))
+			.install(new NetworkModule(Integer.parseInt(args[0])))
 			.run();
 		
 		ShutdownService.INSTANCE.shutdown();
