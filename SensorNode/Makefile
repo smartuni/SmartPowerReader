@@ -24,6 +24,8 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-mega2560 arduino-uno \
 ## Uncomment to redefine request token length, max 8.
 #GCOAP_TOKENLEN = 2
 #CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
+
+# We using ADC peripherie to measure current.
 FEATURES_REQUIRED = periph_adc
 
 
@@ -46,6 +48,7 @@ USEMODULE += shell_commands
 USEMODULE += ps
 # Use SAUL to access LED
 USEMODULE += saul_default
+USEMODULE += xtimer
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the

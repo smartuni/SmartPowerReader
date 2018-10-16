@@ -63,23 +63,24 @@
 #include <math.h>
 
 #include "periph/adc.h"
-#include "measuring/ct_sensor.h"
+#include "ct_sensor.h"
 #include "fmt.h"
 
 #define DEBUG_SAMPLING          (0)
-#define DEBUG_CURRENT_PRIMARY   (1)
+#define DEBUG_CURRENT_PRIMARY   (0)
 #define DEBUG_CURRENT_SECONDARY (0)
 
 #define FLOAT_PRECISION         (2)
 #define FMT_BUF_SIZE            (16)
 
-/* ADC Parameters */
-adc_res_t adc_res = ADC_RES_10BIT;
+/* ADC default Parameters */
+adc_res_t adc_res = ADC_RES_12BIT;
 unsigned adc_line = 0;
 
 /* Used to counts measurements */
 int counter = 0;
 
+/* The Root-Mean-Square of the voltage assumed to be 230V. */
 #define V_RMS 230
 
 /*

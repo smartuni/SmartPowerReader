@@ -6,13 +6,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "net/gcoap.h"
 #include "od.h"
 #include "fmt.h"
+#include "xtimer.h"
+#include "timex.h"
+#include "ct_sensor.h"
 
-#include "measuring/ct_sensor.h"
-
+/* Current transformer parameters needed for current calculations. */
 ct_parameter_t ct_param;
+/* The measured data by the current transformer. */
 ct_i_data_t ct_i_data;
 
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
@@ -61,7 +65,8 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
 
 /* Use to send message to remote client/server using CoAP */
 size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
-{ipv6_addr_t addr;
+{
+    ipv6_addr_t addr;
     size_t bytes_sent;
     sock_udp_ep_t remote;
     remote.family = AF_INET6;
@@ -105,94 +110,141 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
     return bytes_sent;
 }
 
+int dump_current_cmd(int argc, char **argv)
+{
+    /* These parameters are not used in this method. */
+    (void)argc;
+    (void)argv;
+
+    /* Stores the data and parameters used for measuring current. */
+    ct_i_data_t data;
+    ct_parameter_t param;
+
+    /* Parameters used for analog-input-pin (adc). */
+    // NOTE: This is already done in the main.
+    //int line = 0;
+    //adc_res_t res = ADC_RES_12BIT;
+    int bit = 12;
+
+    /* Timer parameters. */
+    xtimer_ticks32_t last = xtimer_now();
+    int delay = (1000LU * US_PER_MS); /*< 1 second. */
+
+    /* Parameters based on a nucleo-f446re. */
+    param.adc_count = 1 << bit;              /*< 4096 */
+    param.adc_offset = param.adc_count >> 1; /*< 2048 */
+    param.v_ref = 3.3;                       /*< 3.3V */
+    param.r_burden = 110;                    /*< 110Ohm */
+    param.turns = 2000;                      /*< turns on the magnet */
+    param.samples = 32;                      /*< number of samples */
+
+    /* Init the adc using riot abstraction layer. */
+    // NOTE: This is already done in the main.
+    // init_adc(line, res);
+
+    /* Measures the current using the parameters and stores the measurements
+     * inside the data reference. Then sleep for 'DELAY' and loop this forever.
+     */
+    while (1) {
+        ct_measure_current(&param, &data);
+
+        /* This could be a place to access the data */
+        // ...
+
+        ct_dump_current(&data);
+        xtimer_periodic_wakeup(&last, delay);
+    }
+
+    /* Should never be reached. */
+    return 0;
+}
+
 int testsend_cmd(int argc, char **argv)
 {
-      /* Parameters needed for accurate measurement */
-      ct_param.adc_count = 1 << 12;              // e.g.: 1 << 12 = 4096
-      ct_param.adc_offset = ct_param.adc_count >> 1; // e.g.: 4096 >> 1 = 2048
-      ct_param.v_ref = 3.3;
-      ct_param.r_burden = 110;
-      ct_param.turns = 2000;
-      ct_param.samples = 32; // The number of iterations of the for-loop.
+    /* Parameters needed for accurate measurement */
+    ct_param.adc_count = 1 << 12;              // e.g.: 1 << 12 = 4096
+    ct_param.adc_offset = ct_param.adc_count >> 1; // e.g.: 4096 >> 1 = 2048
+    ct_param.v_ref = 3.3;
+    ct_param.r_burden = 110;
+    ct_param.turns = 2000;
+    ct_param.samples = 32; // The number of iterations of the for-loop.
 
-      ct_measure_current(&ct_param, &ct_i_data);
-      ct_dump_current(&ct_i_data);
+    ct_measure_current(&ct_param, &ct_i_data);
+    ct_dump_current(&ct_i_data);
 
-      float current = ct_i_data.current;
+    float current = ct_i_data.current;
 
+    /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
+    char *method_codes[] = {"get", "post", "put"};
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    coap_pkt_t pdu;
+    size_t len;
 
+    char fmt_buf[10] = {""};
+    fmt_float(fmt_buf, current, 2);
+    len = strlen(fmt_buf);
 
-      /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
-      char *method_codes[] = {"get", "post", "put"};
-      uint8_t buf[GCOAP_PDU_BUF_SIZE];
-      coap_pkt_t pdu;
-      size_t len;
+    if (argc == 1) {
+        /* show help for main commands */
+        goto end;
+    }
 
-      char fmt_buf[10] = {""};
-      fmt_float(fmt_buf, current, 2);
-      len = strlen(fmt_buf);
+    if (strcmp(argv[1], "info") == 0) {
+        printf("CoAP server is listening on port %u\n", GCOAP_PORT);
+        return 0;
+    }
 
-      if (argc == 1) {
-          /* show help for main commands */
-          goto end;
-      }
+    /* if not 'info', must be a method code */
+    int code_pos = -1;
+    for (size_t i = 0; i < sizeof(method_codes) / sizeof(char*); i++) {
+        if (strcmp(argv[1], method_codes[i]) == 0) {
+            code_pos = i;
+        }
+    }
+    if (code_pos == -1) {
+        goto end;
+    }
 
-      if (strcmp(argv[1], "info") == 0) {
-          printf("CoAP server is listening on port %u\n", GCOAP_PORT);
-          return 0;
-      }
+    /* parse options */
+    int apos          = 2;               /* position of address argument */
+    unsigned msg_type = COAP_TYPE_NON;
+    if (argc > apos && strcmp(argv[apos], "-c") == 0) {
+        msg_type = COAP_TYPE_CON;
+        apos++;
+    }
 
-      /* if not 'info', must be a method code */
-      int code_pos = -1;
-      for (size_t i = 0; i < sizeof(method_codes) / sizeof(char*); i++) {
-          if (strcmp(argv[1], method_codes[i]) == 0) {
-              code_pos = i;
-          }
-      }
-      if (code_pos == -1) {
-          goto end;
-      }
+    if (argc == apos + 3 || argc == apos + 4) {
+        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, code_pos+1, argv[apos+2]);
+        if (argc == apos + 4) {
+            memcpy(pdu.payload, fmt_buf, strlen(fmt_buf));
+        }
+        coap_hdr_set_type(pdu.hdr, msg_type);
 
-      /* parse options */
-      int apos          = 2;               /* position of address argument */
-      unsigned msg_type = COAP_TYPE_NON;
-      if (argc > apos && strcmp(argv[apos], "-c") == 0) {
-          msg_type = COAP_TYPE_CON;
-          apos++;
-      }
+        if (argc == apos + 4) {
+            len = gcoap_finish(&pdu, strlen(fmt_buf), COAP_FORMAT_TEXT);
+        }
+        else {
+            len = gcoap_finish(&pdu, 0, COAP_FORMAT_NONE);
+        }
 
-      if (argc == apos + 3 || argc == apos + 4) {
-          gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, code_pos+1, argv[apos+2]);
-          if (argc == apos + 4) {
-              memcpy(pdu.payload, fmt_buf, strlen(fmt_buf));
-          }
-          coap_hdr_set_type(pdu.hdr, msg_type);
+        printf("gcoap_cli: sending msg ID %u, %u bytes\n", coap_get_id(&pdu),
+               (unsigned) len);
+        if (!send(&buf[0], len, argv[apos], argv[apos+1])) {
+            puts("gcoap_cli: msg send failed");
+        }
+        return 0;
+    }
+    else {
+        printf("usage: %s <get|post|put> [-c] <addr>[%%iface] <port> <path> [data]\n",
+               argv[0]);
+        printf("Options\n");
+        printf("    -c  Send confirmably (defaults to non-confirmable)\n");
+        return 1;
+    }
 
-          if (argc == apos + 4) {
-              len = gcoap_finish(&pdu, strlen(fmt_buf), COAP_FORMAT_TEXT);
-          }
-          else {
-              len = gcoap_finish(&pdu, 0, COAP_FORMAT_NONE);
-          }
-
-          printf("gcoap_cli: sending msg ID %u, %u bytes\n", coap_get_id(&pdu),
-                 (unsigned) len);
-          if (!send(&buf[0], len, argv[apos], argv[apos+1])) {
-              puts("gcoap_cli: msg send failed");
-          }
-          return 0;
-      }
-      else {
-          printf("usage: %s <get|post|put> [-c] <addr>[%%iface] <port> <path> [data]\n",
-                 argv[0]);
-          printf("Options\n");
-          printf("    -c  Send confirmably (defaults to non-confirmable)\n");
-          return 1;
-      }
-
-      end:
-      printf("usage: %s <get|post|put|info>\n", argv[0]);
-      return 1;
+    end:
+    printf("usage: %s <get|post|put|info>\n", argv[0]);
+    return 1;
 }
 /*
  * This is only used for debugging through the shell.*/
