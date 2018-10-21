@@ -113,7 +113,38 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
     return bytes_sent;
 }
 
-int dump_current_cmd(int argc, char **argv)
+int testlcd_cmd(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+
+    /* LCD 1602A initializations using a nucleo-f446re board. */
+    lcd_iface_t iface = MODE_4BIT;
+    lcd_pins_t pins;
+
+    /* NOTE: Make sure the pins are working for your board! */
+    pins.rs = GPIO_PIN(PORT_A, 9);
+    pins.rw = GPIO_PIN(PORT_A, 8);
+    pins.e = GPIO_PIN(PORT_C, 7);
+    pins.d0 = 0; // Not used. We use a 4-Bit interface here.
+    pins.d1 = 0; // Not used.
+    pins.d2 = 0; // Not used.
+    pins.d3 = 0; // Not used.
+    pins.d4 = GPIO_PIN(PORT_B, 3);
+    pins.d5 = GPIO_PIN(PORT_B, 5);
+    pins.d6 = GPIO_PIN(PORT_B, 4);
+    pins.d7 = GPIO_PIN(PORT_B, 10);
+
+    printf("test_lcd_cmd begins..\n");
+
+    lcd_init(iface, &pins);
+
+    printf("test_lcd_cmd is done!\n");
+
+    return 0;
+}
+
+int testcurrent_cmd(int argc, char **argv)
 {
     /* These parameters are not used in this method. */
     (void)argc;
@@ -131,7 +162,7 @@ int dump_current_cmd(int argc, char **argv)
 
     /* Timer parameters. */
     xtimer_ticks32_t last = xtimer_now();
-    int delay = (3000LU * US_PER_MS); /*< 1 second. */
+    int delay = (1000LU * US_PER_MS); /*< 1 second. */
 
     /* Parameters based on a nucleo-f446re. */
     param.adc_count = 1 << bit;              /*< 4096 */
@@ -141,22 +172,6 @@ int dump_current_cmd(int argc, char **argv)
     param.turns = 2000;                      /*< turns on the magnet */
     param.samples = 32;                      /*< number of samples */
 
-    /* LCD 1602A initializations using a nucleo-f446re board. */
-    lcd_iface_t iface = MODE_4BIT;
-    lcd_pins_t pins;
-    pins.rs = GPIO_PIN(PORT_A, 9);
-    pins.rw = GPIO_PIN(PORT_A, 8);
-    pins.e = GPIO_PIN(PORT_C, 7);
-    pins.d0 = 0;
-    pins.d1 = 0;
-    pins.d2 = 0;
-    pins.d3 = 0;
-    pins.d4 = GPIO_PIN(PORT_B, 3);
-    pins.d5 = GPIO_PIN(PORT_B, 5);
-    pins.d6 = GPIO_PIN(PORT_B, 4);
-    pins.d7 = GPIO_PIN(PORT_B, 10);
-
-    lcd_init(iface, &pins);
     /* Init the adc using riot abstraction layer. */
     // NOTE: This is already done in the main.
     // init_adc(line, res);
@@ -164,18 +179,17 @@ int dump_current_cmd(int argc, char **argv)
     /* Measures the current using the parameters and stores the measurements
      * inside the data reference. Then sleep for 'DELAY' and loop this forever.
      */
-    while (1) {
+    /* TODO: Improvement-idea, use argc/argv to determine how much samples
+     *       the loop should print, and then return so we dont need to
+     *       restart the whole application all time!
+     *       Another idea is to set the interval.
+     */
+    for (int i = 0; i < 5; i++) {
         ct_measure_current(&param, &data);
-
-        /* This could be a place to access the data */
-        // ...
-
         ct_dump_current(&data);
         xtimer_periodic_wakeup(&last, delay);
-        lcd_write('A');
     }
 
-    /* Should never be reached. */
     return 0;
 }
 
