@@ -104,14 +104,12 @@ static inline void _command(uint8_t cmd)
  */
 static inline void _power_up(uint8_t collumns, uint8_t lines, uint8_t dot_size)
 {
-    DEBUG("LCD: Powering up start # # # # # # # # # #\n");
+    _lines = lines;
 
     if (_lines > 1) {
         _functionality |= LCD_2LINE;
         DEBUG("LCD: _power_up: Use 2 Lines\n");
     }
-
-    _lines = lines;
 
     /* Needed later for positioning the cursor. */
     _row_offset[0] = 0x00;
@@ -131,7 +129,7 @@ static inline void _power_up(uint8_t collumns, uint8_t lines, uint8_t dot_size)
     DEBUG("LCD: _power_up: rs-, rw-, e-Pin set as GPIO_OUT\n");
 
     for (int i = (!(_functionality & LCD_8BIT_MODE) ? 4 : 0); i < PINS_SIZE; i++) {
-        DEBUG("LCD: _power_up: (D%i)-Pin set as GPIO_OUT \n", i);
+        DEBUG("LCD: _power_up: D%i-Pin set as GPIO_OUT \n", i);
         gpio_init(_data_pins[i], GPIO_OUT);
     }
 
@@ -161,12 +159,6 @@ static inline void _power_up(uint8_t collumns, uint8_t lines, uint8_t dot_size)
         DEBUG("LCD: _power_up: 8-Bit mode\n");
     }
 
-    /*
-    char buf[16];
-    fmt_byte_hex(buf, _functionality);
-    DEBUG("LCD: functionality: 0x%s\n", buf);
-    */
-
     /* Set No. of lines, dot size, etc. */
     _command(LCD_FUNCTION_SET | _functionality);
 
@@ -180,8 +172,6 @@ static inline void _power_up(uint8_t collumns, uint8_t lines, uint8_t dot_size)
     /* Default text direction. */
     _display_mode = LCD_ENTRY_LEFT | LCD_ENTRY_SHIFT_DEC;
     _command(LCD_ENTRY_MODE_SET | _display_mode);
-
-    DEBUG("LCD: Powering up is done! # # # # # # # # # #\n");
 }
 
 int lcd_init(lcd_iface_t iface, lcd_pins_t * pins)
@@ -203,33 +193,26 @@ int lcd_init(lcd_iface_t iface, lcd_pins_t * pins)
 
     if (!(_iface & LCD_8BIT_MODE)) {
         _functionality = LCD_4BIT_MODE | LCD_1LINE | LCD_5x8DOTS;
-        DEBUG("lcd: _init: 4-Bit interface, 1-Line, 5x8Dots\n");
+        DEBUG("lcd: _init: 4-Bit interface, 1-Line, 5x8Dots (default)\n");
     } else {
         _functionality = LCD_8BIT_MODE | LCD_1LINE | LCD_5x8DOTS;
-        DEBUG("lcd: _init: 8-Bit interface, 1-Line, 5x8Dots\n");
+        DEBUG("lcd: _init: 8-Bit interface, 1-Line, 5x8Dots (default)\n");
     }
 
     /* 16 collumns, 2 lines, 5x8 font size. */
     _power_up(16, 2 , LCD_5x8DOTS); // Default settings.
-    DEBUG("lcd: _init: init done\n");
+    DEBUG("LCD: _init: init done\n");
     return 0;
 }
 
 void lcd_write_buf(char * buf)
 {
-    /* We need strlen, because the length of buf
-     * cant be processed in compiler runtime. */
-    int size = strlen(buf);
-
-    for (int i = 0; i < size; i++) {
-        char c = buf[i];
-        lcd_write(c);
-    }
+    for (int i = 0; i < (int)strlen(buf); i++) lcd_write(buf[i]);
 }
 
 void lcd_write(uint8_t value)
 {
-    DEBUG("LCD: write -> (%c)\n", (char)value);
+    DEBUG("LCD: write -> '%c'\n", (char)value);
     _send(value, HIGH);
 }
 
@@ -277,6 +260,7 @@ void lcd_cursor_reset(void)
 
 void lcd_cursor_set(uint8_t col, uint8_t row)
 {
+    DEBUG("LCD: Cursor -> Set col/row %i/%i\n", col, row);
     row = (row > 0) ? 1 : 0; // Lazy check if between 0 and 1.
     _command(LCD_SET_DDRAM_ADDRESS | (col + _row_offset[row]));
 }
