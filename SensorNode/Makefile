@@ -25,8 +25,9 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-mega2560 arduino-uno \
 #GCOAP_TOKENLEN = 2
 #CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
 
-# We using ADC peripherie to measure current.
+# Used peripheral
 FEATURES_REQUIRED = periph_adc
+FEATURES_REQUIRED = periph_gpio
 
 
 # Include packages that pull up and auto-init the link layer.

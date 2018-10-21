@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "periph/adc.h"
+#include "ct_sensor.h"
 #include "net/gcoap.h"
 #include "od.h"
 #include "fmt.h"
@@ -35,6 +38,10 @@
 #define BLINK_QUEUE_SIZE        (8)
 
 #define LED_NUM         (0)
+
+/* ADC pin parameters. */
+#define LINE (0)
+#define RES ADC_RES_12BIT /*< Use 'ADC_RES_10BIT' for arduino's. */
 
 extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
 
@@ -251,6 +258,9 @@ static void _register(void)
 
 void spr_init(void)
 {
+    /* Initialize the adc on line 0 with 12 bit resolution. */
+    init_adc(LINE, RES);
+
     /* Register CoAP resources */
     gcoap_register_listener(&_listener);
 

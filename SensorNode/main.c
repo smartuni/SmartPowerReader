@@ -13,17 +13,10 @@
 
 #include <stdio.h>
 
-#include "periph/adc.h"
-#include "ct_sensor.h"
-
 #include "msg.h"
 #include "net/gcoap.h"
 #include "kernel_types.h"
 #include "shell.h"
-
-/* ADC pin parameters. */
-#define LINE (0)
-#define RES ADC_RES_12BIT /*< Use 'ADC_RES_10BIT' for arduino's. */
 
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -42,9 +35,6 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
-    /* Initialize the adc on line 0 with 12 bit resolution. */
-    init_adc(LINE, RES);
-
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     spr_init();
