@@ -1,7 +1,7 @@
 /*
- * @file lcd_1602a.c
- * @author Rene Herthel <rene.herthel@haw-hamburg.de>
- * @description TODO
+ * @file     lcd_1602a.c
+ * @author   Rene Herthel <rene.herthel@haw-hamburg.de>
+ * @brief    Driver implementation for 1602A LCD's.
  */
 
 #include <stdio.h>
@@ -38,7 +38,7 @@ static uint8_t _lines;
 static uint8_t _row_offset[4];
 
 /**
- * @brief    Creates a single enable-impulse.
+ * @brief    Creates a single enable-impulse, whenever HIGH impulses happen.
  */
 static inline void _pulse_enable(void)
 {
@@ -70,28 +70,39 @@ static inline void _write(uint8_t value)
     _pulse_enable();
 }
 
-static inline void _send(uint8_t value, uint8_t mode)
+/**
+ * @brief   Prepares the LCD for sending some data to it.
+ *
+ * @param[value] The value, which should be sent.
+ * @param[rs_mode] register select mode; LOW:commands; HIGH:Data
+ */
+static inline void _send(uint8_t value, uint8_t rs_mode)
 {
-    gpio_write(_rs, mode);
+    gpio_write(_rs, rs_mode);
     gpio_write(_rw, LOW);
 
     if (_functionality & LCD_8BIT_MODE) {
-        //DEBUG("_send: write as 8-bit\n");
         _write(value);
     } else {
-        //DEBUG("_send: write as 4-Bit\n");
         _write(value >> 4);
-        //DEBUG("_send: write a second time\n");
         _write(value);
     }
 }
 
-static inline void _command(uint8_t value)
+/**
+ * @brief Invokes _send with a logical-low-level for commands.
+ *
+ * @param[cmd] The command to send.
+ */
+static inline void _command(uint8_t cmd)
 {
-    _send(value, LOW);
+    _send(cmd, LOW);
 }
 
-static inline void _power_up(uint8_t collumns, uint8_t lines, lcd_1602a_dots_t dot_size)
+/**
+ * @brief Power ups the lcd. Look at the datasheets for informations about the delays.
+ */
+static inline void _power_up(uint8_t collumns, uint8_t lines, uint8_t dot_size)
 {
     DEBUG("LCD: Powering up start # # # # # # # # # #\n");
 
@@ -198,6 +209,7 @@ int lcd_init(lcd_iface_t iface, lcd_pins_t * pins)
         DEBUG("lcd: _init: 8-Bit interface, 1-Line, 5x8Dots\n");
     }
 
+    /* 16 collumns, 2 lines, 5x8 font size. */
     _power_up(16, 2 , LCD_5x8DOTS); // Default settings.
     DEBUG("lcd: _init: init done\n");
     return 0;
@@ -219,13 +231,6 @@ void lcd_write(uint8_t value)
 {
     DEBUG("LCD: write -> (%c)\n", (char)value);
     _send(value, HIGH);
-}
-
-void lcd_home(void)
-{
-    DEBUG("LCD: Home\n");
-    _command(LCD_RETURN_HOME);
-    xtimer_usleep(2000);
 }
 
 void lcd_display_on(void)
@@ -263,18 +268,16 @@ void lcd_cursor_off(void)
     _command(LCD_DISPLAY_ON_OFF | _display_control);
 }
 
+void lcd_cursor_reset(void)
+{
+    DEBUG("LCD: Cursor -> Reset\n");
+    _command(LCD_RETURN_HOME);
+    xtimer_usleep(2000);
+}
+
 void lcd_cursor_set(uint8_t col, uint8_t row)
 {
-    size_t max_lines = sizeof(_row_offset) / sizeof(*_row_offset);
-
-    if (row >= max_lines) {
-        row = max_lines -1; // Start count rows with /0
-    }
-
-    if (row >= _lines) {
-        row = _lines - 1;
-    }
-
+    row = (row > 0) ? 1 : 0; // Lazy check if between 0 and 1.
     _command(LCD_SET_DDRAM_ADDRESS | (col + _row_offset[row]));
 }
 

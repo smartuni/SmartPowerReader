@@ -1,7 +1,7 @@
 /*
  * @file           lcd_1602a.h
  * @author         Rene Herthel <rene.herthel@haw-hamburg.de>
- * @description    Header file for a 1602A LCD implementation.
+ * @brief          Header file for a 1602A LCD driver implementation.
  */
 
 #ifndef LCD_1602A_H
@@ -19,7 +19,7 @@ extern "C" {
 #define LCD_CLEAR_DISPLAY 0x01
 #define LCD_RETURN_HOME 0x02
 #define LCD_ENTRY_MODE_SET 0x04
-#define LCD_DISPLAY_ON_OFF 0x08 // Also cursor
+#define LCD_DISPLAY_ON_OFF 0x08 /*< Also cursor. */
 #define LCD_CURSOR_OR_DISPLAY_SHIFT 0x10
 #define LCD_FUNCTION_SET 0x20
 #define LCD_SET_CGRAM_ADDRESS 0x40
@@ -28,10 +28,10 @@ extern "C" {
 /*
  * @brief Flags for display entry mode.
  */
- #define LCD_ENTRY_RIGHT 0x00
- #define LCD_ENTRY_LEFT 0x02
- #define LCD_ENTRY_SHIFT_INC 0x01
- #define LCD_ENTRY_SHIFT_DEC 0x00
+#define LCD_ENTRY_RIGHT 0x00
+#define LCD_ENTRY_LEFT 0x02
+#define LCD_ENTRY_SHIFT_INC 0x01
+#define LCD_ENTRY_SHIFT_DEC 0x00
 
 /*
  * @brief Flags for display on/off control.
@@ -46,10 +46,10 @@ extern "C" {
 /*
  * @brief Flags for display/cursor shift.
  */
- #define LCD_DISPLAY_MOVE 0x08
- #define LCD_CURSOR_MOVE 0x00
- #define LCD_MOVE_RIGHT 0x04
- #define LCD_MOVE_LEFT 0x00
+#define LCD_DISPLAY_MOVE 0x08
+#define LCD_CURSOR_MOVE 0x00
+#define LCD_MOVE_RIGHT 0x04
+#define LCD_MOVE_LEFT 0x00
 
 /*
  * @brief Flags for function set
@@ -58,8 +58,8 @@ extern "C" {
 #define LCD_4BIT_MODE 0x00
 #define LCD_2LINE 0x08
 #define LCD_1LINE 0x00
-//#define LCD_5x10DOTS 0x04
-//#define LCD_5x8DOTS 0x00
+#define LCD_5x10DOTS 0x04
+#define LCD_5x8DOTS 0x00
 
 /**
  * @brief    The indices of the data pins in the array.
@@ -80,14 +80,6 @@ typedef enum {
     MODE_4BIT,
     MODE_8BIT
 } lcd_iface_t;
-
-/**
- * @brief    The size of the characters on the lcd.
- */
-typedef enum {
-    LCD_5x8DOTS = 0, /*< 0x00 0b00000000 */
-    LCD_5x10DOTS = 4 /*< 0x04 0b00000100 */
-} lcd_1602a_dots_t;
 
 /**
  * @brief    The pins used to interface the lcd
@@ -120,13 +112,10 @@ void lcd_write(uint8_t value);
 
 /**
  * @brief    Writes a buffer of chars to the lcd.
+ *
+ * @param[buf] Pointer to an char array.
  */
 void lcd_write_buf(char * buf);
-
-/**
- * @brief    Set the cursor position to zero.
- */
-void lcd_home(void);
 
 /**
  * @brief    Set the display on.
@@ -149,10 +138,18 @@ void lcd_display_clear(void);
 void lcd_cursor_on(void);
 
 /**
+ * @brief    Set the cursor position to zero.
+ */
+void lcd_cursor_reset(void);
+
+/**
  * @brief    Turns the underlining cursor off.
  */
 void lcd_cursor_off(void);
 
+/**
+ * @brief    Set the cursor at the given collumn and row.
+ */
 void lcd_cursor_set(uint8_t col, uint8_t row);
 
 /**

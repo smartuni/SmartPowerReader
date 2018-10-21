@@ -116,7 +116,7 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
 int lcd_write_cmd(int argc, char **argv)
 {
     (void)argc;
-    (void)argv;
+    //(void)argv;
 
     /* LCD 1602A initializations using a nucleo-f446re board. */
     lcd_iface_t iface = MODE_4BIT;
@@ -140,6 +140,8 @@ int lcd_write_cmd(int argc, char **argv)
     printf("Try to write \"%s\" to the LCD\n", argv[1]);
 
     /* Use first argument of shell input to display. */
+    lcd_write_buf(argv[1]);
+    lcd_cursor_set(0, 1);
     lcd_write_buf(argv[1]);
 
     return 0;
