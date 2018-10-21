@@ -93,9 +93,9 @@ typedef enum {
  * @brief    The pins used to interface the lcd
  */
 typedef struct {
-    gpio_t rs; /*< Register Select */
-    gpio_t rw; /*< Read Write*/
-    gpio_t e;  /*< Enable */
+    gpio_t rs; /*< Register Select: LOW:command; HIGH:Character. */
+    gpio_t rw; /*< Read Write: LOW:Write to LCD; HIGH: Read from LCD. */
+    gpio_t e;  /*< Enable: Activated by a HIGH pulse. */
     gpio_t d0; /*< Data bus 0 */
     gpio_t d1; /*< Data bus 1 */
     gpio_t d2; /*< Data bus 2 */
@@ -119,8 +119,12 @@ int lcd_init(lcd_iface_t iface, lcd_pins_t * pins);
 void lcd_write(uint8_t value);
 
 /**
+ * @brief    Writes a buffer of chars to the lcd.
+ */
+void lcd_write_buf(char * buf);
+
+/**
  * @brief    Set the cursor position to zero.
- *           NOTE: This is very slow. It takes about 2 seconds!
  */
 void lcd_home(void);
 
@@ -136,7 +140,6 @@ void lcd_display_off(void);
 
 /**
  * @brief    Clears the entire display & sets the cursor position to zero.
- *           NOTE: This is very slow. It takes about 2 seconds!
  */
 void lcd_display_clear(void);
 
@@ -149,6 +152,8 @@ void lcd_cursor_on(void);
  * @brief    Turns the underlining cursor off.
  */
 void lcd_cursor_off(void);
+
+void lcd_cursor_set(uint8_t col, uint8_t row);
 
 /**
  * @brief    Turns the blinking cursor on.

@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "periph/gpio.h"
 #include "timex.h"
@@ -14,16 +15,8 @@
 #include "lcd_1602a.h"
 
 /* Just to debug from very low level to 'user'-like level */
-#define ENABLE_DEBUG    (1)
-#define LEVEL1_DEBUG    (1)
-#define LEVEL2_DEBUG    (0)
+#define ENABLE_DEBUG    (0)
 #include "debug.h"
-#ifdef LEVEL1_DEBUG
-    #define DEBUG_LEVEL1 DEBUG
-#endif
-#ifdef LEVEL2_DEBUG
-    #define DEBUG_LEVEL2 DEBUG
-#endif
 
 /* Logic Level's */
 #define LOW             (0)
@@ -38,9 +31,9 @@ static uint8_t _display_control;
 static uint8_t _display_mode;
 static lcd_iface_t _iface;
 static gpio_t _data_pins[PINS_SIZE];
-static gpio_t _register_select;
-static gpio_t _read_write;
-static gpio_t _enable;
+static gpio_t _rs;
+static gpio_t _rw;
+static gpio_t _e;
 static uint8_t _lines;
 static uint8_t _row_offset[4];
 
@@ -49,12 +42,12 @@ static uint8_t _row_offset[4];
  */
 static inline void _pulse_enable(void)
 {
-    gpio_write(_enable, LOW);
-    xtimer_usleep(1LU);
-    gpio_write(_enable, HIGH);
-    xtimer_usleep(1LU);
-    gpio_write(_enable, LOW);
-    xtimer_usleep(100LU);
+    gpio_write(_e, LOW);
+    xtimer_usleep(1);
+    gpio_write(_e, HIGH);
+    xtimer_usleep(1);
+    gpio_write(_e, LOW);
+    xtimer_usleep(100);
 }
 
 /**
@@ -63,28 +56,32 @@ static inline void _pulse_enable(void)
  */
 static inline void _write(uint8_t value)
 {
-    DEBUG_LEVEL1("_write '%c' to d-pin's:   ", (char)value);
-    for (int i = (!(_functionality & LCD_8BIT_MODE) ? 4 : 0); i < PINS_SIZE; i++) {
-        DEBUG_LEVEL1("%i   ", i);
-        gpio_write(_data_pins[i], (value >> i) & HIGH);
+    /* XXX: This needs a bit polish! make sure:
+     *      (value >> i) matches !(_functionality & LCD_8BIT_MODE) ? 4 : 0;!!!
+     */
+    int j = !(_functionality & LCD_8BIT_MODE) ? 4 : 0;
+    //DEBUG("_write '%i' to d-pin's:   ", value);
+    for (int i = j; i < PINS_SIZE; i++) {
+        //DEBUG("value: %i   ", (value >> (i-j)));
+        gpio_write(_data_pins[i], (value >> (i-j)) & HIGH);
     }
-    DEBUG_LEVEL1("\n");
+    //DEBUG("\n");
 
     _pulse_enable();
 }
 
 static inline void _send(uint8_t value, uint8_t mode)
 {
-    gpio_write(_register_select, mode);
-    gpio_write(_read_write, LOW);
+    gpio_write(_rs, mode);
+    gpio_write(_rw, LOW);
 
     if (_functionality & LCD_8BIT_MODE) {
-        DEBUG("_send: write as 8-bit\n");
+        //DEBUG("_send: write as 8-bit\n");
         _write(value);
     } else {
-        DEBUG("_send: write as 4-Bit\n");
+        //DEBUG("_send: write as 4-Bit\n");
         _write(value >> 4);
-        DEBUG("_send: write a second time\n");
+        //DEBUG("_send: write a second time\n");
         _write(value);
     }
 }
@@ -96,12 +93,14 @@ static inline void _command(uint8_t value)
 
 static inline void _power_up(uint8_t collumns, uint8_t lines, lcd_1602a_dots_t dot_size)
 {
-    _lines = lines;
+    DEBUG("LCD: Powering up start # # # # # # # # # #\n");
 
     if (_lines > 1) {
         _functionality |= LCD_2LINE;
-        DEBUG("lcd: _power_up: _lines > 1\n");
+        DEBUG("LCD: _power_up: Use 2 Lines\n");
     }
+
+    _lines = lines;
 
     /* Needed later for positioning the cursor. */
     _row_offset[0] = 0x00;
@@ -109,50 +108,53 @@ static inline void _power_up(uint8_t collumns, uint8_t lines, lcd_1602a_dots_t d
     _row_offset[2] = 0x00 + collumns;
     _row_offset[3] = 0x40 + collumns;
 
+    /* If a 1 line display can have 10 pixel high font. */
     if ((dot_size != LCD_5x8DOTS) && (_lines == 1)) {
         _functionality |= LCD_5x10DOTS;
-        DEBUG("lcd: _power_up: LCD_5x10DOTS\n");
+        DEBUG("LCD: _power_up: Use 5 x 10 Dots\n");
     }
 
-    DEBUG("lcd: _power_up: rs-, rw-, e-pins before gpio_init\n");
-    gpio_init(_register_select, GPIO_OUT);
-    gpio_init(_read_write, GPIO_OUT);
-    gpio_init(_enable, GPIO_OUT);
-    DEBUG("lcd: _power_up: rs-, rw-, e-pins as GPIO_OUT now\n");
+    gpio_init(_rs, GPIO_OUT);
+    gpio_init(_rw, GPIO_OUT);
+    gpio_init(_e, GPIO_OUT);
+    DEBUG("LCD: _power_up: rs-, rw-, e-Pin set as GPIO_OUT\n");
 
-    for (int i = (!(_functionality & LCD_8BIT_MODE) ? 4 : 0); i < 8; i++) {
-        DEBUG("lcd: _power_up: data pin (%i) as out \n", i);
+    for (int i = (!(_functionality & LCD_8BIT_MODE) ? 4 : 0); i < PINS_SIZE; i++) {
+        DEBUG("LCD: _power_up: (D%i)-Pin set as GPIO_OUT \n", i);
         gpio_init(_data_pins[i], GPIO_OUT);
     }
 
     /* Wait at least 40 ms to let the power rise above 2.7V */
     xtimer_usleep(50LU * US_PER_MS);
 
-    gpio_write(_register_select, LOW);
-    gpio_write(_enable, LOW);
-    gpio_write(_read_write, LOW);
-    DEBUG("lcd: _power_up: rs, e, rw are low now\n");
+    gpio_write(_rs, LOW);
+    gpio_write(_e, LOW);
+    gpio_write(_rw, LOW);
+    DEBUG("LCD: _power_up: rs-, rw-, e-Pin are LOW now\n");
 
     if (!(_functionality & LCD_8BIT_MODE)) {
         _write(0x03);
-        xtimer_usleep(5LU * US_PER_MS);
+        xtimer_usleep(4500);
         _write(0x03);
-        xtimer_usleep(5LU * US_PER_MS);
+        xtimer_usleep(4500);
         _write(0x03);
-        xtimer_usleep(5LU * US_PER_MS);
+        xtimer_usleep(150);
         _write(0x02);
-        DEBUG("lcd: _power_up: 4-Bit mode\n");
+        DEBUG("LCD: _power_up: 4-Bit mode\n");
     } else {
-      _command(LCD_FUNCTION_SET | _functionality);
-      xtimer_usleep(5LU * US_PER_MS);
-      _command(LCD_FUNCTION_SET | _functionality);
-      xtimer_usleep(5LU * US_PER_MS);
-      _command(LCD_FUNCTION_SET | _functionality);
+        _command(LCD_FUNCTION_SET | _functionality);
+        xtimer_usleep(4500);
+        _command(LCD_FUNCTION_SET | _functionality);
+        xtimer_usleep(150);
+        _command(LCD_FUNCTION_SET | _functionality);
+        DEBUG("LCD: _power_up: 8-Bit mode\n");
     }
 
+    /*
     char buf[16];
     fmt_byte_hex(buf, _functionality);
-    DEBUG("lcd: functionality: 0x%s\n", buf);
+    DEBUG("LCD: functionality: 0x%s\n", buf);
+    */
 
     /* Set No. of lines, dot size, etc. */
     _command(LCD_FUNCTION_SET | _functionality);
@@ -167,15 +169,17 @@ static inline void _power_up(uint8_t collumns, uint8_t lines, lcd_1602a_dots_t d
     /* Default text direction. */
     _display_mode = LCD_ENTRY_LEFT | LCD_ENTRY_SHIFT_DEC;
     _command(LCD_ENTRY_MODE_SET | _display_mode);
+
+    DEBUG("LCD: Powering up is done! # # # # # # # # # #\n");
 }
 
 int lcd_init(lcd_iface_t iface, lcd_pins_t * pins)
 {
     _iface = iface;
 
-    _register_select = pins->rs;
-    _read_write = pins->rw;
-    _enable = pins->e;
+    _rs = pins->rs;
+    _rw = pins->rw;
+    _e = pins->e;
 
     _data_pins[LCD_PIN_D0] = pins->d0;
     _data_pins[LCD_PIN_D1] = pins->d1;
@@ -188,23 +192,32 @@ int lcd_init(lcd_iface_t iface, lcd_pins_t * pins)
 
     if (!(_iface & LCD_8BIT_MODE)) {
         _functionality = LCD_4BIT_MODE | LCD_1LINE | LCD_5x8DOTS;
-        DEBUG("lcd: _init: 4-Bit mode\n");
+        DEBUG("lcd: _init: 4-Bit interface, 1-Line, 5x8Dots\n");
     } else {
         _functionality = LCD_8BIT_MODE | LCD_1LINE | LCD_5x8DOTS;
-        DEBUG("lcd: _init: 8-Bit mode\n");
+        DEBUG("lcd: _init: 8-Bit interface, 1-Line, 5x8Dots\n");
     }
 
-    char buf[10];
-    fmt_byte_hex(buf, _iface);
-    DEBUG("lcd: _init: _functionality: 0x%s\n", buf);
-
-    _power_up(16, 1 , LCD_5x8DOTS); // Default settings.
+    _power_up(16, 2 , LCD_5x8DOTS); // Default settings.
     DEBUG("lcd: _init: init done\n");
-    return 1;
+    return 0;
+}
+
+void lcd_write_buf(char * buf)
+{
+    /* We need strlen, because the length of buf
+     * cant be processed in compiler runtime. */
+    int size = strlen(buf);
+
+    for (int i = 0; i < size; i++) {
+        char c = buf[i];
+        lcd_write(c);
+    }
 }
 
 void lcd_write(uint8_t value)
 {
+    DEBUG("LCD: write -> (%c)\n", (char)value);
     _send(value, HIGH);
 }
 
@@ -212,7 +225,7 @@ void lcd_home(void)
 {
     DEBUG("LCD: Home\n");
     _command(LCD_RETURN_HOME);
-    xtimer_usleep(2000LU * US_PER_MS);
+    xtimer_usleep(2000);
 }
 
 void lcd_display_on(void)
@@ -233,7 +246,7 @@ void lcd_display_clear(void)
 {
     DEBUG("LCD: Display -> Clear\n");
     _command(LCD_CLEAR_DISPLAY);
-    xtimer_usleep(2000LU * US_PER_MS);
+    xtimer_usleep(2000);
 }
 
 void lcd_cursor_on(void)
@@ -248,6 +261,21 @@ void lcd_cursor_off(void)
     DEBUG("LCD: Cursor -> Disable\n");
     _display_control &= ~LCD_CURSOR_ON;
     _command(LCD_DISPLAY_ON_OFF | _display_control);
+}
+
+void lcd_cursor_set(uint8_t col, uint8_t row)
+{
+    size_t max_lines = sizeof(_row_offset) / sizeof(*_row_offset);
+
+    if (row >= max_lines) {
+        row = max_lines -1; // Start count rows with /0
+    }
+
+    if (row >= _lines) {
+        row = _lines - 1;
+    }
+
+    _command(LCD_SET_DDRAM_ADDRESS | (col + _row_offset[row]));
 }
 
 void lcd_blink_on(void)

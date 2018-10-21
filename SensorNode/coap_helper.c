@@ -113,7 +113,7 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
     return bytes_sent;
 }
 
-int testlcd_cmd(int argc, char **argv)
+int lcd_write_cmd(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
@@ -135,11 +135,12 @@ int testlcd_cmd(int argc, char **argv)
     pins.d6 = GPIO_PIN(PORT_B, 4);
     pins.d7 = GPIO_PIN(PORT_B, 10);
 
-    printf("test_lcd_cmd begins..\n");
-
     lcd_init(iface, &pins);
 
-    printf("test_lcd_cmd is done!\n");
+    printf("Try to write \"%s\" to the LCD\n", argv[1]);
+
+    /* Use first argument of shell input to display. */
+    lcd_write_buf(argv[1]);
 
     return 0;
 }

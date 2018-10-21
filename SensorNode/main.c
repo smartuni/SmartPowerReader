@@ -21,7 +21,7 @@
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
-extern int testlcd_cmd(int argc, char **argv);
+extern int lcd_write_cmd(int argc, char **argv);
 extern int testcurrent_cmd(int argc, char **argv);
 extern int testsend_cmd(int argc, char **argv);
 extern int gcoap_cli_cmd(int argc, char **argv);
@@ -31,7 +31,7 @@ static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { "testsend", "test send data", testsend_cmd },
     { "testcurrent", "Dump's the current and apparent-power", testcurrent_cmd },
-    { "testlcd", "Test functionality of a 1602A-LCD -> See pin config!", testlcd_cmd },
+    { "lcdwrite", "Writes something to the LCD!", lcd_write_cmd },
     { NULL, NULL, NULL }
 };
 
