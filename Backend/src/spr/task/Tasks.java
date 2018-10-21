@@ -49,5 +49,12 @@ public final class Tasks
 		private Database( ) { }
 	}
 	
+	public static final class Coap
+	{
+		public static final String SEND = "send";
+		
+		private Coap( ) { }
+	}
+	
 	private Tasks( ) { }
 }

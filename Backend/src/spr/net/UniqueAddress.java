@@ -10,7 +10,7 @@ import dave.json.JsonValue;
 import dave.json.Loader;
 import dave.json.Saveable;
 import dave.json.Saver;
-import dave.util.io.SevereIOException;
+import dave.json.SevereIOException;
 import spr.net.common.Address;
 
 @Container

@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import dave.net.server.PacketedServer;
 import dave.net.server.Server;
 import dave.net.server.Server.Datagram;
-import dave.util.io.SevereIOException;
+import dave.json.SevereIOException;
 import dave.util.log.Severity;
 import spr.net.common.Address;
 import spr.net.common.Message;

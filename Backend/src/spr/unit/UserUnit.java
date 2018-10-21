@@ -1,17 +1,10 @@
 package spr.unit;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import dave.json.JsonArray;
 import dave.json.JsonObject;
-import dave.json.JsonValue;
-import dave.json.PrettyPrinter;
-import dave.net.server.Connection;
-import dave.net.server.TCPConnection;
 import dave.util.command.Argument.Type;
 import dave.util.command.CommandBuilder;
 import dave.util.command.Engine;
@@ -24,7 +17,7 @@ import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.task.Task;
 import spr.task.Tasks;
-import spr.util.persistance.DataPoint;
+import spr.unit.LocalDatabaseUnit.Data;
 
 public class UserUnit extends BaseUnit
 {
@@ -57,14 +50,15 @@ public class UserUnit extends BaseUnit
 	
 	private void runGenerate( )
 	{
+		String id = "test-123";
 		long now = (new Timestamp(System.currentTimeMillis())).getTime();
 		double value = 1000;
 		
-		System.out.println("Generating 1000 datapoints starting @" + (new Date()).toString() + " with 1h distance");
+		System.out.println("Generating 100 datapoints for " + id + " starting @" + (new Date()).toString() + " with 1h distance");
 		
-		for(int i = 0 ; i < 1000 ; ++i)
+		for(int i = 0 ; i < 100 ; ++i)
 		{
-			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new DataPoint(now, value)));
+			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, now, value)));
 			
 			value += Math.random();
 			now += 1 * 60 * 60 * 1000;
@@ -73,24 +67,6 @@ public class UserUnit extends BaseUnit
 	
 	private void runRemote(String ip, int port)
 	{
-		try
-		{
-			Connection c = new TCPConnection(new Socket(InetAddress.getByName(ip), port));
-			Message<Task> req = new Message<>(LocalAddress.BROADCAST, Units.SYSTEM, new Task(Tasks.System.Report.REQUEST, 99));
-			
-			c.send(req.save());
-			
-			JsonValue rep = c.receive();
-			
-			System.out.println("Received: ");
-			System.out.println(rep.toString(new PrettyPrinter()));
-			
-			c.close();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
 	}
 	
 	private void runStart( )

@@ -2,6 +2,12 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="libs/util.jar"/>
+	<classpathentry kind="lib" path="libs/args.jar"/>
+	<classpathentry kind="lib" path="libs/cmd.jar"/>
+	<classpathentry kind="lib" path="libs/net.jar"/>
+	<classpathentry kind="lib" path="libs/tiny_json.jar"/>
+	<classpathentry kind="lib" path="libs/utils.jar"/>
+	<classpathentry kind="lib" path="libs/cf-con.jar"/>
+	<classpathentry kind="lib" path="libs/cf-core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

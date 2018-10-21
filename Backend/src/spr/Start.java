@@ -1,5 +1,8 @@
 package spr;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
 import dave.arguments.Arguments;
 import dave.arguments.Option;
 import dave.arguments.Option.OptionBuilder;
@@ -18,7 +21,8 @@ import dave.util.log.Spacer;
 import spr.unit.SystemBuilder;
 import spr.unit.SystemBuilder.DistributedNetwork;
 import spr.unit.SystemBuilder.BaseModule;
-import spr.unit.SystemBuilder.NetworkModule;
+import spr.unit.SystemBuilder.FrontendModule;
+import spr.unit.SystemBuilder.NodeLogicModule;
 
 public class Start
 {
@@ -35,7 +39,8 @@ public class Start
 			
 			(new SystemBuilder(new DistributedNetwork()))
 				.install(new BaseModule())
-				.install(new NetworkModule((int) options.get(Params.TCP_PORT)))
+				.install(new FrontendModule((int) options.get(Params.TCP_PORT)))
+				.install(new NodeLogicModule(new InetSocketAddress(InetAddress.getLocalHost(), (int) options.get(Params.COAP_PORT))))
 				.run();
 		}
 		catch(Throwable e)
@@ -81,7 +86,9 @@ public class Start
 	
 	private static enum Params implements dave.util.config.Option
 	{
-		TCP_PORT(9900)
+		COAP_PORT(9900),
+		TCP_PORT(9901),
+		UDP_PORT(9902)
 		;
 
 		@Override

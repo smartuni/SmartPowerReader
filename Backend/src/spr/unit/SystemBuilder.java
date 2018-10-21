@@ -2,6 +2,7 @@ package spr.unit;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,9 +10,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.network.CoapEndpoint;
+
 import dave.net.server.Server;
 import dave.util.Distributor;
-import dave.util.io.SevereIOException;
+import dave.json.SevereIOException;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.client.SimpleStorage;
@@ -21,6 +25,7 @@ import spr.net.LocalBroker;
 import spr.net.common.Broker;
 import spr.net.common.Message;
 import spr.net.common.Node;
+import spr.resource.MeasurementResource;
 import spr.task.Task;
 
 public class SystemBuilder
@@ -118,6 +123,29 @@ public class SystemBuilder
 		}
 	}
 	
+	public static class FrontendModule implements Module
+	{
+		private final int mPort;
+		
+		public FrontendModule(int port)
+		{
+			mPort = port;
+		}
+
+		@Override
+		public void installOn(SystemBuilder builder)
+		{
+			try
+			{
+				builder.install(new FrontendUnit(mPort, new Node<>(Units.IDs.FRONTEND)));
+			}
+			catch(IOException e)
+			{
+				throw new SevereIOException(e);
+			}
+		}
+	}
+	
 	public static class NetworkModule implements Module
 	{
 		private final int mPort;
@@ -149,6 +177,28 @@ public class SystemBuilder
 			{
 				throw new SevereIOException(e);
 			}
+		}
+	}
+	
+	public static class NodeLogicModule implements Module
+	{
+		private final CoapServer mServer;
+		
+		public NodeLogicModule(InetSocketAddress a)
+		{
+			mServer = new CoapServer();
+			
+			mServer.addEndpoint(new CoapEndpoint(a));
+		}
+		
+		@Override
+		public void installOn(SystemBuilder builder)
+		{
+			Node<Task> net = new Node<>(Units.IDs.COAP);
+			
+			mServer.add(new MeasurementResource(net));
+			
+			builder.install(new CoapServerUnit(mServer, net));
 		}
 	}
 	

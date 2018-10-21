@@ -36,38 +36,34 @@ public class LocalDatabaseUnit extends BaseUnit
 		registerMessageHandler(Tasks.Database.DELETE, this::handleDelete);
 	}
 	
+	private Storage get(String id)
+	{
+		Storage s = mDatabase.get(id);
+		
+		if(s == null)
+		{
+			mDatabase.put(id, s = mCallback.apply(id));
+		}
+		
+		return s;
+	}
+	
 	private void handleStore(Message<Task> p)
 	{
 		Data d = p.getContent().getPayload();
 		
-		Storage s = mDatabase.get(d.id);
-		
-		if(s == null)
-		{
-			mDatabase.put(d.id, s = mCallback.apply(d.id));
-		}
-		
-		s.store(new DataPoint(d.timestamp, d.value));
+		get(d.id).store(new DataPoint(d.timestamp, d.value));
 	}
 	
 	private void handleRetrieve(Message<Task> p)
 	{
 		Interval i = p.getContent().getPayload();
-		Storage s = mDatabase.get(i.id);
+		JsonObject data = new JsonObject();
 		
-		if(s == null)
-		{
-			getNode().send(p.getSender(), new Task(p.getContent(), Tasks.Database.UNKNOWN, i.id));
-		}
-		else
-		{
-			JsonObject data = new JsonObject();
-			
-			data.putString("id", i.id);
-			data.put("data", s.interval(i.lower, i.upper, i.count).map(LocalDatabaseUnit::toJSON).collect(JsonCollectors.ofArray()));
-			
-			getNode().send(p.getSender(), new Task(p.getContent(), Tasks.Database.DELIVER, data));
-		}
+		data.putString("id", i.id);
+		data.put("data", get(i.id).interval(i.lower, i.upper, i.count).map(LocalDatabaseUnit::toJSON).collect(JsonCollectors.ofArray()));
+		
+		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.Database.DELIVER, data));
 	}
 	
 	private void handleDelete(Message<Task> p)
@@ -126,6 +122,12 @@ public class LocalDatabaseUnit extends BaseUnit
 			
 			return new Interval(id, lower, upper, count);
 		}
+		
+		@Override
+		public String toString( )
+		{
+			return "Interval('" + id + "' " + count + "@[" + lower + ", " + upper + "])";
+		}
 	}
 	
 	@Container
@@ -165,6 +167,12 @@ public class LocalDatabaseUnit extends BaseUnit
 			double value = o.getDouble("value");
 			
 			return new Data(id, timestamp, value);
+		}
+		
+		@Override
+		public String toString( )
+		{
+			return "Data('" + id + "' " + value + "@" + timestamp + ")";
 		}
 	}
 }
