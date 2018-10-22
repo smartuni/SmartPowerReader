@@ -138,14 +138,14 @@ void lcd_display_clear(void);
 void lcd_cursor_on(void);
 
 /**
- * @brief    Set the cursor position to zero.
- */
-void lcd_cursor_reset(void);
-
-/**
  * @brief    Turns the underlining cursor off.
  */
 void lcd_cursor_off(void);
+
+/**
+ * @brief    Set the cursor position to zero.
+ */
+void lcd_cursor_reset(void);
 
 /**
  * @brief    Set the cursor at the given collumn and row.

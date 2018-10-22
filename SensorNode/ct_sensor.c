@@ -81,7 +81,7 @@ unsigned adc_line = 0;
 int counter = 0;
 
 /* The Root-Mean-Square of the voltage assumed to be 230V. */
-#define V_RMS 230
+#define V_RMS 223
 
 /*
  * @brief    Prints float numbers (some boards does not provide it..).
@@ -109,7 +109,8 @@ static inline float _voltage(ct_parameter_t * param)
     /* Remove the offset from the sample, so can calc with negative numbers. */
     sample = sample - param->adc_offset;
 
-    if (sample < 4 && sample > -4) {
+    /* Ignoring the least bits, because of ADC noise. */
+    if (sample < 16 && sample > -16) {
         sample = 0;
     }
 

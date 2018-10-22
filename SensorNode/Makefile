@@ -26,8 +26,8 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-mega2560 arduino-uno \
 #CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
 
 # Used peripheral
-FEATURES_REQUIRED = periph_adc
-FEATURES_REQUIRED = periph_gpio
+FEATURES_REQUIRED += periph_adc
+FEATURES_REQUIRED += periph_gpio
 
 
 # Include packages that pull up and auto-init the link layer.

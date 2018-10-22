@@ -14,28 +14,23 @@
 #include "fmt.h"
 #include "lcd_1602a.h"
 
-/* Just to debug from very low level to 'user'-like level */
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
-/* Logic Level's */
-#define LOW             (0)
-#define HIGH            (1)
+#define LOW             (0)      /*< Logical low-level */
+#define HIGH            (1)      /*< Logical high-level */
+#define PINS_SIZE       (8)      /*< Maximum available data pins. */
 
-/* The maximum used data bus pins. */
-#define PINS_SIZE       (8)
-
-/* Parameters which are hold between functions. */
-static uint8_t _functionality;
-static uint8_t _display_control;
-static uint8_t _display_mode;
-static lcd_iface_t _iface;
-static gpio_t _data_pins[PINS_SIZE];
-static gpio_t _rs;
-static gpio_t _rw;
-static gpio_t _e;
-static uint8_t _lines;
-static uint8_t _row_offset[4];
+static uint8_t _functionality;   /*< Holds general functionality */
+static uint8_t _display_control; /*< Holds data to manipulate cursor etc */
+static uint8_t _display_mode;    /*< How the data should be displayed */
+static lcd_iface_t _iface;       /*< To remember if 4-, or 8-bit is used */
+static gpio_t _data_pins[PINS_SIZE]; /*< Array, which holds all data pins */
+static gpio_t _rs;               /*< Register-Select-Pin */
+static gpio_t _rw;               /*< Read-Write-Pin */
+static gpio_t _e;                /*< Enable-Pin */
+static uint8_t _lines;           /*< Number of lines, the display has */
+static uint8_t _row_offset[4];   /*< For cursor positiions */
 
 /**
  * @brief    Creates a single enable-impulse, whenever HIGH impulses happen.

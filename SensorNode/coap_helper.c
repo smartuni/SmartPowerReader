@@ -179,6 +179,25 @@ int testcurrent_cmd(int argc, char **argv)
     // NOTE: This is already done in the main.
     // init_adc(line, res);
 
+    /* LCD 1602A initializations using a nucleo-f446re board. */
+    lcd_iface_t iface = MODE_4BIT;
+    lcd_pins_t pins;
+
+    /* NOTE: Make sure the pins are working for your board! */
+    pins.rs = GPIO_PIN(PORT_A, 9);
+    pins.rw = GPIO_PIN(PORT_A, 8);
+    pins.e = GPIO_PIN(PORT_C, 7);
+    pins.d0 = 0; // Not used. We use a 4-Bit interface here.
+    pins.d1 = 0; // Not used.
+    pins.d2 = 0; // Not used.
+    pins.d3 = 0; // Not used.
+    pins.d4 = GPIO_PIN(PORT_B, 3);
+    pins.d5 = GPIO_PIN(PORT_B, 5);
+    pins.d6 = GPIO_PIN(PORT_B, 4);
+    pins.d7 = GPIO_PIN(PORT_B, 10);
+
+    lcd_init(iface, &pins);
+
     /* Measures the current using the parameters and stores the measurements
      * inside the data reference. Then sleep for 'DELAY' and loop this forever.
      */
@@ -187,8 +206,21 @@ int testcurrent_cmd(int argc, char **argv)
      *       restart the whole application all time!
      *       Another idea is to set the interval.
      */
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         ct_measure_current(&param, &data);
+
+        /* LCD */
+        char current[8] = {' '};
+        fmt_float(current, data.current, 2);
+        char apparent[8] = {' '};
+        fmt_float(apparent, data.apparent, 2);
+        lcd_cursor_reset();
+        lcd_write_buf("Ampere: ");
+        lcd_write_buf(current);
+        lcd_cursor_set(0, 1);
+        lcd_write_buf("Watt: ");
+        lcd_write_buf(apparent);
+
         ct_dump_current(&data);
         xtimer_periodic_wakeup(&last, delay);
     }
@@ -209,7 +241,7 @@ int testsend_cmd(int argc, char **argv)
     ct_measure_current(&ct_param, &ct_i_data);
     ct_dump_current(&ct_i_data);
 
-    float current = ct_i_data.current;
+    float apparent = ct_i_data.apparent;
 
     /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
     char *method_codes[] = {"get", "post", "put"};
@@ -217,9 +249,14 @@ int testsend_cmd(int argc, char **argv)
     coap_pkt_t pdu;
     size_t len;
 
-    char fmt_buf[10] = {""};
-    fmt_float(fmt_buf, current, 2);
-    len = strlen(fmt_buf);
+    //char fmt_buf[4];
+    //fmt_float(fmt_buf, apparent, 2);
+    //len = sizeof fmt_buf;//strlen(fmt_buf);
+
+    //printf("len = %i\n", len);
+    //printf("buf = %s\n", fmt_buf);
+
+
 
     if (argc == 1) {
         /* show help for main commands */
@@ -253,12 +290,13 @@ int testsend_cmd(int argc, char **argv)
     if (argc == apos + 3 || argc == apos + 4) {
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, code_pos+1, argv[apos+2]);
         if (argc == apos + 4) {
-            memcpy(pdu.payload, fmt_buf, strlen(fmt_buf));
+            memcpy(pdu.payload, &apparent, sizeof (apparent));
+            printf("%02x %02x %02x %02x\n0", ((const unsigned char *) &apparent)[0], ((const unsigned char *) &apparent)[1], ((const unsigned char *) &apparent)[2], ((const unsigned char *) &apparent)[3]);
         }
         coap_hdr_set_type(pdu.hdr, msg_type);
 
         if (argc == apos + 4) {
-            len = gcoap_finish(&pdu, strlen(fmt_buf), COAP_FORMAT_TEXT);
+            len = gcoap_finish(&pdu, sizeof (apparent), COAP_FORMAT_TEXT);
         }
         else {
             len = gcoap_finish(&pdu, 0, COAP_FORMAT_NONE);
