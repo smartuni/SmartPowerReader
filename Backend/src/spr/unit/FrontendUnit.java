@@ -1,11 +1,6 @@
 package spr.unit;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,13 +13,9 @@ import java.util.function.Predicate;
 
 import dave.json.JsonObject;
 import dave.json.JsonValue;
-import dave.json.StreamBuffer;
-import dave.json.StringBuffer;
 import dave.net.server.Connection;
 import dave.net.server.Server;
-//import dave.net.server.StreamingTransceiver;
-import dave.net.server.Transceiver;
-import dave.util.Utils;
+import dave.net.server.StreamingTransceiver;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.common.Message;
@@ -51,65 +42,7 @@ public class FrontendUnit extends BaseUnit
 		mAsync = Executors.newCachedThreadPool();
 		mCallbacks = new HashMap<>();
 		
-		mTCP = Server.createTCPServer(port, new Transceiver() {
-			@Override
-			public void send(OutputStream out, JsonValue json) throws IOException
-			{
-				String response = "HTTP/1.1 200 OK\n\n" + json.toString();
-				
-				System.out.println("Responds with " + response);
-				
-				out.write(response.getBytes(Utils.CHARSET));
-			}
-
-			@Override
-			public JsonValue receive(InputStream in) throws IOException
-			{
-				Reader r = new InputStreamReader(in);
-				int last = 0;
-				StringBuilder sb = new StringBuilder();
-				
-//				while(true)
-//				{
-//					int v = r.read();
-//					
-//					if(v == '\r') continue;
-//					
-//					if(v == '\n')
-//					{
-//						System.out.println(sb.toString());
-//						sb = new StringBuilder();
-//					}
-//					else
-//					{
-//						sb.append((char) v);
-//					}
-//					
-//					if(v == -1)
-//						throw new IOException("Unexpected EOS");
-//					
-//					if(last == '\n' && v == '\n')
-//						break;
-//					
-//					last = v;
-//				}
-//				
-//				System.out.println("EXIT LOOP");
-				
-				while(true)
-				{
-					int v = r.read();
-					
-					System.out.print((char) v);
-				}
-//				
-//				JsonValue v = JsonValue.read(new StreamBuffer(in));
-//				
-//				System.out.println("Received " + v.toString());
-//				
-//				return v;
-			}
-		}, this::handleConnection);
+		mTCP = Server.createTCPServer(port, new StreamingTransceiver(), this::handleConnection);
 		
 		registerAction("query", this::actQuery);
 		
