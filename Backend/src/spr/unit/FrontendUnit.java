@@ -96,11 +96,18 @@ public class FrontendUnit extends BaseUnit
 				
 				System.out.println("EXIT LOOP");
 				
-				JsonValue v = JsonValue.read(new StreamBuffer(in));
-				
-				System.out.println("Received " + v.toString());
-				
-				return v;
+				while(true)
+				{
+					int v = r.read();
+					
+					System.out.print((char) v);
+				}
+//				
+//				JsonValue v = JsonValue.read(new StreamBuffer(in));
+//				
+//				System.out.println("Received " + v.toString());
+//				
+//				return v;
 			}
 		}, this::handleConnection);
 		
