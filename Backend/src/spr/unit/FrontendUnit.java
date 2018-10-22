@@ -69,32 +69,32 @@ public class FrontendUnit extends BaseUnit
 				int last = 0;
 				StringBuilder sb = new StringBuilder();
 				
-				while(true)
-				{
-					int v = r.read();
-					
-					if(v == '\r') continue;
-					
-					if(v == '\n')
-					{
-						System.out.println(sb.toString());
-						sb = new StringBuilder();
-					}
-					else
-					{
-						sb.append((char) v);
-					}
-					
-					if(v == -1)
-						throw new IOException("Unexpected EOS");
-					
-					if(last == '\n' && v == '\n')
-						break;
-					
-					last = v;
-				}
-				
-				System.out.println("EXIT LOOP");
+//				while(true)
+//				{
+//					int v = r.read();
+//					
+//					if(v == '\r') continue;
+//					
+//					if(v == '\n')
+//					{
+//						System.out.println(sb.toString());
+//						sb = new StringBuilder();
+//					}
+//					else
+//					{
+//						sb.append((char) v);
+//					}
+//					
+//					if(v == -1)
+//						throw new IOException("Unexpected EOS");
+//					
+//					if(last == '\n' && v == '\n')
+//						break;
+//					
+//					last = v;
+//				}
+//				
+//				System.out.println("EXIT LOOP");
 				
 				while(true)
 				{
