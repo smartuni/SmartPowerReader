@@ -1,6 +1,10 @@
 package spr.unit;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,11 +15,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import dave.json.JsonConstant;
 import dave.json.JsonObject;
 import dave.json.JsonValue;
 import dave.net.server.Connection;
 import dave.net.server.Server;
 import dave.net.server.StreamingTransceiver;
+import dave.net.server.Transceiver;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.common.Message;
@@ -42,7 +48,25 @@ public class FrontendUnit extends BaseUnit
 		mAsync = Executors.newCachedThreadPool();
 		mCallbacks = new HashMap<>();
 		
-		mTCP = Server.createTCPServer(port, new StreamingTransceiver(), this::handleConnection);
+		mTCP = Server.createTCPServer(port, new Transceiver() {
+			@Override
+			public void send(OutputStream out, JsonValue json) throws IOException
+			{
+			}
+
+			@Override
+			public JsonValue receive(InputStream in) throws IOException
+			{
+				BufferedReader r = new BufferedReader(new InputStreamReader(in));
+				
+				for(String line ; (line = r.readLine()) != null ;)
+				{
+					Logger.DEFAULT.log(Severity.INFO, "%s", line);
+				}
+				
+				return JsonConstant.NULL;
+			}
+		}, this::handleConnection);
 		
 		registerAction("query", this::actQuery);
 		
