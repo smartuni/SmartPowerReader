@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.function.Predicate;
 
 import dave.json.JsonObject;
 import dave.json.JsonValue;
+import dave.json.StreamBuffer;
 import dave.json.StringBuffer;
 import dave.net.server.Connection;
 import dave.net.server.Server;
@@ -61,23 +63,23 @@ public class FrontendUnit extends BaseUnit
 			@Override
 			public JsonValue receive(InputStream in) throws IOException
 			{
-				BufferedReader r = new BufferedReader(new InputStreamReader(in));
-				StringBuilder sb = new StringBuilder();
-				boolean json = false;
+				Reader r = new InputStreamReader(in);
+				int last = 0;
 				
-				for(String line ; (line = r.readLine()) != null ;)
+				while(true)
 				{
-					if(line.isEmpty())
-					{
-						json = true;
-					}
-					else if(json)
-					{
-						sb.append(line);
-					}
+					int v = r.read();
+					
+					if(v == -1)
+						throw new IOException("Unexpected EOS");
+					
+					if(last == '\n' && v == '\n')
+						break;
+					
+					last = v;
 				}
 				
-				return JsonValue.read(new StringBuffer(sb.toString()));
+				return JsonValue.read(new StreamBuffer(in));
 			}
 		}, this::handleConnection);
 		
