@@ -57,6 +57,8 @@ public class FrontendUnit extends BaseUnit
 			{
 				String response = "HTTP/1.1 200 OK\n\n" + json.toString();
 				
+				System.out.println("Responds with " + response);
+				
 				out.write(response.getBytes(Utils.CHARSET));
 			}
 
@@ -72,8 +74,6 @@ public class FrontendUnit extends BaseUnit
 					
 					if(v == '\r') continue;
 					
-					System.out.println("Read " + (char) v);
-					
 					if(v == -1)
 						throw new IOException("Unexpected EOS");
 					
@@ -83,7 +83,11 @@ public class FrontendUnit extends BaseUnit
 					last = v;
 				}
 				
-				return JsonValue.read(new StreamBuffer(in));
+				JsonValue v = JsonValue.read(new StreamBuffer(in));
+				
+				System.out.println("Received " + v.toString());
+				
+				return v;
 			}
 		}, this::handleConnection);
 		
