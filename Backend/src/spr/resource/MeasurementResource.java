@@ -34,7 +34,11 @@ public class MeasurementResource extends Resource
 		}
 		else
 		{
-			ByteBuffer bb = ByteBuffer.wrap(com.getRequestPayload());
+			byte[] payload = com.getRequestPayload();
+			
+			Logger.DEFAULT.log(Severity.INFO, "%02x %02x %02x %02x", payload[0], payload[1], payload[2], payload[3]);
+			
+			ByteBuffer bb = ByteBuffer.wrap(payload);
 			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
