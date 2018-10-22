@@ -70,6 +70,10 @@ public class FrontendUnit extends BaseUnit
 				{
 					int v = r.read();
 					
+					if(v == '\r') continue;
+					
+					System.out.println("Read " + (char) v);
+					
 					if(v == -1)
 						throw new IOException("Unexpected EOS");
 					
