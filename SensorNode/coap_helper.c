@@ -15,7 +15,7 @@
 #include "xtimer.h"
 #include "timex.h"
 #include "ct_sensor.h"
-#include "lcd_1602a.h"
+#include "lcd1602a.h"
 
 /* Current transformer parameters needed for current calculations. */
 ct_parameter_t ct_param;
@@ -119,8 +119,8 @@ int lcd_write_cmd(int argc, char **argv)
     //(void)argv;
 
     /* LCD 1602A initializations using a nucleo-f446re board. */
-    lcd_iface_t iface = MODE_4BIT;
-    lcd_pins_t pins;
+    lcd1602a_iface_t iface = MODE_4BIT;
+    lcd1602a_pins_t pins;
 
     /* NOTE: Make sure the pins are working for your board! */
     pins.rs = GPIO_PIN(PORT_A, 9);
@@ -135,14 +135,14 @@ int lcd_write_cmd(int argc, char **argv)
     pins.d6 = GPIO_PIN(PORT_B, 4);
     pins.d7 = GPIO_PIN(PORT_B, 10);
 
-    lcd_init(iface, &pins);
+    lcd1602a_init(iface, &pins);
 
     printf("Try to write \"%s\" to the LCD\n", argv[1]);
 
     /* Use first argument of shell input to display. */
-    lcd_write_buf(argv[1]);
-    lcd_cursor_set(0, 1);
-    lcd_write_buf(argv[1]);
+    lcd1602a_write_buf(argv[1]);
+    lcd1602a_cursor_set(0, 1);
+    lcd1602a_write_buf(argv[1]);
 
     return 0;
 }
@@ -180,8 +180,8 @@ int testcurrent_cmd(int argc, char **argv)
     // init_adc(line, res);
 
     /* LCD 1602A initializations using a nucleo-f446re board. */
-    lcd_iface_t iface = MODE_4BIT;
-    lcd_pins_t pins;
+    lcd1602a_iface_t iface = MODE_4BIT;
+    lcd1602a_pins_t pins;
 
     /* NOTE: Make sure the pins are working for your board! */
     pins.rs = GPIO_PIN(PORT_A, 9);
@@ -196,7 +196,7 @@ int testcurrent_cmd(int argc, char **argv)
     pins.d6 = GPIO_PIN(PORT_B, 4);
     pins.d7 = GPIO_PIN(PORT_B, 10);
 
-    lcd_init(iface, &pins);
+    lcd1602a_init(iface, &pins);
 
     /* Measures the current using the parameters and stores the measurements
      * inside the data reference. Then sleep for 'DELAY' and loop this forever.
@@ -214,12 +214,12 @@ int testcurrent_cmd(int argc, char **argv)
         fmt_float(current, data.current, 2);
         char apparent[8] = {' '};
         fmt_float(apparent, data.apparent, 2);
-        lcd_cursor_reset();
-        lcd_write_buf("Ampere: ");
-        lcd_write_buf(current);
-        lcd_cursor_set(0, 1);
-        lcd_write_buf("Watt: ");
-        lcd_write_buf(apparent);
+        lcd1602a_cursor_reset();
+        lcd1602a_write_buf("Ampere: ");
+        lcd1602a_write_buf(current);
+        lcd1602a_cursor_set(0, 1);
+        lcd1602a_write_buf("Watt: ");
+        lcd1602a_write_buf(apparent);
 
         ct_dump_current(&data);
         xtimer_periodic_wakeup(&last, delay);
