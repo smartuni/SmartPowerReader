@@ -26,6 +26,8 @@ public class MeasurementResource extends Resource
 	{
 		String id = com.getSourceAddress().getHostAddress();
 		
+		Logger.DEFAULT.log(Severity.INFO, "Client %s send text '%s'", "" + com.getRequestText());
+		
 		if(com.getRequestPayload() == null)
 		{
 			Logger.DEFAULT.log(Severity.ERROR, "Client %s send empty payload!", id);
