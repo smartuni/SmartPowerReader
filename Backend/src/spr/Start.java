@@ -3,6 +3,8 @@ package spr;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
+import org.eclipse.californium.core.network.EndpointManager;
+
 import dave.arguments.Arguments;
 import dave.arguments.Option;
 import dave.arguments.Option.OptionBuilder;
@@ -33,7 +35,15 @@ public class Start
 		
 		ShutdownService.INSTANCE.register(LogBase.INSTANCE::stop);
 		
-		try
+		if(args.length == 1 && args[0].equals("list"))
+		{
+			Logger.DEFAULT.log(Severity.INFO, "Listing all available interfaces:");
+			for(InetAddress a : EndpointManager.getEndpointManager().getNetworkInterfaces())
+			{
+				Logger.DEFAULT.log(Severity.INFO, "%s", a.getHostAddress());
+			}
+		}
+		else try
 		{
 			Configuration<Params> options = parseArguments(args);
 			
