@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.sql.Timestamp;
 
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 
@@ -46,6 +48,11 @@ public class MeasurementResource extends Resource
 			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
+			
+			CoapClient remote = new CoapClient("coap://" + id + ":" + com.getSourcePort() + "/value");
+			CoapResponse r = remote.put("Hello, World!", 0);
+			
+			Logger.DEFAULT.log(Severity.INFO, "%s responds %s", id, r.getCode().toString());
 		}
 	}
 }
