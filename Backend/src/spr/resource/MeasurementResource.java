@@ -38,7 +38,7 @@ public class MeasurementResource extends Resource
 			
 			Logger.DEFAULT.log(Severity.INFO, "%02x %02x %02x %02x", payload[0], payload[1], payload[2], payload[3]);
 			
-			ByteBuffer bb = ByteBuffer.wrap(payload);
+			ByteBuffer bb = ByteBuffer.wrap(payload); bb.flip();
 			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
