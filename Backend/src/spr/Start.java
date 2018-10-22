@@ -40,7 +40,13 @@ public class Start
 			Logger.DEFAULT.log(Severity.INFO, "Listing all available interfaces:");
 			for(InetAddress a : EndpointManager.getEndpointManager().getNetworkInterfaces())
 			{
-				Logger.DEFAULT.log(Severity.INFO, "%s", a.getHostAddress());
+				if(a.isLoopbackAddress()) continue;
+				if(a.isLinkLocalAddress()) continue;
+				
+				String ip = a.getHostAddress();
+				
+				if(ip.contains("%lowpan"))
+					Logger.DEFAULT.log(Severity.INFO, "%s", a.getHostAddress());
 			}
 		}
 		else try
