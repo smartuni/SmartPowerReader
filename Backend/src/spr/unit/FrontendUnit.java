@@ -67,12 +67,23 @@ public class FrontendUnit extends BaseUnit
 			{
 				Reader r = new InputStreamReader(in);
 				int last = 0;
+				StringBuilder sb = new StringBuilder();
 				
 				while(true)
 				{
 					int v = r.read();
 					
 					if(v == '\r') continue;
+					
+					if(v == '\n')
+					{
+						System.out.println(sb.toString());
+						sb = new StringBuilder();
+					}
+					else
+					{
+						sb.append((char) v);
+					}
 					
 					if(v == -1)
 						throw new IOException("Unexpected EOS");
@@ -82,6 +93,8 @@ public class FrontendUnit extends BaseUnit
 					
 					last = v;
 				}
+				
+				System.out.println("EXIT LOOP");
 				
 				JsonValue v = JsonValue.read(new StreamBuffer(in));
 				
