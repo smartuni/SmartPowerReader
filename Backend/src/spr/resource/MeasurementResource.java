@@ -53,7 +53,8 @@ public class MeasurementResource extends Resource
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 			
-			CoapClient remote = new CoapClient("coap://[" + id + "]:" + com.getSourcePort() + "/value");
+			Logger.DEFAULT.log(Severity.INFO, "%s", "coap://[" + id + "]:" + com.getSourcePort() + "/value");
+			CoapClient remote = new CoapClient("coap://[" + id.replaceAll("%.*$", "") + "]:" + 5683 + "/value");
 			remote.setTimeout(1000);
 			try
 			{
