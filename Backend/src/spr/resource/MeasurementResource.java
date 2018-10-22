@@ -50,25 +50,25 @@ public class MeasurementResource extends Resource
 			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
-			com.respond("Hello, World!");
+//			com.respond("Hello, World!");
 			
-//			com.accept();
+			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 
-//			Logger.DEFAULT.log(Severity.INFO, "%s", "coap://[" + id + "]:" + com.getSourcePort() + "/value");
-//			CoapClient remote = new CoapClient("coap://[" + id.replaceAll("%.*$", "") + "]:" + 5683 + "/value");
-//			remote.setTimeout(1000);
-//			try
-//			{
-//				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName("fe80::1ac0:ffee:1ac0:ffee%lowpan0"), 0)));
-//			}
-//			catch(UnknownHostException e)
-//			{
-//				e.printStackTrace();
-//			}
-//			CoapResponse r = remote.put("Hello, World!", 0);		
-//			Logger.DEFAULT.log(Severity.INFO, "%s responds %s", id, r.getCode().toString());
+			Logger.DEFAULT.log(Severity.INFO, "%s", "coap://[" + id + "]:" + com.getSourcePort() + "/value");
+			CoapClient remote = new CoapClient("coap://[" + id.replaceAll("%.*$", "") + "]:" + 5683 + "/value");
+			remote.setTimeout(1000);
+			try
+			{
+				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName("fe80::1ac0:ffee:1ac0:ffee%lowpan0"), 0)));
+			}
+			catch(UnknownHostException e)
+			{
+				e.printStackTrace();
+			}
+			CoapResponse r = remote.put("Hello, World!", 0);		
+			Logger.DEFAULT.log(Severity.INFO, "%s responds %s", id, r.getCode().toString());
 		}
 	}
 }
