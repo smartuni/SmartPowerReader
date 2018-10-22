@@ -26,8 +26,6 @@ public class MeasurementResource extends Resource
 	{
 		String id = com.getSourceAddress().getHostAddress();
 		
-		Logger.DEFAULT.log(Severity.INFO, "Client %s send text '%s'", "" + com.getRequestText());
-		
 		if(com.getRequestPayload() == null)
 		{
 			Logger.DEFAULT.log(Severity.ERROR, "Client %s send empty payload!", id);
@@ -37,7 +35,7 @@ public class MeasurementResource extends Resource
 		else
 		{
 			ByteBuffer bb = ByteBuffer.wrap(com.getRequestPayload());
-			double v = (double) bb.getLong(); //bb.getDouble();
+			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
