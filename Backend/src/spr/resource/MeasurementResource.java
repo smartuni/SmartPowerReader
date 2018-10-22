@@ -37,7 +37,7 @@ public class MeasurementResource extends Resource
 		else
 		{
 			ByteBuffer bb = ByteBuffer.wrap(com.getRequestPayload());
-			double v = bb.getDouble();
+			double v = (double) bb.getLong(); //bb.getDouble();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
