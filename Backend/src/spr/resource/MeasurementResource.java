@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.server.resources.CoapExchange;
@@ -49,24 +50,25 @@ public class MeasurementResource extends Resource
 			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
-			com.accept();
+			com.respond("Hello, World!");
+			
+//			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
-			
-			Logger.DEFAULT.log(Severity.INFO, "%s", "coap://[" + id + "]:" + com.getSourcePort() + "/value");
-			CoapClient remote = new CoapClient("coap://[" + id.replaceAll("%.*$", "") + "]:" + 5683 + "/value");
-			remote.setTimeout(1000);
-			try
-			{
-				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName("fe80::1ac0:ffee:1ac0:ffee%lowpan0"), 0)));
-			}
-			catch(UnknownHostException e)
-			{
-				e.printStackTrace();
-			}
-			CoapResponse r = remote.put("Hello, World!", 0);
-			
-			Logger.DEFAULT.log(Severity.INFO, "%s responds %s", id, r.getCode().toString());
+
+//			Logger.DEFAULT.log(Severity.INFO, "%s", "coap://[" + id + "]:" + com.getSourcePort() + "/value");
+//			CoapClient remote = new CoapClient("coap://[" + id.replaceAll("%.*$", "") + "]:" + 5683 + "/value");
+//			remote.setTimeout(1000);
+//			try
+//			{
+//				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName("fe80::1ac0:ffee:1ac0:ffee%lowpan0"), 0)));
+//			}
+//			catch(UnknownHostException e)
+//			{
+//				e.printStackTrace();
+//			}
+//			CoapResponse r = remote.put("Hello, World!", 0);		
+//			Logger.DEFAULT.log(Severity.INFO, "%s responds %s", id, r.getCode().toString());
 		}
 	}
 }
