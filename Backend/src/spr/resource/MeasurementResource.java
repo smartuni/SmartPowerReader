@@ -39,9 +39,11 @@ public class MeasurementResource extends Resource
 			
 			Logger.DEFAULT.log(Severity.INFO, "%02x %02x %02x %02x", payload[0], payload[1], payload[2], payload[3]);
 			
-			ByteBuffer bb = ByteBuffer.wrap(payload); bb.order(ByteOrder.BIG_ENDIAN);
+			ByteBuffer bb = ByteBuffer.wrap(payload); bb.order(ByteOrder.LITTLE_ENDIAN);
 			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
+			
+			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 		}
