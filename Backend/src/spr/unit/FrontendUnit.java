@@ -15,13 +15,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import dave.json.JsonConstant;
 import dave.json.JsonObject;
 import dave.json.JsonValue;
+import dave.json.StringBuffer;
 import dave.net.server.Connection;
 import dave.net.server.Server;
-import dave.net.server.StreamingTransceiver;
+//import dave.net.server.StreamingTransceiver;
 import dave.net.server.Transceiver;
+import dave.util.Utils;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.common.Message;
@@ -52,19 +53,31 @@ public class FrontendUnit extends BaseUnit
 			@Override
 			public void send(OutputStream out, JsonValue json) throws IOException
 			{
+				String response = "HTTP/1.1 200 OK\n\n" + json.toString();
+				
+				out.write(response.getBytes(Utils.CHARSET));
 			}
 
 			@Override
 			public JsonValue receive(InputStream in) throws IOException
 			{
 				BufferedReader r = new BufferedReader(new InputStreamReader(in));
+				StringBuilder sb = new StringBuilder();
+				boolean json = false;
 				
 				for(String line ; (line = r.readLine()) != null ;)
 				{
-					Logger.DEFAULT.log(Severity.INFO, "%s", line);
+					if(line.isEmpty())
+					{
+						json = true;
+					}
+					else if(json)
+					{
+						sb.append(line);
+					}
 				}
 				
-				return JsonConstant.NULL;
+				return JsonValue.read(new StringBuffer(sb.toString()));
 			}
 		}, this::handleConnection);
 		
