@@ -184,11 +184,11 @@ public class SystemBuilder
 	{
 		private final CoapServer mServer;
 		
-		public NodeLogicModule(InetSocketAddress a)
+		public NodeLogicModule(List<InetSocketAddress> endpoints)
 		{
 			mServer = new CoapServer();
 			
-			mServer.addEndpoint(new CoapEndpoint(a));
+			endpoints.forEach(a -> mServer.addEndpoint(new CoapEndpoint(a)));
 		}
 		
 		@Override

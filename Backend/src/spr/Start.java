@@ -2,6 +2,8 @@ package spr;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.californium.core.network.EndpointManager;
 
@@ -35,22 +37,35 @@ public class Start
 		
 		ShutdownService.INSTANCE.register(LogBase.INSTANCE::stop);
 		
+		
 		if(args.length == 1 && args[0].equals("list"))
 		{
 			Logger.DEFAULT.log(Severity.INFO, "Listing all available interfaces:");
 			for(InetAddress a : EndpointManager.getEndpointManager().getNetworkInterfaces())
 			{
-				Logger.DEFAULT.log(Severity.INFO, "%s", a.getHostAddress());
+				if(a.isLoopbackAddress()) continue;
+				if(a.isLinkLocalAddress()) continue;
+				
+				String ip = a.getHostAddress();
+				
+				if(ip.contains("%lowpan"))
+					Logger.DEFAULT.log(Severity.INFO, "%s", a.getHostAddress());
 			}
 		}
 		else try
 		{
 			Configuration<Params> options = parseArguments(args);
-			
+
+			int coap_port = (int) options.get(Params.COAP_PORT);
+			List<InetSocketAddress> coap_endpoints = EndpointManager.getEndpointManager().getNetworkInterfaces().stream()
+				.filter(a -> !a.isLoopbackAddress())
+				.map(a -> new InetSocketAddress(a, coap_port))
+				.collect(Collectors.toList());
+
 			(new SystemBuilder(new DistributedNetwork()))
 				.install(new BaseModule())
 				.install(new FrontendModule((int) options.get(Params.TCP_PORT)))
-				.install(new NodeLogicModule(new InetSocketAddress(InetAddress.getLocalHost(), (int) options.get(Params.COAP_PORT))))
+				.install(new NodeLogicModule(coap_endpoints))
 				.run();
 		}
 		catch(Throwable e)
