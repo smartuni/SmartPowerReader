@@ -21,6 +21,7 @@ app.get('/sensors/:sensorId', (req, res) => {
     dispatch(payload,(data)=>{
         res.end(data);
     })
+
 });
 
 function dispatch(payload, cb){
