@@ -61,7 +61,7 @@ public class MeasurementResource extends Resource
 			remote.setTimeout(1000);
 			try
 			{
-				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName("fe80::1ac0:ffee:1ac0:ffee%lowpan0"), 0)));
+				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName(IP), 0)));
 			}
 			catch(UnknownHostException e)
 			{
@@ -79,4 +79,6 @@ public class MeasurementResource extends Resource
 			}
 		}
 	}
+	
+	private static final String IP = "fe80::a02d:51f7:cdf4:a686%lowpan0"; //"fe80::1ac0:ffee:1ac0:ffee%lowpan0";
 }
