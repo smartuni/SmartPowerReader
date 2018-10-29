@@ -36,8 +36,14 @@
 #define SPR_CONFIGURED          (2)
 
 #define BLINK_QUEUE_SIZE        (8)
+#define SENDDATA_QUEUE_SIZE     (8)
 
 #define LED_NUM         (0)
+
+#define SPR_SENDDATA_STOP           (0)
+#define SPR_SENDDATA_START           (1)
+
+#define COAP_METHOD_PUT         (3)
 
 /* ADC pin parameters. */
 #define LINE (0)
@@ -52,10 +58,15 @@ static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
 
 static uint32_t interval = SPR_INTERVAL;
 static uint8_t config_status = 0;
+static uint8_t start_status = 0;
 
 static kernel_pid_t blink_pid;
 static char blink_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
 static msg_t blink_queue[BLINK_QUEUE_SIZE];
+
+static kernel_pid_t senddata_pid;
+static char senddata_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
+static msg_t senddata_queue[SENDDATA_QUEUE_SIZE];
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
@@ -110,6 +121,53 @@ static void *send_data(void *arg)
 {
     (void)arg;
     (void)interval;
+
+    msg_init_queue(senddata_queue, SENDDATA_QUEUE_SIZE);
+
+    /* Current transformer parameters needed for current calculations. */
+    ct_parameter_t ct_param;
+    /* The measured data by the current transformer. */
+    ct_i_data_t ct_i_data;
+
+    float apparent;
+
+    /* Parameters needed for accurate measurement */
+    ct_param.adc_count = 1 << 12;              // e.g.: 1 << 12 = 4096
+    ct_param.adc_offset = ct_param.adc_count >> 1; // e.g.: 4096 >> 1 = 2048
+    ct_param.v_ref = 3.3;
+    ct_param.r_burden = 110;
+    ct_param.turns = 2000;
+    ct_param.samples = 32; // The number of iterations of the for-loop.
+
+    /* prepare packet to send */
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    coap_pkt_t pdu;
+    size_t len;
+
+    /* send data repeatedly */
+    while (1) {
+        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, "/value");       // change server resource '/value' here
+
+        /* measure current */
+        ct_measure_current(&ct_param, &ct_i_data);
+        ct_dump_current(&ct_i_data);
+        apparent = ct_i_data.apparent;
+
+        /* copy read value to packet payload */
+        memcpy(pdu.payload, &apparent, sizeof (apparent));
+
+        /* explicitly set packet to NON-confirmable */
+        coap_hdr_set_type(pdu.hdr, COAP_TYPE_NON);
+
+        /* finish the packet */
+        len = gcoap_finish(&pdu, sizeof (apparent), COAP_FORMAT_TEXT);
+
+        /* send the packet */
+        puts("Sending measurent to pi");
+        if (!send(&buf[0], len, "fd00:1:2:3:a02d:51f7:cdf4:a686", "5683")) {  // FIXME: change address
+                puts("gcoap_cli: msg send failed");
+        }
+    }
 
     return NULL;
 }
@@ -238,15 +296,60 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
 static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
-    (void)pdu;
-    (void)buf;
-    (void)len;
     (void)ctx;
 
-    /* start thread to send values to RPI */
-    (void)send_data;
-
     /* send ACK response */
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+
+    switch (method_flag) {
+        case COAP_GET:
+            /* return start send status
+             * 0 - not started , 1 - started */
+
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            /* write the response buffer with the request count value */
+            size_t payload_len = fmt_u16_dec((char *)pdu->payload, start_status);
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+
+        case COAP_PUT: {
+            char payload[3] = { 0 };
+            memcpy(payload, (char *)pdu->payload, pdu->payload_len);
+            start_status = (uint8_t)strtoul(payload, NULL, 10);
+
+            if (config_status == SPR_SENDDATA_STOP) {
+                    /* stop thread senddata */
+                    msg_t msg;
+                    msg.content.value = 0;
+                    puts("stopping thread senddata");
+                    int ret = msg_try_send(&msg, senddata_pid);
+                    if (ret == 0) {
+                        puts("Receiver queue full");
+                    }
+                    else if (ret < 0) {
+                        puts("ERROR: invalid PID; sendata thread not started");
+                    }
+            }
+            else if (config_status == SPR_SENDDATA_START) {
+                    /* start thread send_data */
+                    puts("starting senddata thread");
+                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
+                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
+            }
+            else {
+                /* value not valid */
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+
+            if (pdu->payload_len <= 2) {
+                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
+            }
+            else {
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+        }
+    }
 
     return -1;
 }
