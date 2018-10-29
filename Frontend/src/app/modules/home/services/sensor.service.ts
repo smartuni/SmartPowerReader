@@ -11,8 +11,12 @@ export class SensorService {
     }
 
 
-    getDatada(params: any) {
+    getData(params: any) {
         return this.httpClient.post(`${environment.serverUrl}`, params);
+    }
+
+    getDataFromServer(server: string, params: any) {
+        return this.httpClient.get(`${server}`, {params: params});
     }
 
 }
