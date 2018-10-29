@@ -133,7 +133,7 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
 
           printf("Payload: %s\n", payload);
 
-          if (pdu->payload_len <= 5) {
+          if (pdu->payload_len <= 15) {
               return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
           }
           else {
