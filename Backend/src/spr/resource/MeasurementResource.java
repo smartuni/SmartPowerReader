@@ -80,5 +80,6 @@ public class MeasurementResource extends Resource
 		}
 	}
 	
-	private static final String IP = "fe80::a02d:51f7:cdf4:a686%lowpan0"; //"fe80::1ac0:ffee:1ac0:ffee%lowpan0";
+	private static final String IP = "fd00:1:2:3:a02d:51f7:cdf4:a686%lowpan0";
+	//"fe80::a02d:51f7:cdf4:a686%lowpan0"; //"fe80::1ac0:ffee:1ac0:ffee%lowpan0";
 }
