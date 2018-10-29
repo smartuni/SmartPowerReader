@@ -52,7 +52,8 @@ public class MeasurementResource extends Resource
 			
 //			com.respond("Hello, World!");
 			
-			com.accept();
+			com.respond(ResponseCode.VALID);
+//			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 
@@ -67,7 +68,7 @@ public class MeasurementResource extends Resource
 			{
 				e.printStackTrace();
 			}
-			CoapResponse r = remote.put("Hello, World!", 0);		
+			CoapResponse r = remote.put("Hello, World!", 0);
 			
 			if(r == null)
 			{
