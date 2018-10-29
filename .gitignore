@@ -9,3 +9,5 @@
 */node_modules
 */release/*.jar
 .DS_Store
+
+*/Californium.properties
