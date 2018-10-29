@@ -11,7 +11,6 @@ import org.eclipse.californium.proxy.resources.ForwardingResource;
 import org.eclipse.californium.proxy.resources.ProxyCoapClientResource;
 import org.eclipse.californium.proxy.resources.ProxyHttpClientResource;
 
-import dave.json.SevereIOException;
 import spr.net.common.Node;
 import spr.task.Task;
 import spr.util.ProxyMessageDeliverer;
@@ -21,7 +20,7 @@ public class HttpFrontendUnit extends BaseUnit
 	private final CoapServer mCoapProxy;
 	private final ProxyHttpServer mHttpServer;
 	
-	public HttpFrontendUnit(int port, Node<Task> g)
+	public HttpFrontendUnit(int port, Node<Task> g) throws IOException
 	{
 		super(g);
 		
@@ -39,14 +38,7 @@ public class HttpFrontendUnit extends BaseUnit
 		
 		mCoapProxy.start();
 		
-		try
-		{
-			mHttpServer = new ProxyHttpServer(coap2coap, port);
-		}
-		catch(IOException e)
-		{
-			throw new SevereIOException(e);
-		}
+		mHttpServer = new ProxyHttpServer(coap2coap, port);
 	}
 	
 	private static class TargetResource extends CoapResource
