@@ -137,8 +137,7 @@ public class SystemBuilder
 		{
 			try
 			{
-				builder.install(new FrontendUnit(mPort, new Node<>(Units.IDs.FRONTEND)));
-				builder.install(new HttpFrontendUnit(8999, new Node<>(Units.IDs.FRONTEND + "-http")));
+				builder.install(new FrontendUnit(mPort, 8998, 8999, new Node<>(Units.IDs.FRONTEND)));
 			}
 			catch(IOException e)
 			{
