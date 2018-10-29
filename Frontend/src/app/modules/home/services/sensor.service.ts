@@ -1,23 +1,29 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
-import {Sensor} from '../../../core/interfaces/sensor.interface';
-import {MockHttpApi} from '../../../core/mocks/mockHttpApi';
 import {HttpClient} from '@angular/common/http';
+import net from 'net-socket';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class SensorService {
+    socket: net.Socket;
+    constructor(private httpClient: HttpClient) {
+    }
 
-  constructor(private httpClient: HttpClient) {
-  }
 
-  getAllSensorsData(server: string, params: any) {
-    console.log('prams', params);
-    return this.httpClient.get<Sensor[]>(server, params);
-  }
+    getDatada(host: string, port: number, params: any) {
+        this.socket.connect(port, host, () => {
+            this.socket.write(params);
+        });
+        // const headers = {
+        //     'Content-Type': 'application/json',
+        //     'Accept': '*.*'
+        // };
+        // return this.httpClient.post(server, params, {headers: headers});
+    }
 
-  getAllSensors(server: string): Observable<Sensor[]> {
-    return this.httpClient.get<Sensor[]>(server);
-  }
+
+    // return this.httpClient.put(server, params;
+
+
 }

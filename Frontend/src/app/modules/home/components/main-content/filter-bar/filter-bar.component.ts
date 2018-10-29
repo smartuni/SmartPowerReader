@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {Folder} from '../../../../../core/interfaces/folder.interface';
 import {formatDate} from '@angular/common';
 import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';

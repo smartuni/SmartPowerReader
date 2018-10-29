@@ -26,6 +26,7 @@
     "@swimlane/ngx-charts": "^9.0.0",
     "amazing-time-picker": "^1.5.3",
     "core-js": "^2.5.4",
+    "net-socket": "^1.1.0",
     "rxjs": "~6.2.0",
     "rxjs-compat": "^6.3.3",
     "zone.js": "~0.8.26"
@@ -50,5 +51,10 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~2.9.2"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }

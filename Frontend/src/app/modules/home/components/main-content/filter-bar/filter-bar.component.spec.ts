@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FilterBarComponent } from './filter-bar.component';
+import {FilterBarComponent} from './filter-bar.component';
 
 describe('FilterBarComponent', () => {
   let component: FilterBarComponent;

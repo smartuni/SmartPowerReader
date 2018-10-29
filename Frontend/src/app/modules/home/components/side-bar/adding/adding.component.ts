@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {ModalService} from '../../../../../shared/services/modal.service';
 import {SensorService} from '../../../services/sensor.service';
@@ -31,10 +31,10 @@ export class AddingComponent implements OnInit {
   }
 
   loadServer() {
-    this.sensorService.getAllSensors(this.form.getRawValue().server).subscribe( res => {
-      console.log('res', res);
-      this.isLoadedLink = true;
-    });
+    // this.sensorService.getAllSensors(this.form.getRawValue().server).subscribe( res => {
+    //   console.log('res', res);
+    //   this.isLoadedLink = true;
+    // });
   }
 
 }

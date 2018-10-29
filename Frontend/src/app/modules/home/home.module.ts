@@ -10,7 +10,7 @@ import {FilterBarComponent} from './components/main-content/filter-bar/filter-ba
 import {GraphSummaryComponent} from './components/main-content/graph-summary/graph-summary.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AmazingTimePickerModule} from 'amazing-time-picker';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SensorService} from './services/sensor.service';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 

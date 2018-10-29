@@ -1,11 +1,4 @@
-import {
-  ApplicationRef,
-  ComponentFactoryResolver,
-  EmbeddedViewRef,
-  EventEmitter,
-  Injectable,
-  Injector
-} from '@angular/core';
+import {ApplicationRef, ComponentFactoryResolver, EmbeddedViewRef, EventEmitter, Injectable, Injector} from '@angular/core';
 
 @Injectable(
   {providedIn: 'root'}
