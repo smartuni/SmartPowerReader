@@ -39,7 +39,7 @@ export class AddingComponent implements OnInit {
             to: 20000000000000,
             count: 100
         };
-        this.sensorService.getDataFromServer(this.form.getRawValue().server, params).subscribe(res => {
+        this.sensorService.getData(params).subscribe(res => {
             console.log('response from serve', res);
         });
         // this.sensorService.getAllSensors(this.form.getRawValue().server).subscribe( res => {

@@ -2,13 +2,11 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-const serverUrl = 'http://0.0.0.0:9901';
-const apiServerUrl = serverUrl + '/api/v1';
+const serverUrl = 'http://0.0.0.0:3000';
 export const environment: any = {
-  production: false,
-  serverUrl: serverUrl,
-  tokenApi: serverUrl + '/oauth/token',
-  searchApi: apiServerUrl + '/search',
+    production: false,
+    serverUrl: serverUrl,
+    sensorUrl: serverUrl + '/sensors'
 };
 
 /*

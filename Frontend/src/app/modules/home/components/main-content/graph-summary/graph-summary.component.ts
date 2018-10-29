@@ -9,7 +9,7 @@ import {formatDate} from '@angular/common';
     styleUrls: ['./graph-summary.component.scss']
 })
 export class GraphSummaryComponent implements OnInit, AfterViewInit {
-    results: Sensor[];
+    results: Sensor[] = [];
     isLoading = true;
 
     showXAxis = true;
@@ -37,34 +37,48 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
             to: 20000000000000,
             count: 100
         };
-        this.sensorService.getData(params).subscribe(res => {
+        this.sensorService.getData(params).subscribe((res) => {
+            this.results = [];
             console.log('response from server', res);
-        });
-        // this.sensorService.getDatada('http://0.0.0.0', 9901, params);
-        // this.results = data;
-        // let count = 0;
-        // // for (let i = 0; i < data.length; i++) {
-        // data[0].series.forEach(val => {
-        //     const date = formatDate(new Date(val.name), 'MMM dd', 'en');
-        //
-        //     if (!this.ticks.includes(val.name)) {
-        //         this.ticks.push(val.name);
-        //     }
-        //
-        //     if (!this.simpleTicks.includes(date)) {
-        //         this.simpleTicks.push(JSON.parse(JSON.stringify(date)));
-        //         this.indexTicks.push(+JSON.parse(JSON.stringify(count)));
-        //     }
-        //
-        //     count++;
-        // });
-        // }
+            this.results.push({
+                id: params.id,
+                name: params.id,
+                series: res
+            });
+            this.results.forEach(result => {
+                result.series = result.series.map(s => ({
+                    name: s.timestamp,
+                    value: s.value
+                }));
+            });
 
-        this.isLoading = false;
-        this.indexTicks = JSON.parse(JSON.stringify(this.indexTicks));
-        console.log('outside index', this.indexTicks);
-        console.log('outside simple', this.simpleTicks);
-        console.log('outside full', this.ticks);
+            let count = 0;
+            // for (let i = 0; i < data.length; i++) {
+            this.results.forEach(sensor => {
+                sensor.series.forEach(val => {
+                    const date = formatDate(new Date(val.name), 'MMM dd', 'en');
+
+                    if (!this.ticks.includes(val.name)) {
+                        this.ticks.push(val.name);
+                    }
+
+                    if (!this.simpleTicks.includes(date)) {
+                        this.simpleTicks.push(JSON.parse(JSON.stringify(date)));
+                        this.indexTicks.push(+JSON.parse(JSON.stringify(count)));
+                    }
+
+                    count++;
+                });
+            });
+            console.log(this.results);
+            this.isLoading = false;
+            this.indexTicks = JSON.parse(JSON.stringify(this.indexTicks));
+            console.log('outside index', this.indexTicks);
+            console.log('outside simple', this.simpleTicks);
+            console.log('outside full', this.ticks);
+        });
+
+
     }
 
     xFormat = (e) => {
