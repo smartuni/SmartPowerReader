@@ -34,21 +34,35 @@ typedef enum {
 } lcd1602a_iface_t;
 
 /**
+ * @brief    Available character font sizes
+ */
+typedef enum {
+    DOTSIZE_5x8,
+    DOTSIZE_5x10
+} lcd1602a_dotsize_t;
+
+/*
+ * @brief The
+ */
+#define MAX_DATA_PINS       (8)
+
+/**
  * @brief    The pins used to interface the lcd
  */
 typedef struct {
-    gpio_t rs; /*< Register Select: LOW:command; HIGH:Character. */
-    gpio_t rw; /*< Read Write: LOW:Write to LCD; HIGH: Read from LCD. */
-    gpio_t e;  /*< Enable: Activated by a HIGH pulse. */
-    gpio_t d0; /*< Data bus 0 */
-    gpio_t d1; /*< Data bus 1 */
-    gpio_t d2; /*< Data bus 2 */
-    gpio_t d3; /*< Data bus 3 */
-    gpio_t d4; /*< Data bus 4 */
-    gpio_t d5; /*< Data bus 5 */
-    gpio_t d6; /*< Data bus 6 */
-    gpio_t d7; /*< Data bus 7 */
-} lcd1602a_pins_t;
+    gpio_t register_select_pin;          /*< Register Select: LOW:command; HIGH:Character. */
+    gpio_t read_write_pin;               /*< Read Write: LOW:Write to LCD; HIGH: Read from LCD. */
+    gpio_t enable_pin;                   /*< Enable: Activated by a HIGH pulse. */
+    gpio_t data_pins[MAX_DATA_PINS]; /*< The available data pins. */
+    lcd1602a_iface_t iface;          /*< The used interface (4-, 8-Bit) */
+    lcd1602a_dotsize_t dotsize;
+    uint8_t functions;               /*< The active functionality. */
+    uint8_t controls;                 /*< The controls */
+    uint8_t modes;                    /*< The modes */
+    uint8_t lines;                   /*< The number of lines available. */
+    uint8_t collumns;
+    uint8_t row_offset[4];          /*< Offset to place the cursor */
+} lcd1602a_dev_t;
 
 /**
  * @brief     Initialize and power up the lcd.
@@ -58,51 +72,51 @@ typedef struct {
  *
  * @return    [int] < 0 on Error, else Success.
  */
-int lcd1602a_init(lcd1602a_iface_t iface, lcd1602a_pins_t * pins);
+int lcd1602a_init(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Writes a value to the the lcd display.
  *
  * @return [in] value  The value to write onto the display.
  */
-void lcd1602a_write(uint8_t value);
+void lcd1602a_write(lcd1602a_dev_t * dev, uint8_t value);
 
 /**
  * @brief    Writes a buffer of chars to the lcd.
  *
  * @param[in] buf      A string as char-array to write onto the display.
  */
-void lcd1602a_write_buf(char * buf);
+void lcd1602a_write_buf(lcd1602a_dev_t * dev, char * buf);
 
 /**
  * @brief    Set the display on.
  */
-void lcd1602a_display_on(void);
+void lcd1602a_display_on(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Set the display off.
  */
-void lcd1602a_display_off(void);
+void lcd1602a_display_off(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Clears the entire display & sets the cursor position to zero.
  */
-void lcd1602a_display_clear(void);
+void lcd1602a_display_clear(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Turns the underlining cursor on.
  */
-void lcd1602a_cursor_on(void);
+void lcd1602a_cursor_on(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Turns the underlining cursor off.
  */
-void lcd1602a_cursor_off(void);
+void lcd1602a_cursor_off(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Set the cursor position to zero.
  */
-void lcd1602a_cursor_reset(void);
+void lcd1602a_cursor_reset(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Set the cursor at the given collumn and row.
@@ -112,47 +126,47 @@ void lcd1602a_cursor_reset(void);
  * @param[in] col    The collumn to set the cursor.
  * @param[in] row    The row to set the cursor.
  */
-void lcd1602a_cursor_set(uint8_t col, uint8_t row);
+void lcd1602a_cursor_set(lcd1602a_dev_t * dev, uint8_t col, uint8_t row);
 
 /**
  * @brief    Turns the blinking cursor on.
  */
-void lcd1602a_blink_on(void);
+void lcd1602a_blink_on(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Turns the blinking cursor off.
  */
-void lcd1602a_blink_off(void);
+void lcd1602a_blink_off(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Scroll the display to the left.
  */
-void lcd1602a_scroll_left(void);
+void lcd1602a_scroll_left(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Scroll the display to the right.
  */
-void lcd1602a_scroll_right(void);
+void lcd1602a_scroll_right(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Let the text flows from left to right.
  */
-void lcd_left_to_right(void);
+void lcd_left_to_right(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Let the text flows from right to left.
  */
-void lcd1602a_right_to_left(void);
+void lcd1602a_right_to_left(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Right justify the text from the cursor.
  */
-void lcd1602a_autoscroll_on(void);
+void lcd1602a_autoscroll_on(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Left justify the text from the cursor.
  */
-void lcd1602a_autoscroll_off(void);
+void lcd1602a_autoscroll_off(lcd1602a_dev_t * dev);
 
 #ifdef __cplusplus
 }

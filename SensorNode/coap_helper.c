@@ -118,31 +118,39 @@ int lcd_write_cmd(int argc, char **argv)
     (void)argc;
     //(void)argv;
 
-    /* LCD 1602A initializations using a nucleo-f446re board. */
+    lcd1602a_dev_t lcd;
     lcd1602a_iface_t iface = MODE_4BIT;
-    lcd1602a_pins_t pins;
+    lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
     /* NOTE: Make sure the pins are working for your board! */
-    pins.rs = GPIO_PIN(PORT_A, 9);
-    pins.rw = GPIO_PIN(PORT_A, 8);
-    pins.e = GPIO_PIN(PORT_C, 7);
-    pins.d0 = 0; // Not used. We use a 4-Bit interface here.
-    pins.d1 = 0; // Not used.
-    pins.d2 = 0; // Not used.
-    pins.d3 = 0; // Not used.
-    pins.d4 = GPIO_PIN(PORT_B, 3);
-    pins.d5 = GPIO_PIN(PORT_B, 5);
-    pins.d6 = GPIO_PIN(PORT_B, 4);
-    pins.d7 = GPIO_PIN(PORT_B, 10);
+    lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
+    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
+    lcd.enable_pin = GPIO_PIN(PORT_C, 7);
+    lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    lcd.data_pins[1] = 0; // Not used.
+    lcd.data_pins[2] = 0; // Not used.
+    lcd.data_pins[3] = 0; // Not used.
+    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3);
+    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5);
+    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4);
+    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10);
+    lcd.iface = iface;
+    lcd.dotsize = dotsize;
+    /* functions set in init */
+    /* controls set in init */
+    /* modes set in init */
+    /* row_offset set in init */
+    lcd.lines = 2;
+    lcd.collumns = 16;
 
-    lcd1602a_init(iface, &pins);
+    lcd1602a_init(&lcd);
 
     printf("Try to write \"%s\" to the LCD\n", argv[1]);
 
     /* Use first argument of shell input to display. */
-    lcd1602a_write_buf(argv[1]);
-    lcd1602a_cursor_set(0, 1);
-    lcd1602a_write_buf(argv[1]);
+    lcd1602a_write_buf(&lcd, argv[1]);
+    lcd1602a_cursor_set(&lcd, 0, 1);
+    lcd1602a_write_buf(&lcd, argv[1]);
 
     return 0;
 }
@@ -180,23 +188,32 @@ int testcurrent_cmd(int argc, char **argv)
     // init_adc(line, res);
 
     /* LCD 1602A initializations using a nucleo-f446re board. */
+    lcd1602a_dev_t lcd;
     lcd1602a_iface_t iface = MODE_4BIT;
-    lcd1602a_pins_t pins;
+    lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
     /* NOTE: Make sure the pins are working for your board! */
-    pins.rs = GPIO_PIN(PORT_A, 9);
-    pins.rw = GPIO_PIN(PORT_A, 8);
-    pins.e = GPIO_PIN(PORT_C, 7);
-    pins.d0 = 0; // Not used. We use a 4-Bit interface here.
-    pins.d1 = 0; // Not used.
-    pins.d2 = 0; // Not used.
-    pins.d3 = 0; // Not used.
-    pins.d4 = GPIO_PIN(PORT_B, 3);
-    pins.d5 = GPIO_PIN(PORT_B, 5);
-    pins.d6 = GPIO_PIN(PORT_B, 4);
-    pins.d7 = GPIO_PIN(PORT_B, 10);
+    lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
+    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
+    lcd.enable_pin = GPIO_PIN(PORT_C, 7);
+    lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    lcd.data_pins[1] = 0; // Not used.
+    lcd.data_pins[2] = 0; // Not used.
+    lcd.data_pins[3] = 0; // Not used.
+    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3);
+    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5);
+    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4);
+    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10);
+    lcd.iface = iface;
+    lcd.dotsize = dotsize;
+    /* functions set in init */
+    /* controls set in init */
+    /* modes set in init */
+    /* row_offset set in init */
+    lcd.lines = 2;
+    lcd.collumns = 16;
 
-    lcd1602a_init(iface, &pins);
+    lcd1602a_init(&lcd);
 
     /* Measures the current using the parameters and stores the measurements
      * inside the data reference. Then sleep for 'DELAY' and loop this forever.
@@ -214,12 +231,12 @@ int testcurrent_cmd(int argc, char **argv)
         fmt_float(current, data.current, 2);
         char apparent[8] = {' '};
         fmt_float(apparent, data.apparent, 2);
-        lcd1602a_cursor_reset();
-        lcd1602a_write_buf("Ampere: ");
-        lcd1602a_write_buf(current);
-        lcd1602a_cursor_set(0, 1);
-        lcd1602a_write_buf("Watt: ");
-        lcd1602a_write_buf(apparent);
+        lcd1602a_cursor_reset(&lcd);
+        lcd1602a_write_buf(&lcd, "Ampere: ");
+        lcd1602a_write_buf(&lcd, current);
+        lcd1602a_cursor_set(&lcd, 0, 1);
+        lcd1602a_write_buf(&lcd, "Watt: ");
+        lcd1602a_write_buf(&lcd, apparent);
 
         ct_dump_current(&data);
         xtimer_periodic_wakeup(&last, delay);
