@@ -92,6 +92,8 @@ public class HttpFrontendProxy implements Actor
 				con.send(request);
 				
 				ex.respond(con.receive().toString());
+				
+				con.close();
 			}
 			catch(NullPointerException | NumberFormatException e)
 			{
