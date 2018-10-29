@@ -37,7 +37,10 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
             to: 20000000000000,
             count: 100
         };
-        this.sensorService.getDatada('http://0.0.0.0', 9901, params);
+        this.sensorService.getDatada(params).subscribe(res => {
+            console.log('response from server', res);
+        });
+        // this.sensorService.getDatada('http://0.0.0.0', 9901, params);
         // this.results = data;
         // let count = 0;
         // // for (let i = 0; i < data.length; i++) {

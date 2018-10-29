@@ -24,11 +24,13 @@
     "@ng-bootstrap/ng-bootstrap": "^3.3.0",
     "@progress/kendo-date-math": "^1.2.0",
     "@swimlane/ngx-charts": "^9.0.0",
+    "@types/socket.io-client": "^1.4.32",
     "amazing-time-picker": "^1.5.3",
     "core-js": "^2.5.4",
-    "net-socket": "^1.1.0",
+    "net": "^1.0.2",
     "rxjs": "~6.2.0",
     "rxjs-compat": "^6.3.3",
+    "socket.io-client": "^2.1.1",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
