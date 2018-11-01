@@ -52,7 +52,8 @@ public class MeasurementResource extends Resource
 			
 //			com.respond("Hello, World!");
 			
-			com.accept();
+			com.respond(ResponseCode.VALID);
+//			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 
@@ -61,13 +62,13 @@ public class MeasurementResource extends Resource
 			remote.setTimeout(1000);
 			try
 			{
-				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName("fe80::1ac0:ffee:1ac0:ffee%lowpan0"), 0)));
+				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName(IP), 0)));
 			}
 			catch(UnknownHostException e)
 			{
 				e.printStackTrace();
 			}
-			CoapResponse r = remote.put("Hello, World!", 0);		
+			CoapResponse r = remote.put("Hello, World!", 0);
 			
 			if(r == null)
 			{
@@ -79,4 +80,7 @@ public class MeasurementResource extends Resource
 			}
 		}
 	}
+	
+	private static final String IP = "fd00:1:2:3:a02d:51f7:cdf4:a686%lowpan0";
+	//"fe80::a02d:51f7:cdf4:a686%lowpan0"; //"fe80::1ac0:ffee:1ac0:ffee%lowpan0";
 }

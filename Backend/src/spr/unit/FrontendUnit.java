@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,6 +48,7 @@ public class FrontendUnit extends BaseUnit
 		registerAction("query", this::actQuery);
 		
 		registerMessageHandler(Tasks.Database.DELIVER, this::handleDelivery);
+		registerMessageHandler(Tasks.Frontend.ABORT, this::handleAbort);
 	}
 	
 	@Override
@@ -77,32 +79,64 @@ public class FrontendUnit extends BaseUnit
 		getNode().send(Units.DATABASE, new Task(Tasks.Database.RETRIEVE, p.id, i));
 	}
 	
-	private void handleDelivery(Message<Task> p)
+	private Entry get(int id)
 	{
 		for(Iterator<Entry> i = mConnected.iterator() ; i.hasNext() ;)
 		{
 			Entry e = i.next();
 			
-			if(e.id == p.getContent().getSession())
+			if(e.id == id)
 			{
-				JsonObject data = p.getContent().getPayload();
-				
-				LOG.log("Frontend gets data from %s (%d)", data.get("id"), e.id);
-				
-				try
-				{
-					e.con.send(data.get("data"));
-					e.con.close();
-				}
-				catch(IOException ex)
-				{
-					LOG.log(Severity.ERROR, "Failed to report back to frontend: %s", ex.getMessage());
-				}
-				
 				i.remove();
 				
-				return;
+				return e;
 			}
+		}
+		
+		throw new NoSuchElementException("" + id);
+	}
+	
+	private void handleDelivery(Message<Task> p)
+	{
+		int id = (int) p.getContent().getSession();
+		
+		try
+		{
+			Entry e = get(id);
+			JsonObject data = p.getContent().getPayload();
+			
+			LOG.log("Frontend gets data from %s (%d)", data.get("id"), e.id);
+			
+			e.con.send(data.get("data"));
+			e.con.close();
+		}
+		catch(IOException ex)
+		{
+			LOG.log(Severity.ERROR, "Failed to report back to frontend: %s", ex.getMessage());
+		}
+		catch(NoSuchElementException e)
+		{
+			LOG.log(Severity.ERROR, "Unknown connection %d!", id);
+		}
+	}
+	
+	private void handleAbort(Message<Task> p)
+	{
+		Integer id = p.getContent().getPayload();
+		
+		try
+		{
+			Entry e = get(id);
+			
+			e.con.close();
+		}
+		catch(IOException ex)
+		{
+			LOG.log(Severity.ERROR, "Failure while closing connection: %s", ex.getMessage());
+		}
+		catch(NoSuchElementException e)
+		{
+			LOG.log(Severity.ERROR, "Unknown connection %d!", id.intValue());
 		}
 	}
 	
@@ -162,6 +196,8 @@ public class FrontendUnit extends BaseUnit
 			if(cb == null)
 			{
 				LOG.log("Received invalid request (%d): %s", p.id, p.content.toString());
+				
+				getNode().send(Units.FRONTEND, new Task(Tasks.Frontend.ABORT, newSession(), p.id));
 			}
 			else
 			{

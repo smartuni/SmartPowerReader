@@ -49,6 +49,13 @@ public final class Tasks
 		private Database( ) { }
 	}
 	
+	public static final class Frontend
+	{
+		public static final String ABORT = "frontend.abort";
+		
+		private Frontend( ) { }
+	}
+	
 	public static final class Coap
 	{
 		public static final String SEND = "send";
