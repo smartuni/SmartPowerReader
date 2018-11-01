@@ -17,27 +17,41 @@ app.get('/sensors/:sensorId', (req, res) => {
         to: parseInt(req.query.to),
         count: parseInt(req.query.count)
     };
-
-    dispatch(payload,(data)=>{
+    console.log('payload', payload);
+    dispatch(payload, (data) => {
+        // console.log('from backend', data);
+        // let newData = "";
+        // console.log('length data', data.toString());
+        // isNewObject = false;
+        // for (let i = 0; i < data.length; i++) {
+        //     if(data[i] === '}' ){
+        //         isNewObject = true;
+        //     }
+        //
+        //     newData += data[i] === "," ? "." : data[i];
+        // }
+        // console.log('newData', newData)
         res.end(data);
     })
 
 });
 
-function dispatch(payload, cb){
+function dispatch(payload, cb) {
     const socket = require('net').Socket();
     socket.connect(9901, '0.0.0.0', () => {
         console.log('connect');
         socket.write(JSON.stringify(payload));
         let result = "";
         socket.on('data', (data) => {
-            result+=data.toString();
+            console.log('data', data.toString());
+            result += data.toString();
         });
         socket.on('error', function (error) {
-            result+=error.toString();
+            result += error.toString();
         });
         socket.on('end', function () {
             // console.log(result);
+
             if (cb) cb(result);
         })
     });

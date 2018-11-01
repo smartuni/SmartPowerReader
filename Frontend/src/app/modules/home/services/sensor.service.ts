@@ -12,7 +12,7 @@ export class SensorService {
     }
 
 
-    getData(params: any) : Observable<Object[]>{
+    getData(params: any): Observable<Object[]> {
         return this.httpClient.get<Object[]>(`${environment.sensorUrl}/${params.id}`, {params: params});
     }
 
