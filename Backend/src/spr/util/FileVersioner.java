@@ -27,6 +27,8 @@ public class FileVersioner implements Producer<File>
 			{
 				for(int i = 0 ; i < files.length ; ++i)
 				{
+					if(!files[i].endsWith(".conf")) continue;
+					
 					if(newest == null || mGen.compare(files[i], newest) > 0)
 					{
 						newest = files[i];
@@ -41,7 +43,7 @@ public class FileVersioner implements Producer<File>
 		}
 	}
 	
-	private File get(String fn) { return mPath.resolve(fn).toFile(); }
+	private File get(String fn) { return mPath.resolve(fn + ".conf").toFile(); }
 	
 	public File get( )
 	{
