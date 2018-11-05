@@ -49,12 +49,14 @@ static const shell_command_t shell_commands[] = {
 static inline void _init_lcd(lcd1602a_dev_t * lcd)
 {
     int PORT_A = 0;
-    int PORT_B = 1;
+    //int PORT_B = 1;
     int PORT_C = 2;
+    //int PORT_D = 3;
+    int PORT_E = 4;
 
     puts("Main: _init_lcd..\n");
 
-    /* NOTE: Make sure the pins are working for your board! */
+    /*
     lcd->register_select_pin = GPIO_PIN(PORT_A, 9);
     lcd->read_write_pin = GPIO_PIN(PORT_A, 8);
     lcd->enable_pin = GPIO_PIN(PORT_C, 7);
@@ -68,14 +70,28 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     lcd->data_pins[7] = GPIO_PIN(PORT_B, 10);
     lcd->iface = iface;
     lcd->dotsize = dotsize;
-    /* functions set in init */
-    /* controls set in init */
-    /* modes set in init */
-    /* row_offset set in init */
+    lcd->lines = 2;
+    lcd->collumns = 16;
+    */
+    lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
+    lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
+    lcd->enable_pin = GPIO_PIN(PORT_A, 2);
+    lcd->data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    lcd->data_pins[1] = 0; // Not used.
+    lcd->data_pins[2] = 0; // Not used.
+    lcd->data_pins[3] = 0; // Not used.
+    lcd->data_pins[4] = GPIO_PIN(PORT_A, 1);
+    lcd->data_pins[5] = GPIO_PIN(PORT_C, 4);
+    lcd->data_pins[6] = GPIO_PIN(PORT_C, 7);
+    lcd->data_pins[7] = GPIO_PIN(PORT_C, 5);
+    lcd->iface = iface;
+    lcd->dotsize = dotsize;
     lcd->lines = 2;
     lcd->collumns = 16;
 
+
     lcd1602a_init(lcd);
+    //lcd1602a_autoscroll_on(lcd);
 
     puts("Main: _init_lcd [ done ]\n");
 }
@@ -101,6 +117,8 @@ static inline void _ip_to_lcd(void)
             ipv6_addr_to_str(ipv6_addr, &ipv6_addrs[i], IPV6_ADDR_MAX_STR_LEN);
             printf("My address is %s\n", ipv6_addr);
             lcd1602a_write_buf(&lcd, ipv6_addr);
+            lcd1602a_cursor_set(&lcd, 0, 1);
+            lcd1602a_write_buf(&lcd, "helloworld");
         }
     }
     puts("Main: _ip_to_lcd [ done ]\n");
