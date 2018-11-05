@@ -127,7 +127,7 @@ public class ConfigUnit extends BaseUnit
 				ByteBuffer bb = ByteBuffer.wrap(payload);
 				bb.putInt((int) period);
 //				byte[] payload = (new JsonBuilder()).putLong("period", period).toJSON().toString().getBytes(Utils.CHARSET);
-				CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload, Directive.PUT);
+				CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "value", payload, Directive.PUT);
 				
 				getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 			}
