@@ -50,8 +50,6 @@ public class FrontendUnit extends BaseUnit
 		
 		registerMessageHandler(Tasks.Database.DELIVER, this::handleDelivery);
 		registerMessageHandler(Tasks.Frontend.ABORT, this::handleAbort);
-		
-		mProxy = new HttpFrontendProxy(http, coap, port);
 	}
 	
 	@Override
