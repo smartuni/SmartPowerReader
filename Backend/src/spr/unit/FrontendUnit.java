@@ -28,13 +28,14 @@ import spr.unit.LocalDatabaseUnit.Interval;
 public class FrontendUnit extends BaseUnit
 {
 	private final Server mTCP;
+	private final HttpFrontendProxy mProxy;
 	private final BlockingQueue<Entry> mConnected;
 	private final BlockingQueue<Packet> mRequests;
 	private final ExecutorService mAsync;
 	private final Map<Predicate<JsonValue>, Consumer<Packet>> mCallbacks;
 	private int mNextID;
 	
-	public FrontendUnit(int port, Node<Task> g) throws IOException
+	public FrontendUnit(int port, int coap, int http, Node<Task> g) throws IOException
 	{
 		super(g);
 		
@@ -56,11 +57,13 @@ public class FrontendUnit extends BaseUnit
 	{
 		mAsync.submit(this::run);
 		mTCP.start();
+		mProxy.start();
 	}
 	
 	@Override
 	protected void onStop( )
 	{
+		mProxy.stop();
 		mTCP.stop();
 		mAsync.shutdown();
 	}

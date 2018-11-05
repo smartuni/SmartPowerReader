@@ -1,7 +1,15 @@
 /*
- * @file     lcd_1602a.c
- * @author   Rene Herthel <rene.herthel@haw-hamburg.de>
+ * Copyright (C) 2018 HAW Hamburg
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/*
  * @brief    Driver implementation for 1602A LCD's.
+ *
+ * @author   Rene Herthel <rene.herthel@haw-hamburg.de>
  */
 
 #include <stdio.h>
@@ -22,7 +30,9 @@
 #define HIGH            (1)
 
 /**
- * @brief    Creates a single enable-impulse, whenever HIGH impulses happen.
+ * @brief    Creates a single enable-impulse, whenever HIGH impulses happen
+ *
+ * @param [in] dev    A pointer to the current lcd device
  */
 static inline void _pulse_enable(lcd1602a_dev_t * dev)
 {
@@ -39,9 +49,10 @@ static inline void _pulse_enable(lcd1602a_dev_t * dev)
 
 /**
  * @brief    Writes the given value to the lcd, by setting the corresponding
- *           interface data-bus-pins to high.
+ *           interface data-bus-pins to high
  *
- * @param[in] value    The value to write via gpio onto the lcd.
+ * @param[in] dev      A pointer to the current lcd device
+ * @param[in] value    The value to write via gpio onto the lcd
  */
 static inline void _write(lcd1602a_dev_t * dev, uint8_t value)
 {
@@ -57,15 +68,16 @@ static inline void _write(lcd1602a_dev_t * dev, uint8_t value)
         gpio_write(dev->data_pins[i], (value >> (i - start)) & HIGH);
     }
 
-    /* Tell the LCD to write down the HIGH GPIO's. */
+    /* Tell the LCD to 'write down' the HIGH GPIO's. */
     _pulse_enable(dev);
 }
 
 /**
- * @brief   Prepares the LCD for sending some data to it.
+ * @brief   Prepares the LCD for sending some data to it
  *
- * @param[value] The value, which should be sent.
- * @param[rs_mode] register select mode; LOW:commands; HIGH:Data
+ * @param[in] dev        A pointer to the current lcd device
+ * @param[in] value      The value, which should be sent
+ * @param[in] rs_mode    register select mode; LOW:commands; HIGH:Data
  */
 static inline void _send(lcd1602a_dev_t * dev, uint8_t value, uint8_t rs_mode)
 {
@@ -83,9 +95,10 @@ static inline void _send(lcd1602a_dev_t * dev, uint8_t value, uint8_t rs_mode)
 }
 
 /**
- * @brief Invokes _send with a logical-low-level for commands.
+ * @brief Uses _send to write a command to the lcd device
  *
- * @param[cmd] The command to send.
+ * @paran[in] dev    A pointer to the current lcd device
+ * @param[in] cmd    The command to send
  */
 static inline void _command(lcd1602a_dev_t * dev, uint8_t cmd)
 {
@@ -93,7 +106,7 @@ static inline void _command(lcd1602a_dev_t * dev, uint8_t cmd)
     _send(dev, cmd, LOW);
 }
 
-int lcd1602a_init(lcd1602a_dev_t * dev)
+void lcd1602a_init(lcd1602a_dev_t * dev)
 {
     /* Initialize some values by default with zero. */
     dev->functions = 0x00;
@@ -131,13 +144,21 @@ int lcd1602a_init(lcd1602a_dev_t * dev)
         DEBUG("LCD: _power_up: Use 5 x 10 Dots\n");
     }
 
+    /* Initialize all used pins as output. */
     gpio_init(dev->register_select_pin, GPIO_OUT);
     gpio_init(dev->read_write_pin, GPIO_OUT);
     gpio_init(dev->enable_pin, GPIO_OUT);
     DEBUG("LCD: _power_up: rs-, rw-, e-Pin set as GPIO_OUT\n");
 
-    /* Initialize the data pins; Make sure to use the right range. */
-    for (int i = (!(dev->functions & LCD1602A_8BIT_MODE) ? 4 : 0); i < MAX_DATA_PINS; i++) {
+    /* Initialize the data pins; Make sure to use the correct range. */
+    int start = 0;
+
+    /* Use D4 - D7 for 4 Bit interface. */
+    if (!(dev->functions & LCD1602A_8BIT_MODE)) {
+        start = 4;
+    }
+
+    for (int i = start; i < MAX_DATA_PINS; i++) {
         DEBUG("LCD: _power_up: D%i-Pin set as GPIO_OUT \n", i);
         gpio_init(dev->data_pins[i], GPIO_OUT);
     }
@@ -183,13 +204,14 @@ int lcd1602a_init(lcd1602a_dev_t * dev)
     _command(dev, LCD1602A_ENTRY_MODE_SET | dev->modes);
 
     DEBUG("LCD: _init: init done\n");
-    return 0;
 }
 
 void lcd1602a_write_buf(lcd1602a_dev_t * dev, char * buf)
 {
     int len = (int)strlen(buf);
+    DEBUG("LCD: write_buf -> len: %d\n", len);
 
+    /* Use write method for every character in the buffer. */
     for (int i = 0; i < len; i++) {
          lcd1602a_write(dev, buf[i]);
     }
@@ -219,6 +241,7 @@ void lcd1602a_display_clear(lcd1602a_dev_t * dev)
 {
     DEBUG("LCD: Display -> Clear\n");
     _command(dev, LCD1602A_CLEAR_DISPLAY);
+    /* It needs about two seconds to settle. */
     xtimer_usleep(2000);
 }
 

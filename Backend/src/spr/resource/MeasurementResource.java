@@ -43,44 +43,13 @@ public class MeasurementResource extends Resource
 		else
 		{
 			byte[] payload = com.getRequestPayload();
-			
-			Logger.DEFAULT.log(Severity.INFO, "%02x %02x %02x %02x", payload[0], payload[1], payload[2], payload[3]);
-			
 			ByteBuffer bb = ByteBuffer.wrap(payload); bb.order(ByteOrder.LITTLE_ENDIAN);
 			double v = bb.getFloat();
 			long t = (new Timestamp(System.currentTimeMillis())).getTime();
 			
-//			com.respond("Hello, World!");
-			
 			com.respond(ResponseCode.VALID);
-//			com.accept();
 			
 			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
-
-			Logger.DEFAULT.log(Severity.INFO, "%s", "coap://[" + id + "]:" + com.getSourcePort() + "/value");
-			CoapClient remote = new CoapClient("coap://[" + id + "]:" + 5683 + "/value");
-			remote.setTimeout(1000);
-			try
-			{
-				remote.setEndpoint(new CoapEndpoint(new InetSocketAddress(InetAddress.getByName(IP), 0)));
-			}
-			catch(UnknownHostException e)
-			{
-				e.printStackTrace();
-			}
-			CoapResponse r = remote.put("Hello, World!", 0);
-			
-			if(r == null)
-			{
-				Logger.DEFAULT.log(Severity.ERROR, "Timeout!");
-			}
-			else
-			{
-				Logger.DEFAULT.log(Severity.INFO, "%s responds %s", id, r.getCode().toString());
-			}
 		}
 	}
-	
-	private static final String IP = "fd00:1:2:3:a02d:51f7:cdf4:a686%lowpan0";
-	//"fe80::a02d:51f7:cdf4:a686%lowpan0"; //"fe80::1ac0:ffee:1ac0:ffee%lowpan0";
 }

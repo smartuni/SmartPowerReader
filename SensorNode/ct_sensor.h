@@ -33,23 +33,23 @@ typedef struct {
 /*
  * @brief    Initialize an adc-pin using the riot abstractions.
  *
- * @param    [line]    The Analog input line
- * @param    [res]     The resolution of the adc
+ * @param[in] line    The Analog input line
+ * @param[in] res     The resolution of the adc
  */
 void init_adc(int line, adc_res_t res);
 
 /*
  * @brief    Dump the measured current data to the terminal.
  *
- * @param    [data]    The measured data
+ * @param[in] data    The measured data
  */
 void ct_dump_current(ct_i_data_t * data);
 
 /*
  * @brief    Measures the current using parameters and a data reference.
  *
- * @param    [param]   The parameters used for measuring
- * @param    [data]    A reference to the current data structure
+ * @param[in] param    The parameters used for measuring
+ * @param[in] data     A reference to the current data structure
  */
 void ct_measure_current(ct_parameter_t * param, ct_i_data_t * data);
 
