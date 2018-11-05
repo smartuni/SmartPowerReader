@@ -69,6 +69,6 @@ function dispatch(payload, cb) {
     });
 }
 
-app.listen(3000, '0.0.0.0', () => {
+app.listen('3000', '192.168.1.236', () => {
     console.log("Gateway is listening on port 3000");
 });
