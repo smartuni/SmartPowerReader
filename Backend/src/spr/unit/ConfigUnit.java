@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 
 import dave.json.JsonConstant;
 import dave.json.JsonObject;
@@ -117,7 +118,10 @@ public class ConfigUnit extends BaseUnit
 					coap = new UniqueAddress(Units.IDs.COAP, e.location);
 				}
 				
-				byte[] payload = (new JsonBuilder()).putLong("period", period).toJSON().toString().getBytes(Utils.CHARSET);
+				byte[] payload = new byte[4];
+				ByteBuffer bb = ByteBuffer.wrap(payload);
+				bb.putInt((int) period);
+//				byte[] payload = (new JsonBuilder()).putLong("period", period).toJSON().toString().getBytes(Utils.CHARSET);
 				CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload, Directive.PUT);
 				
 				getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
