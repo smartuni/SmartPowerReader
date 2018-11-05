@@ -22,11 +22,11 @@ import dave.util.log.Logger;
 import dave.util.log.Severity;
 import dave.util.log.SimpleFormatter;
 import dave.util.log.Spacer;
-import spr.unit.SystemBuilder;
-import spr.unit.SystemBuilder.DistributedNetwork;
-import spr.unit.SystemBuilder.BaseModule;
-import spr.unit.SystemBuilder.FrontendModule;
-import spr.unit.SystemBuilder.NodeLogicModule;
+import spr.common.SystemBuilder;
+import spr.common.SystemBuilder.BaseModule;
+import spr.common.SystemBuilder.DistributedNetwork;
+import spr.common.SystemBuilder.FrontendModule;
+import spr.common.SystemBuilder.NodeLogicModule;
 
 public class Start
 {

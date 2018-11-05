@@ -58,9 +58,19 @@ public final class Tasks
 	
 	public static final class Coap
 	{
-		public static final String SEND = "send";
+		public static final String SEND = "coap.send";
 		
 		private Coap( ) { }
+	}
+	
+	public static final class Configuration
+	{
+		public static final String NEW = "config.new-device";
+		public static final String CONFIGURE = "config.configure";
+		public static final String QUERY = "config.query";
+		public static final String DELIVER = "config.deliver";
+		
+		private Configuration( ) { }
 	}
 	
 	private Tasks( ) { }

@@ -1,4 +1,4 @@
-package spr.unit;
+package spr.common;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +25,21 @@ import spr.net.LocalBroker;
 import spr.net.common.Broker;
 import spr.net.common.Message;
 import spr.net.common.Node;
+import spr.resource.HelloResource;
 import spr.resource.MeasurementResource;
 import spr.task.Task;
+import spr.unit.CoapServerUnit;
+import spr.unit.ConfigUnit;
+import spr.unit.ConnectionUnit;
+import spr.unit.FrontendUnit;
+import spr.unit.LocalDatabaseUnit;
+import spr.unit.SystemUnit;
+import spr.unit.TimerUnit;
+import spr.unit.Unit;
+import spr.unit.Units;
+import spr.unit.UserUnit;
+import spr.util.FileVersioner;
+import spr.util.FilenameGenerator;
 
 public class SystemBuilder
 {
@@ -117,9 +130,12 @@ public class SystemBuilder
 		@Override
 		public void installOn(SystemBuilder builder)
 		{
+			FileVersioner config_files = new FileVersioner((new File("config")).toPath(), new FilenameGenerator());
+			
 			builder.install(new SystemUnit(new Node<>(Units.IDs.SYSTEM)));
 			builder.install(new TimerUnit(new Node<>(Units.IDs.TIMER)));
-			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File(id + ".bin")), new Node<>(Units.IDs.DATABASE)));
+			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File("config/" + id + ".bin")), new Node<>(Units.IDs.DATABASE)));
+			builder.install(new ConfigUnit(config_files.get(), config_files, new Node<>(Units.IDs.CONFIG)));
 		}
 	}
 	
@@ -137,7 +153,7 @@ public class SystemBuilder
 		{
 			try
 			{
-				builder.install(new FrontendUnit(mPort, 8998, 8999, new Node<>(Units.IDs.FRONTEND)));
+				builder.install(new FrontendUnit(mPort, new Node<>(Units.IDs.FRONTEND)));
 			}
 			catch(IOException e)
 			{
@@ -197,6 +213,7 @@ public class SystemBuilder
 			Node<Task> net = new Node<>(Units.IDs.COAP);
 			
 			mServer.add(new MeasurementResource(net));
+			mServer.add(new HelloResource(net));
 			
 			builder.install(new CoapServerUnit(mServer, net));
 		}

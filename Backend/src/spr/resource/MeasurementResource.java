@@ -42,7 +42,7 @@ public class MeasurementResource extends Resource
 			
 			com.respond(ResponseCode.VALID);
 			
-			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
+			getNode().send(Units.IDs.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 		}
 	}
 }

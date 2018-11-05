@@ -34,7 +34,7 @@ public class SystemUnit extends BaseUnit
 	@Override
 	protected void onStart( )
 	{
-		getNode().send(Units.TIMER,
+		getNode().send(Units.IDs.TIMER,
 			new Task(Tasks.Timer.Schedule.PERIODIC, newSession(),
 				new TimerUnit.FutureTask(FUTURE_ID,
 					new Task(TASK_TRIGGER_QUERY, newSession()), QUERY_DELTA)));
