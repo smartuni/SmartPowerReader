@@ -43,7 +43,7 @@ public class FileVersioner implements Producer<File>
 		}
 	}
 	
-	private File get(String fn) { return mPath.resolve(fn + ".conf").toFile(); }
+	private File get(String fn) { return mPath.resolve(fn).toFile(); }
 	
 	public File get( )
 	{
@@ -53,6 +53,6 @@ public class FileVersioner implements Producer<File>
 	@Override
 	public File produce()
 	{
-		return mLast = get(mGen.produce());
+		return mLast = get(mGen.produce() + ".conf");
 	}
 }
