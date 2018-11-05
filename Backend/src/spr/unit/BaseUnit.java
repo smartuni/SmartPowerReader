@@ -48,6 +48,8 @@ public class BaseUnit implements Unit
 	{
 		if(mCallbacks.put(task, cb) != null)
 			BASE_LOG.log(Severity.INFO, "Overwritten message handler for task '%s'", task);
+		
+		BASE_LOG.log("Node %s registered handler for %s", getNode().getID(), task);
 	}
 
 	@Override
