@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ModalService} from '../../../../../shared/services/modal.service';
 import {SensorService} from '../../../services/sensor.service';
+import {Sensor} from '../../../../../core/interfaces/sensor.interface';
 
 @Component({
     selector: 'app-components',
@@ -10,8 +11,8 @@ import {SensorService} from '../../../services/sensor.service';
 })
 export class AddingComponent implements OnInit {
     form: FormGroup;
-    info: any = {};
     isLoadedLink = false;
+    sensorsInfo: Sensor[] = [];
 
     constructor(private modalService: ModalService, private sensorService: SensorService) {
     }
@@ -21,9 +22,10 @@ export class AddingComponent implements OnInit {
         this.form = new FormGroup({
             server: new FormControl(''),
             serverName: new FormControl(''),
-            deviceID: new FormControl(''),
+            deviceId: new FormControl(''),
             deviceName: new FormControl(''),
-            folderName: new FormControl('')
+            folderName: new FormControl(''),
+            period: new FormControl(1, [Validators.min(1)])
         });
     }
 
@@ -32,20 +34,28 @@ export class AddingComponent implements OnInit {
     }
 
     loadServer() {
-        const params = {
-            action: 'query',
-            id: 'test-123',
-            from: 0,
-            to: 20000000000000,
-            count: 100
-        };
-        this.sensorService.getData(params).subscribe(res => {
-            console.log('response from serve', res);
+        this.isLoadedLink = false;
+        this.sensorService.getAllSenors().subscribe(res => {
+            console.log('getAllSensors response from serve', res);
+            this.sensorsInfo = res;
+            this.isLoadedLink = true;
         });
-        // this.sensorService.getAllSensors(this.form.getRawValue().server).subscribe( res => {
-        //   console.log('res', res);
-        //   this.isLoadedLink = true;
-        // });
+    }
+
+    save() {
+        const formValue = this.form.getRawValue();
+        const newValues = {
+            id: formValue.deviceId,
+            name: formValue.deviceName,
+            period: formValue.period
+        };
+        this.sensorService.updateSensors(newValues).subscribe( res => {
+            console.log('updateSensors response from server', res);
+        });
+    }
+
+    isFormValid() {
+        return !this.form.invalid;
     }
 
 }

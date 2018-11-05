@@ -19,18 +19,30 @@ app.get('/sensors/:sensorId', (req, res) => {
     };
     console.log('payload', payload);
     dispatch(payload, (data) => {
-        // console.log('from backend', data);
-        // let newData = "";
-        // console.log('length data', data.toString());
-        // isNewObject = false;
-        // for (let i = 0; i < data.length; i++) {
-        //     if(data[i] === '}' ){
-        //         isNewObject = true;
-        //     }
-        //
-        //     newData += data[i] === "," ? "." : data[i];
-        // }
-        // console.log('newData', newData)
+        res.end(data);
+    })
+
+});
+
+app.get('/sensors', (req, res) => {
+    console.log('Incoming request...');
+    const payload = {
+        action: 'query-devices',
+    };
+    console.log('payload', payload);
+    dispatch(payload, (data) => {
+        res.end(data);
+    })
+
+});
+
+app.put('/sensors', (req, res) => {
+    console.log('Incoming request...');
+    const payload = {
+        action: 'query-devices',
+    };
+    console.log('payload', payload);
+    dispatch(payload, (data) => {
         res.end(data);
     })
 
