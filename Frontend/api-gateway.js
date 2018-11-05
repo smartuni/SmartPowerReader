@@ -52,7 +52,7 @@ function dispatch(payload, cb) {
     const socket = require('net').Socket();
     socket.connect(9901, '0.0.0.0', () => {
         console.log('connect');
-        socket.write(JSON.stringify(payload));
+        socket.write(JSON.stringify(payload) + '\n');
         let result = "";
         socket.on('data', (data) => {
             console.log('data', data.toString());
@@ -69,6 +69,6 @@ function dispatch(payload, cb) {
     });
 }
 
-app.listen(3000, () => {
+app.listen(3000, '0.0.0.0', () => {
     console.log("Gateway is listening on port 3000");
 });
