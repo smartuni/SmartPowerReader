@@ -41,7 +41,7 @@ app.put('/sensors', (req, res) => {
     console.log('Incoming request...');
     const payload = {
         action: 'put-device',
-        id: req.body.sensorId,
+        id: req.body.id,
         name: req.body.name,
         period: parseInt(req.body.period)
     };
