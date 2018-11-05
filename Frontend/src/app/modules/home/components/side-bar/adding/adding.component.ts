@@ -11,14 +11,14 @@ import {Sensor} from '../../../../../core/interfaces/sensor.interface';
 })
 export class AddingComponent implements OnInit {
     form: FormGroup;
-    isLoadedLink = false;
+    isLoadedLink = true;
     sensorsInfo: Sensor[] = [];
 
     constructor(private modalService: ModalService, private sensorService: SensorService) {
     }
 
     ngOnInit() {
-        this.isLoadedLink = false;
+        this.isLoadedLink = true;
         this.form = new FormGroup({
             server: new FormControl(''),
             serverName: new FormControl(''),

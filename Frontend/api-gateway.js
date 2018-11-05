@@ -38,8 +38,12 @@ app.get('/sensors', (req, res) => {
 
 app.put('/sensors', (req, res) => {
     console.log('Incoming request...');
+    console.log('req', req);
     const payload = {
-        action: 'query-devices',
+        action: 'put-device',
+        id: req.params.sensorId,
+        name: req.query.name,
+        period: parseInt(req.query.period)
     };
     console.log('payload', payload);
     dispatch(payload, (data) => {
