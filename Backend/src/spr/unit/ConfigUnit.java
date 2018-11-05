@@ -52,7 +52,11 @@ public class ConfigUnit extends BaseUnit
 		{
 			try
 			{
+				LOG.log("Read configuration from %s", orig.getName());
+				
 				mConfig.load(JsonValue.read(new StreamBuffer(new FileInputStream(orig))));
+				
+				LOG.log("Loaded %d device entries.", mConfig.stream().count());
 			}
 			catch(IOException | SevereIOException | IllegalArgumentException | IllegalStateException e)
 			{
