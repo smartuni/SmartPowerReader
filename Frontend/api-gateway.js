@@ -39,12 +39,11 @@ app.get('/sensors', (req, res) => {
 
 app.put('/sensors', (req, res) => {
     console.log('Incoming request...');
-    console.log('req', req);
     const payload = {
         action: 'put-device',
-        id: req.params.sensorId,
-        name: req.query.name,
-        period: parseInt(req.query.period)
+        id: req.body.sensorId,
+        name: req.body.name,
+        period: parseInt(req.body.period)
     };
     console.log('payload', payload);
     dispatch(payload, (data) => {
