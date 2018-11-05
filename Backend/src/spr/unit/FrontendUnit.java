@@ -208,6 +208,8 @@ public class FrontendUnit extends BaseUnit
 			{
 				JsonValue r = c.receive();
 				
+				LOG.log("Received from front-end %s", r.toString());
+				
 				mConnected.add(entry);
 				mRequests.add(new Packet(entry.id, r));
 			}

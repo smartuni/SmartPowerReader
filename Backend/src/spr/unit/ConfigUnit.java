@@ -95,13 +95,13 @@ public class ConfigUnit extends BaseUnit
 	{
 		JsonObject json = p.getContent().getPayload();
 		
-		if(!json.contains("ip"))
+		if(!json.contains("id"))
 		{
 			LOG.log(Severity.ERROR, "Received a configuration message without valid IP!");
 		}
 		else
 		{
-			Configuration.Entry e = mConfig.get(json.getString("ip"));
+			Configuration.Entry e = mConfig.get(json.getString("id"));
 			
 			if(json.contains("name"))
 			{
