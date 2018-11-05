@@ -29,7 +29,7 @@ public class FileVersioner implements Producer<File>
 				{
 					if(!files[i].endsWith(".conf")) continue;
 					
-					if(newest == null || mGen.compare(files[i], newest) > 0)
+					if(newest == null || mGen.compare(files[i], newest) < 0)
 					{
 						newest = files[i];
 					}
