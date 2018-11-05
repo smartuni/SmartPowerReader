@@ -28,7 +28,6 @@ import spr.unit.LocalDatabaseUnit.Interval;
 public class FrontendUnit extends BaseUnit
 {
 	private final Server mTCP;
-	private final HttpFrontendProxy mProxy;
 	private final BlockingQueue<Entry> mConnected;
 	private final BlockingQueue<Packet> mRequests;
 	private final ExecutorService mAsync;
@@ -57,13 +56,11 @@ public class FrontendUnit extends BaseUnit
 	{
 		mAsync.submit(this::run);
 		mTCP.start();
-		mProxy.start();
 	}
 	
 	@Override
 	protected void onStop( )
 	{
-		mProxy.stop();
 		mTCP.stop();
 		mAsync.shutdown();
 	}
