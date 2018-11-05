@@ -61,6 +61,7 @@ public class ConfigUnit extends BaseUnit
 			catch(IOException | SevereIOException | IllegalArgumentException | IllegalStateException e)
 			{
 				LOG.log(Severity.ERROR, "Failed to load configuration: %s", e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
