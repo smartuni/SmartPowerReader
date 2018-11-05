@@ -2,6 +2,7 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {SensorService} from '../../../services/sensor.service';
 import {Sensor} from '../../../../../core/interfaces/sensor.interface';
 import {formatDate} from '@angular/common';
+import {actionGetMeasurement} from '../../../constants/constants';
 
 @Component({
     selector: 'app-graph-summary',
@@ -24,22 +25,31 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     ticks = [];
     indexTicks = [];
     simpleTicks = [];
+    isLessThan3Days = false;
 
+    colorScheme = {
+        domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+    };
     constructor(private sensorService: SensorService) {
     }
 
     ngOnInit() {
+    }
+
+    drawGraph(selectedDeviceId, from: number, to: number) {
         this.isLoading = true;
+        this.isLessThan3Days = false;
+        // console.log('selectedDeviceId', selectedDeviceId, from, to);
         const params = {
-            action: 'query',
-            id: 'test-123',
-            from: 0,
-            to: 20000000000000,
+            action: actionGetMeasurement,
+            id: selectedDeviceId ? selectedDeviceId : 'test-123',
+            from: from,
+            to: to,
             count: 100
         };
         this.sensorService.getData(params).subscribe((res) => {
             this.results = [];
-            console.log('response from server', res);
+            // console.log('response from server', res);
             this.results.push({
                 id: params.id,
                 name: params.id,
@@ -50,43 +60,22 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                     name: s.timestamp,
                     value: s.value
                 }));
+                result.series.sort((a, b) => a.name < b.name ? 1 : (a.name > b.name ? 1 : 0));
             });
+            this.isLessThan3Days = to - from <= 86340000 * 3;
+
 
             let count = 0;
             // for (let i = 0; i < data.length; i++) {
             this.results.forEach(sensor => {
                 sensor.series.forEach(val => {
-                    const date = formatDate(new Date(val.name), 'MMM dd', 'en');
-
-                    if (!this.ticks.includes(val.name)) {
-                        this.ticks.push(val.name);
-                    }
-
-                    if (!this.simpleTicks.includes(date)) {
-                        this.simpleTicks.push(JSON.parse(JSON.stringify(date)));
-                        this.indexTicks.push(+JSON.parse(JSON.stringify(count)));
-                    }
-
                     count++;
                 });
             });
-            console.log(this.results);
             this.isLoading = false;
             this.indexTicks = JSON.parse(JSON.stringify(this.indexTicks));
-            console.log('outside index', this.indexTicks);
-            console.log('outside simple', this.simpleTicks);
-            console.log('outside full', this.ticks);
         });
-
-
     }
-
-    xFormat = (e) => {
-        // where e - value of tick by default
-        // console.log(this);
-        // now you have access to your component variables
-        return formatDate(new Date(e), 'MMM dd HH:MM:ss', 'en');
-    };
 
 
     ngAfterViewInit(): void {
@@ -96,24 +85,12 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     }
 
 
-    dateTickFormatting = (e) => {
-        return new Date(e).toLocaleString('de-DE');
-    };
-
-    axisFormat(val) {
-        // console.log('index', this.indexTicks);
-        // console.log('simple', this.simpleTicks);
-        // console.log('ticks', this.ticks);
-
-        // const index = this.ticks.indexOf(val);
-        // const i = this.indexTicks.includes(index);
-        // console.log(val, index, i);
-        // if (this.indexTicks.includes(this.ticks.indexOf(val) )) {
-        return formatDate(new Date(val), 'MMM dd', 'en');
-        // } else {
-        //   return '';
-        // }
+    axisFormatDate(val) {
+        return formatDate(new Date(val), 'MMM  yyyy', 'en');
     }
 
+    axisFormatTime(val) {
+        return formatDate(new Date(val), 'MMM dd HH:mm', 'en');
+    }
 
 }

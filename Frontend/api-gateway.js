@@ -6,6 +6,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, PUT");
     next();
 });
 app.get('/sensors/:sensorId', (req, res) => {
@@ -19,18 +20,33 @@ app.get('/sensors/:sensorId', (req, res) => {
     };
     console.log('payload', payload);
     dispatch(payload, (data) => {
-        // console.log('from backend', data);
-        // let newData = "";
-        // console.log('length data', data.toString());
-        // isNewObject = false;
-        // for (let i = 0; i < data.length; i++) {
-        //     if(data[i] === '}' ){
-        //         isNewObject = true;
-        //     }
-        //
-        //     newData += data[i] === "," ? "." : data[i];
-        // }
-        // console.log('newData', newData)
+        res.end(data);
+    })
+
+});
+
+app.get('/sensors', (req, res) => {
+    console.log('Incoming request...');
+    const payload = {
+        action: 'query-devices',
+    };
+    console.log('payload', payload);
+    dispatch(payload, (data) => {
+        res.end(data);
+    })
+
+});
+
+app.put('/sensors', (req, res) => {
+    console.log('Incoming request...');
+    const payload = {
+        action: 'put-device',
+        id: req.body.id,
+        name: req.body.name,
+        period: parseInt(req.body.period)
+    };
+    console.log('payload', payload);
+    dispatch(payload, (data) => {
         res.end(data);
     })
 
@@ -40,7 +56,7 @@ function dispatch(payload, cb) {
     const socket = require('net').Socket();
     socket.connect(9901, '0.0.0.0', () => {
         console.log('connect');
-        socket.write(JSON.stringify(payload));
+        socket.write(JSON.stringify(payload) + '\n');
         let result = "";
         socket.on('data', (data) => {
             console.log('data', data.toString());
@@ -57,6 +73,6 @@ function dispatch(payload, cb) {
     });
 }
 
-app.listen(3000, () => {
+app.listen('3000', '192.168.1.236', () => {
     console.log("Gateway is listening on port 3000");
 });

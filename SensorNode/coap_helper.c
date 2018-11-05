@@ -14,6 +14,7 @@
 #include "fmt.h"
 #include "xtimer.h"
 #include "timex.h"
+
 #include "ct_sensor.h"
 #include "lcd1602a.h"
 
@@ -122,6 +123,10 @@ int lcd_write_cmd(int argc, char **argv)
     lcd1602a_iface_t iface = MODE_4BIT;
     lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
+    int PORT_A = 0;
+    int PORT_B = 1;
+    int PORT_C = 2;
+
     /* NOTE: Make sure the pins are working for your board! */
     lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
     lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
@@ -192,18 +197,22 @@ int testcurrent_cmd(int argc, char **argv)
     lcd1602a_iface_t iface = MODE_4BIT;
     lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
+    int PORT_A = 0;
+    int PORT_B = 1;
+    int PORT_C = 2;
+
     /* NOTE: Make sure the pins are working for your board! */
-    lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
-    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
-    lcd.enable_pin = GPIO_PIN(PORT_C, 7);
+    lcd.register_select_pin = GPIO_PIN(PORT_A, 9); // D8
+    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);      // D7
+    lcd.enable_pin = GPIO_PIN(PORT_C, 7);          // D9
     lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
     lcd.data_pins[1] = 0; // Not used.
     lcd.data_pins[2] = 0; // Not used.
     lcd.data_pins[3] = 0; // Not used.
-    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3);
-    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5);
-    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4);
-    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10);
+    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3); // D3
+    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5); //D4
+    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4); // D5
+    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10); // D6
     lcd.iface = iface;
     lcd.dotsize = dotsize;
     /* functions set in init */
@@ -338,8 +347,8 @@ int testsend_cmd(int argc, char **argv)
     printf("usage: %s <get|post|put|info>\n", argv[0]);
     return 1;
 }
-/*
- * This is only used for debugging through the shell.*/
+
+/* This is only used for debugging through the shell.*/
 int gcoap_cli_cmd(int argc, char **argv)
 {
     /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
