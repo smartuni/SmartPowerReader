@@ -153,7 +153,11 @@ public class ConfigUnit extends BaseUnit
 			LOG.log(Severity.FATAL, "Failed to write config file: %s", ex.getMessage());
 		}
 		
-		mLast.delete();
+		if(mLast != null)
+		{
+			mLast.delete();
+		}
+		
 		mLast = f;
 	}
 	
