@@ -51,9 +51,11 @@
 
 extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
 
+static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
+
+/* test/debug */
 static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
 static uint32_t interval = SPR_INTERVAL;
@@ -122,6 +124,9 @@ static void *send_data(void *arg)
     (void)arg;
     (void)interval;
 
+    msg_t msg;
+    msg.content.value = 1;
+
     msg_init_queue(senddata_queue, SENDDATA_QUEUE_SIZE);
 
     /* Current transformer parameters needed for current calculations. */
@@ -145,7 +150,8 @@ static void *send_data(void *arg)
     size_t len;
 
     /* send data repeatedly */
-    while (1) {
+    int continue_loop = 1;
+    while (continue_loop) {
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, "/value");       // change server resource '/value' here
 
         /* measure current */
@@ -167,6 +173,9 @@ static void *send_data(void *arg)
         if (!send(&buf[0], len, "fd00:1:2:3:a02d:51f7:cdf4:a686", "5683")) {  // FIXME: change address
                 puts("gcoap_cli: msg send failed");
         }
+
+        msg_try_receive(&msg);
+        continue_loop = msg.content.value;
     }
 
     return NULL;
@@ -312,13 +321,12 @@ static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
             size_t payload_len = fmt_u16_dec((char *)pdu->payload, start_status);
 
             return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
-
         case COAP_PUT: {
             char payload[3] = { 0 };
             memcpy(payload, (char *)pdu->payload, pdu->payload_len);
             start_status = (uint8_t)strtoul(payload, NULL, 10);
 
-            if (config_status == SPR_SENDDATA_STOP) {
+            if (start_status == SPR_SENDDATA_STOP) {
                     /* stop thread senddata */
                     msg_t msg;
                     msg.content.value = 0;
@@ -331,7 +339,7 @@ static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
                         puts("ERROR: invalid PID; sendata thread not started");
                     }
             }
-            else if (config_status == SPR_SENDDATA_START) {
+            else if (start_status == SPR_SENDDATA_START) {
                     /* start thread send_data */
                     puts("starting senddata thread");
                     senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
