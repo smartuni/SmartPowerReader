@@ -198,9 +198,25 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
           memcpy(payload, (char *)pdu->payload, pdu->payload_len);
           //interval = (uint8_t)strtoul(payload, NULL, 10);
 
-          printf("Payload: %s\n", payload);
+          if (pdu->payload_len) {
+              if (pdu->content_type == COAP_FORMAT_TEXT
+                      || pdu->content_type == COAP_FORMAT_LINK
+                      || coap_get_code_class(pdu) == COAP_CLASS_CLIENT_FAILURE
+                      || coap_get_code_class(pdu) == COAP_CLASS_SERVER_FAILURE) {
+                  /* Expecting diagnostic payload in failure cases */
+                  printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
+                                                                (char *)pdu->payload);
+              }
+              else {
+                  printf(", %u bytes\n", pdu->payload_len);
+                  od_hex_dump(pdu->payload, pdu->payload_len, OD_WIDTH_DEFAULT);
+              }
+          }
+          else {
+              printf(", empty payload\n");
+          }
 
-          if (pdu->payload_len <= 15) {
+          if (pdu->payload_len <= 128) {
               return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
           }
           else {
