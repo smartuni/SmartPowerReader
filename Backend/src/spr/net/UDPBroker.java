@@ -78,7 +78,11 @@ public class UDPBroker<T> extends BaseBroker<T>
 		Message<T> msg = Message.load(p.payload);
 		UniqueAddress from = new UniqueAddress(msg.getSender().getID(), p.source);
 		
-		mCallback.accept(new Message<>(from, msg.getRecipient(), msg.getContent()));
+		msg = new Message<>(from, msg.getRecipient(), msg.getContent());
+		
+		LOG.log("%s", msg.toString());
+		
+		mCallback.accept(msg);
 	}
 
 	@Override

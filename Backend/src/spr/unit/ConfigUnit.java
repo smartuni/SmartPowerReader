@@ -83,7 +83,7 @@ public class ConfigUnit extends BaseUnit
 			e = new Configuration.Entry(ip, e.name, e.period, location);
 		}
 		
-		mConfig.put(e);
+		updateConfig(e);
 	}
 	
 	private void handleConfigure(Message<Task> p)
@@ -127,21 +127,7 @@ public class ConfigUnit extends BaseUnit
 				getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 			}
 			
-			mConfig.put(e);
-			
-			File f = mGen.produce();
-			
-			try(BufferedWriter out = new BufferedWriter(new FileWriter(f)))
-			{
-				out.write(mConfig.save().toString(new PrettyPrinter()));
-			}
-			catch(IOException ex)
-			{
-				LOG.log(Severity.FATAL, "Failed to write config file: %s", ex.getMessage());
-			}
-			
-			mLast.delete();
-			mLast = f;
+			updateConfig(e);
 		}
 	}
 	
@@ -150,6 +136,25 @@ public class ConfigUnit extends BaseUnit
 		JsonValue json = mConfig.stream().map(Configuration.Entry::save).collect(JsonCollectors.ofArray());
 		
 		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.Configuration.DELIVER, json));
+	}
+	
+	private void updateConfig(Configuration.Entry e)
+	{
+		mConfig.put(e);
+		
+		File f = mGen.produce();
+		
+		try(BufferedWriter out = new BufferedWriter(new FileWriter(f)))
+		{
+			out.write(mConfig.save().toString(new PrettyPrinter()));
+		}
+		catch(IOException ex)
+		{
+			LOG.log(Severity.FATAL, "Failed to write config file: %s", ex.getMessage());
+		}
+		
+		mLast.delete();
+		mLast = f;
 	}
 	
 	private static final int PORT = 5683;
