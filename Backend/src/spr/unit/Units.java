@@ -1,6 +1,10 @@
 package spr.unit;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import spr.net.LocalAddress;
+import spr.net.common.Address;
 
 public final class Units
 {
@@ -13,15 +17,29 @@ public final class Units
 		public static final String CONNECTION = "connection";
 		public static final String FRONTEND = "front-end";
 		public static final String COAP = "coap";
+		public static final String CONFIG = "configuration";
 		
 		private IDs( ) { }
 	}
 	
-	public static final LocalAddress SYSTEM = new LocalAddress(IDs.SYSTEM);
-	public static final LocalAddress TIMER = new LocalAddress(IDs.TIMER);
-	public static final LocalAddress DATABASE = new LocalAddress(IDs.DATABASE);
-	public static final LocalAddress FRONTEND = new LocalAddress(IDs.FRONTEND);
-	public static final LocalAddress COAP = new LocalAddress(IDs.COAP);
+	private static final Map<String, Address> sAddresses = new HashMap<>();
+	
+	public static Address get(String id)
+	{
+		Address a = sAddresses.get(id);
+		
+		if(a == null)
+		{
+			sAddresses.put(id, a = new LocalAddress(id));
+		}
+		
+		return a;
+	}
+	
+	public static void put(Address a)
+	{
+		sAddresses.put(a.getID(), a);
+	}
 	
 	private Units( ) { }
 }

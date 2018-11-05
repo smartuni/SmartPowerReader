@@ -19,6 +19,7 @@ public abstract class Resource extends CoapResource
 	}
 
 	public static final String MEASUREMENT = "measure";
+	public static final String HELLO = "new-device";
 	
 	protected Gateway<Task> getNode( ) { return mGateway; }
 	protected long newSession( ) { return mSession++; }

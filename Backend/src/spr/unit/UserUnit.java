@@ -58,7 +58,7 @@ public class UserUnit extends BaseUnit
 		
 		for(int i = 0 ; i < 100 ; ++i)
 		{
-			getNode().send(Units.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, now, value)));
+			getNode().send(Units.IDs.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, now, value)));
 			
 			value += Math.random();
 			now += 1 * 60 * 60 * 1000;
@@ -89,7 +89,7 @@ public class UserUnit extends BaseUnit
 	
 	private void runStatus( )
 	{
-		getNode().send(Units.SYSTEM, new Task(Tasks.System.Report.REQUEST, newSession()));
+		getNode().send(Units.IDs.SYSTEM, new Task(Tasks.System.Report.REQUEST, newSession()));
 	}
 	
 	private void runHelp( )

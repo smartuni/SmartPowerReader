@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import dave.json.JsonArray;
 import dave.json.JsonObject;
 import dave.json.JsonValue;
 import dave.net.server.Connection;
@@ -28,14 +29,13 @@ import spr.unit.LocalDatabaseUnit.Interval;
 public class FrontendUnit extends BaseUnit
 {
 	private final Server mTCP;
-	private final HttpFrontendProxy mProxy;
 	private final BlockingQueue<Entry> mConnected;
 	private final BlockingQueue<Packet> mRequests;
 	private final ExecutorService mAsync;
 	private final Map<Predicate<JsonValue>, Consumer<Packet>> mCallbacks;
 	private int mNextID;
 	
-	public FrontendUnit(int port, int coap, int http, Node<Task> g) throws IOException
+	public FrontendUnit(int port, Node<Task> g) throws IOException
 	{
 		super(g);
 		
@@ -46,9 +46,12 @@ public class FrontendUnit extends BaseUnit
 		
 		mTCP = Server.createTCPServer(port, new StreamingTransceiver(), this::handleConnection);
 		
-		registerAction("query", this::actQuery);
+		registerAction("query-measurement", this::actQueryMeasurements);
+		registerAction("query-devices", this::actQueryDevices);
+		registerAction("put-device", this::actUpdateDevice);
 		
-		registerMessageHandler(Tasks.Database.DELIVER, this::handleDelivery);
+		registerMessageHandler(Tasks.Database.DELIVER, this::handleMeasurements);
+		registerMessageHandler(Tasks.Configuration.DELIVER, this::handleDevices);
 		registerMessageHandler(Tasks.Frontend.ABORT, this::handleAbort);
 	}
 	
@@ -57,18 +60,16 @@ public class FrontendUnit extends BaseUnit
 	{
 		mAsync.submit(this::run);
 		mTCP.start();
-		mProxy.start();
 	}
 	
 	@Override
 	protected void onStop( )
 	{
-		mProxy.stop();
 		mTCP.stop();
 		mAsync.shutdown();
 	}
 	
-	private void actQuery(Packet p)
+	private void actQueryMeasurements(Packet p)
 	{
 		JsonObject req = (JsonObject) p.content;
 		
@@ -79,7 +80,17 @@ public class FrontendUnit extends BaseUnit
 		
 		LOG.log("Frontend requests data from %s (%d)", id, p.id);
 		
-		getNode().send(Units.DATABASE, new Task(Tasks.Database.RETRIEVE, p.id, i));
+		getNode().send(Units.IDs.DATABASE, new Task(Tasks.Database.RETRIEVE, p.id, i));
+	}
+	
+	private void actQueryDevices(Packet p)
+	{
+		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.QUERY, p.id));
+	}
+	
+	private void actUpdateDevice(Packet p)
+	{
+		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.CONFIGURE, p.id, p.content));
 	}
 	
 	private Entry get(int id)
@@ -99,7 +110,7 @@ public class FrontendUnit extends BaseUnit
 		throw new NoSuchElementException("" + id);
 	}
 	
-	private void handleDelivery(Message<Task> p)
+	private void handleMeasurements(Message<Task> p)
 	{
 		int id = (int) p.getContent().getSession();
 		
@@ -120,6 +131,26 @@ public class FrontendUnit extends BaseUnit
 		catch(NoSuchElementException e)
 		{
 			LOG.log(Severity.ERROR, "Unknown connection %d!", id);
+		}
+	}
+	
+	private void handleDevices(Message<Task> p)
+	{
+		int id = (int) p.getContent().getSession();
+		
+		try
+		{
+			Entry e = get(id);
+			JsonValue data = p.getContent().getPayload();
+			
+			LOG.log("Frontend received device list (%d devices)", ((JsonArray) data).size());
+			
+			e.con.send(data);
+			e.con.close();
+		}
+		catch(IOException ex)
+		{
+			LOG.log(Severity.ERROR, "Failed to deliver device list: %s", ex.getMessage());
 		}
 	}
 	
@@ -200,7 +231,7 @@ public class FrontendUnit extends BaseUnit
 			{
 				LOG.log("Received invalid request (%d): %s", p.id, p.content.toString());
 				
-				getNode().send(Units.FRONTEND, new Task(Tasks.Frontend.ABORT, newSession(), p.id));
+				getNode().send(Units.IDs.FRONTEND, new Task(Tasks.Frontend.ABORT, newSession(), p.id));
 			}
 			else
 			{
