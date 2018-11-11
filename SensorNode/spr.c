@@ -205,37 +205,36 @@ static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void
                     else if (ret < 0) {
                         puts("ERROR: invalid PID; sendata thread not started");
                     }
+                }
             }
-            else if (start_status == SPR_SENDDATA_START) {
-                    /* start thread send_data */
-                    puts("starting senddata thread");
-                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
-                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
-            }
-            else {
-                /* value not valid */
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-            }
-
-            if (pdu->payload_len <= 2) {
-                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
-            }
-            else {
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-            }
+            return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
         }
     }
 
     return -1;
 }
 
-static void _register(void)
+void _register(char *base_addr)
 {
-    (void)send;
+    /* prepare packet to send */
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    coap_pkt_t pdu;
+    size_t len;
+
+    /* send POST to /new-device */
+    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_POST, BACKEND_REG);
+    /* set confirmable */
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+    /* we have no payload */
+    len = gcoap_finish(&pdu, 0, COAP_FORMAT_NONE);
+    if (!send(&buf[0], len, base_addr, BACKEND_PORT)) {
+        puts("gcoap_cli: msg send failed");
+    }
 }
 
 void spr_init(void)
 {
+    char base_addr[NANOCOAP_URI_MAX];
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
@@ -243,8 +242,8 @@ void spr_init(void)
     gcoap_register_listener(&_listener);
 
     /* Find RPI/Basisstation */
-    //...
+    // base_addr = ...
 
     /* Register Basisstation */
-    (void)_register;
+    _register(base_addr);
 }
