@@ -25,6 +25,7 @@
 #include "xtimer.h"
 #include "thread.h"
 #include "saul_reg.h"
+#include "cbor.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -57,6 +58,9 @@
 #define RES ADC_RES_12BIT /*< Use 'ADC_RES_10BIT' for arduino's. */
 
 extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
+extern void indent(int nestingLevel);
+extern void dumpbytes(const uint8_t *buf, size_t len);
+extern bool dumprecursive(CborValue *it, int nestingLevel);
 
 static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
@@ -232,9 +236,37 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             /* get payload from pdu */
             memcpy(received, (const void *)pdu->payload, pdu->payload_len);
 
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+            /* parse payload to CborValue it*/
+            CborParser parser;
+            CborValue it;
+            CborError err = cbor_parser_init(received, CONFIG_PAYLOAD_LEN, 0, &parser, &it);
+            if (!err)
+                err = dumprecursive(&it, 0);
 
+            if (err) {
+                fprintf(stderr, "CBOR parsing failure at offset %d: %s\n",
+                        it.ptr - received, cbor_error_string(err));
+                return 1;
+            }
 
+            // TODO: check if cbor (map) valid
+            uint64_t tmp;
+            CborValue interval_cbor;
+            /* find interval pair in map */
+            cbor_value_map_find_value(&it, "interval", &interval_cbor);
+            /* get value of interval */
+            cbor_value_get_uint64(&interval_cbor, &tmp);
+            /* downcast to uint32_t */
+            cfg.interval = (uint32_t) tmp;
+
+            if (cfg.interval != 0) {
+                /* thread not started yet */
+                if (senddata_pid == 0) {
+                    /* start thread send_data */
+                    puts("starting senddata thread");
+                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
+                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
+                    /* send interval */
                     msg_t msg;
                     msg.content.value = cfg.interval;
                     int ret = msg_try_send(&msg, senddata_pid);
