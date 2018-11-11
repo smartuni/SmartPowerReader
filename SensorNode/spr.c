@@ -67,6 +67,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 /* test/debug */
 static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
+static char base_addr[NANOCOAP_URI_MAX];
 static uint32_t interval = SPR_INTERVAL;
 
 static kernel_pid_t senddata_pid;
@@ -155,7 +156,7 @@ static void *send_data(void *arg)
 
         /* send the packet */
         puts("Sending measurent to pi");
-        if (!send(&buf[0], len, "fd00:1:2:3:a02d:51f7:cdf4:a686", "5683")) {  // FIXME: change address
+        if (!send(&buf[0], len, base_addr, BACKEND_PORT)) {  // FIXME: change address
                 puts("gcoap_cli: msg send failed");
         }
 
@@ -317,7 +318,6 @@ void _register(char *base_addr)
 
 void spr_init(void)
 {
-    char base_addr[NANOCOAP_URI_MAX];
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
@@ -325,7 +325,7 @@ void spr_init(void)
     gcoap_register_listener(&_listener);
 
     /* Find RPI/Basisstation */
-    // base_addr = ...
+    strncpy(base_addr, "fd00:1:2:3:a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
 
     /* Register Basisstation */
     _register(base_addr);
