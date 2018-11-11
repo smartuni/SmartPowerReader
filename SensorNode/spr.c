@@ -43,7 +43,14 @@
 #define SPR_SENDDATA_STOP           (0)
 #define SPR_SENDDATA_START           (1)
 
+#define CONFIG_PAYLOAD_LEN      (128)
+
 #define COAP_METHOD_PUT         (3)
+
+#define CON_THRESH      (300)
+
+#define BACKEND_REG     "/new-device"
+#define BACKEND_PORT    "9900"
 
 /* ADC pin parameters. */
 #define LINE (0)
@@ -68,6 +75,12 @@ static const coap_resource_t _resources[] = {
     { "/value", COAP_PUT, _value_handler, NULL },
 };
 
+struct spr_config {
+    uint32_t interval;  /* Interval for measuring */
+};
+
+static struct spr_config cfg = { 0 };
+
 static gcoap_listener_t _listener = {
     (coap_resource_t *)&_resources[0],
     sizeof(_resources) / sizeof(_resources[0]),
@@ -80,7 +93,7 @@ static void *send_data(void *arg)
     (void)interval;
 
     msg_t msg;
-    msg.content.value = 1;
+    msg.content.value = 0;
 
     msg_init_queue(senddata_queue, SENDDATA_QUEUE_SIZE);
 
@@ -104,10 +117,18 @@ static void *send_data(void *arg)
     coap_pkt_t pdu;
     size_t len;
 
-    /* send data repeatedly */
-    int continue_loop = 1;
-    while (continue_loop) {
-        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, "/value");       // change server resource '/value' here
+    /* send data repeatedly with default interval*/
+    uint32_t interval;
+    if (msg_try_receive(&msg) > 0) {
+        interval = msg.content.value;
+    }
+    else {
+        interval = SPR_INTERVAL;        /* use default interval value */
+    }
+
+    /* stop send if interval 0 */
+    while (interval) {
+        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, "/measure");       // change server resource '/value' here
 
         /* measure current */
         ct_measure_current(&ct_param, &ct_i_data);
@@ -117,8 +138,13 @@ static void *send_data(void *arg)
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
-        /* explicitly set packet to NON-confirmable */
-        coap_hdr_set_type(pdu.hdr, COAP_TYPE_NON);
+        /* set packet CONFIRMABLE if interval >= 15 minutes */
+        if (interval >= CON_THRESH) {
+            coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+        }
+        else {
+            coap_hdr_set_type(pdu.hdr, COAP_TYPE_NON);
+        }
 
         /* finish the packet */
         len = gcoap_finish(&pdu, sizeof (apparent), COAP_FORMAT_TEXT);
@@ -130,8 +156,10 @@ static void *send_data(void *arg)
         }
 
         msg_try_receive(&msg);
-        continue_loop = msg.content.value;
+        interval = msg.content.value;
     }
+    /* reset pid to 0 if thread stopped */
+    senddata_pid = 0;
 
     return NULL;
 }
@@ -153,7 +181,17 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
           memcpy(payload, (char *)pdu->payload, pdu->payload_len);
           //interval = (uint8_t)strtoul(payload, NULL, 10);
 
-          printf("Payload: %s\n", payload);
+            if (pdu->content_type == COAP_FORMAT_TEXT
+                    || pdu->content_type == COAP_FORMAT_LINK
+                    || coap_get_code_class(pdu) == COAP_CLASS_CLIENT_FAILURE
+                    || coap_get_code_class(pdu) == COAP_CLASS_SERVER_FAILURE) {
+                /* Expecting diagnostic payload in failure cases */
+                printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
+                                                              (char *)pdu->payload);
+            }
+            else {
+                dumpbytes(pdu->payload, pdu->payload_len);
+            }
 
           if (pdu->payload_len <= 15) {
               return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
@@ -166,7 +204,7 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
   return -1;
 }
 
-static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
+static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void)ctx;
 
@@ -176,28 +214,41 @@ static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void
         case COAP_GET:
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-            /* write the response buffer with the request count value */
-            size_t payload_len = fmt_u16_dec((char *)pdu->payload, interval);
+            // TODO: change to cbor
+            size_t payload_len = fmt_u16_dec((char *)pdu->payload, cfg.interval);
 
             return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 
         case COAP_PUT: {
+            /* setup buffer to receive payload */
+            uint8_t received[CONFIG_PAYLOAD_LEN];
+            memset(received, 0, CONFIG_PAYLOAD_LEN);
 
+            if (pdu->payload_len > CONFIG_PAYLOAD_LEN) {
+                puts("error: payload overflow");
+                return -1;
+            }
 
+            /* get payload from pdu */
+            memcpy(received, (const void *)pdu->payload, pdu->payload_len);
 
             return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
 
 
                     msg_t msg;
+                    msg.content.value = cfg.interval;
+                    int ret = msg_try_send(&msg, senddata_pid);
                     if (ret == 0) {
                         puts("Receiver queue full");
                     }
                     else if (ret < 0) {
-                        puts("ERROR: invalid PID");
+                        puts("ERROR: invalid PID; sendata thread not started");
                     }
+                }
+                else {
+                    /* update interval */
                     msg_t msg;
-                    msg.content.value = 0;
-                    puts("stopping thread senddata");
+                    msg.content.value = cfg.interval;
                     int ret = msg_try_send(&msg, senddata_pid);
                     if (ret == 0) {
                         puts("Receiver queue full");
