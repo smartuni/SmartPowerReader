@@ -69,7 +69,7 @@ bool dumprecursive(CborValue *it, int nestingLevel)
         case CborIntegerType: {
             int64_t val;
             cbor_value_get_int64(it, &val);     // can't fail
-            printf("%lld\n", (long long)val);
+            printf("%d\n", (int)val);
             break;
         }
 

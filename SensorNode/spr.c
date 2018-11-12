@@ -109,6 +109,7 @@ static void *send_data(void *arg)
 
     /* stop send if interval 0 */
     while (cfg.interval) {
+        puts("sending data to pi");
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
 
         /* measure current */
@@ -183,6 +184,10 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
     switch (method_flag) {
         case COAP_GET:
+            if (pdu->content_type == COAP_FORMAT_CBOR) {
+                puts("config handler: got cbor!");
+                dumpbytes(pdu->payload, pdu->payload_len);
+            }
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
             CborEncoder encoder;
@@ -211,23 +216,33 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             return gcoap_finish(pdu, sizeof(encoder_buf), COAP_FORMAT_CBOR);
 
         case COAP_PUT: {
+            puts("got put at config handler");
+            if (pdu->content_type == COAP_FORMAT_CBOR) {
+                dumpbytes(pdu->payload, pdu->payload_len);
+            }
             /* parse payload to CborValue it*/
             CborParser parser;
             CborValue iterator;
             CborError err = cbor_parser_init(pdu->payload, pdu->payload_len, 0, &parser, &iterator);
-            if (!err)
-                err = dumprecursive(&iterator, 0);
+            /* check if iterator is a map */
+            if (!cbor_value_is_map(&iterator)) {
+                puts("not map");
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+            if (!err) {
+                CborValue copy;
+                memcpy(&copy, &iterator, sizeof(iterator));
+                puts("dumping payload:");
+                err = dumprecursive(&copy, 0);
+            }
             else
                 printf("error: cbor %d\n", err);
 
-            /* check if iterator is a map */
-            if (!cbor_value_is_map(&iterator)) {
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-            }
             /* find interval pair in map */
             CborValue interval;
-            cbor_value_map_find_value(&iterator, "interval", &interval);
+            cbor_value_map_find_value(&iterator, "period", &interval);
             if (cbor_value_get_type(&interval) != CborIntegerType) {
+                puts("not integer");
                 return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
             /* get value of interval */
@@ -235,6 +250,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             printf("Got new interval: %lu\n", cfg.interval);
 
             if (cfg.interval != 0) {
+                puts("starting senddata thread");
                 /* thread not started yet */
                 if (senddata_pid == 0) {
                     /* start thread send_data */
@@ -299,8 +315,9 @@ void spr_init(void)
     gcoap_register_listener(&_listener);
 
     /* Find RPI/Basisstation */
-    strncpy(base_addr, "fd00:1:2:3:a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
+    strncpy(base_addr, "fe80::a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
 
+    xtimer_sleep(2);
     /* Register Basisstation */
     _register(base_addr);
 }
