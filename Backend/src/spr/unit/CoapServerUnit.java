@@ -132,7 +132,7 @@ public class CoapServerUnit extends BaseUnit
 		@Override
 		public String toString( )
 		{
-			String p = Stream.of(payload).map(v -> String.format("%02X", v)).collect(Collectors.joining(" "));
+			String p = IntStream.range(0, payload.length).mapToObj(i -> String.format("%02X", payload[i])).collect(Collectors.joining(" "));
 			
 			return getURI() + "[" + action + " (" + payload.length + "B): " + p + "]";
 		}
