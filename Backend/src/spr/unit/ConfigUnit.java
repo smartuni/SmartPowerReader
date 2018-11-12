@@ -137,10 +137,8 @@ public class ConfigUnit extends BaseUnit
 						CborEncoder cbor = new CborEncoder(payload);
 						
 						cbor.writeMapStart(1);
-						cbor.writeTextStringStart();
 						cbor.writeTextString("period");
 						cbor.writeInt32(period);
-						cbor.writeBreak();
 					}
 					catch(IOException ex)
 					{
