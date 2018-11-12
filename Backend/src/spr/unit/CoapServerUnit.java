@@ -59,11 +59,11 @@ public class CoapServerUnit extends BaseUnit
 				break;
 
 			case POST:
-				c.post(msg.payload, 0);
+				c.post(msg.payload, msg.type);
 				break;
 
 			case PUT:
-				c.put(msg.payload, 0);
+				c.put(msg.payload, msg.type);
 				break;
 
 			case DELETE:
@@ -81,14 +81,16 @@ public class CoapServerUnit extends BaseUnit
 		public final String path;
 		public final byte[] payload;
 		public final Directive action;
+		public final int type;
 		
-		public Packet(String host, int port, String path, byte[] payload, Directive action)
+		public Packet(String host, int port, String path, byte[] payload, Directive action, int type)
 		{
 			this.host = host;
 			this.port = port;
 			this.path = path;
 			this.payload = payload;
 			this.action = action;
+			this.type = type;
 		}
 		
 		public String getURI( ) { return "coap://" + (host.contains(":") ? ("[" + host + "]") : host) + ":" + port + "/" + path; }
@@ -104,6 +106,7 @@ public class CoapServerUnit extends BaseUnit
 			json.putString("path", path);
 			json.put("payload", IntStream.range(0, payload.length).mapToObj(i -> new JsonNumber(payload[i])).collect(JsonCollectors.ofArray()));
 			json.putString("action", action.toString());
+			json.putInt("type", type);
 			
 			return json;
 		}
@@ -117,6 +120,7 @@ public class CoapServerUnit extends BaseUnit
 			int port = o.getInt("port");
 			String path = o.getString("path");
 			Directive action = Directive.valueOf(o.getString("action"));
+			int type = o.getInt("type");
 			
 			JsonArray p = o.getArray("payload");
 			ByteBuffer bb = ByteBuffer.allocate(p.size());
@@ -125,7 +129,7 @@ public class CoapServerUnit extends BaseUnit
 			
 			byte[] payload = bb.array();
 			
-			return new Packet(host, port, path, payload, action);
+			return new Packet(host, port, path, payload, action, type);
 		}
 		
 		@Override

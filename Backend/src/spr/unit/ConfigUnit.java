@@ -27,6 +27,7 @@ import spr.net.UniqueAddress;
 import spr.net.common.Address;
 import spr.net.common.Message;
 import spr.net.common.Node;
+import spr.resource.Resource;
 import spr.task.Task;
 import spr.task.Tasks;
 import spr.unit.CoapServerUnit.Directive;
@@ -147,7 +148,7 @@ public class ConfigUnit extends BaseUnit
 					}
 					
 					
-					CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT);
+					CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT, Resource.Format.CBOR);
 					
 					getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 				}
