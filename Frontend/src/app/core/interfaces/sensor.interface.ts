@@ -3,8 +3,7 @@ export interface Sensor {
   id: string;
   name: string;
   folderName?: string;
-  frequency?: any;
-  frequencyUnit?: string;
-  series: any;
+  period?: number;
+  series?: any;
 }
 
