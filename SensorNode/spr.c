@@ -83,9 +83,6 @@ static void *send_data(void *arg)
     (void)arg;
 
     msg_t msg;
-    msg.content.value = 0;
-
-    msg_t msg;
     msg.content.value = 1;
 
     msg_init_queue(senddata_queue, SENDDATA_QUEUE_SIZE);
