@@ -49,14 +49,10 @@ static const shell_command_t shell_commands[] = {
 static inline void _init_lcd(lcd1602a_dev_t * lcd)
 {
     int PORT_A = 0;
-    //int PORT_B = 1;
+    int PORT_B = 1;
     int PORT_C = 2;
-    //int PORT_D = 3;
-    int PORT_E = 4;
 
-    puts("Main: _init_lcd..\n");
-
-    /*
+    /* nucleo */
     lcd->register_select_pin = GPIO_PIN(PORT_A, 9);
     lcd->read_write_pin = GPIO_PIN(PORT_A, 8);
     lcd->enable_pin = GPIO_PIN(PORT_C, 7);
@@ -72,7 +68,10 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     lcd->dotsize = dotsize;
     lcd->lines = 2;
     lcd->collumns = 16;
-    */
+
+    /* Phywave board */
+    /*
+    int PORT_E = 4;
     lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
     lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
     lcd->enable_pin = GPIO_PIN(PORT_A, 2);
@@ -88,17 +87,16 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     lcd->dotsize = dotsize;
     lcd->lines = 2;
     lcd->collumns = 16;
-
+    */
 
     lcd1602a_init(lcd);
-    //lcd1602a_autoscroll_on(lcd);
-
-    puts("Main: _init_lcd [ done ]\n");
 }
 
 static inline void _ip_to_lcd(void)
 {
-    puts("Main: _ip_to_lcd print IPv6..\n");
+    /*
+     * NOTE: MAKE SURE TO USE A BOARD WITH NETWORK SUPPORT (or it won't work).
+     */
 
     /* get interfaces and print their addresses */
     gnrc_netif_t *netif = NULL;
@@ -116,12 +114,18 @@ static inline void _ip_to_lcd(void)
 
             ipv6_addr_to_str(ipv6_addr, &ipv6_addrs[i], IPV6_ADDR_MAX_STR_LEN);
             printf("My address is %s\n", ipv6_addr);
-            lcd1602a_write_buf(&lcd, ipv6_addr);
+            for (int k = 0; k < 16; k++) {
+              lcd1602a_write(&lcd, ipv6_addr[k]);
+            }
             lcd1602a_cursor_set(&lcd, 0, 1);
-            lcd1602a_write_buf(&lcd, "helloworld");
+            for (int k = 16; k < 32; k++) {
+              lcd1602a_write(&lcd, ipv6_addr[k]);
+            }
+            //lcd1602a_write_buf(&lcd, ipv6_addr);
+            //lcd1602a_cursor_set(&lcd, 0, 1);
+            //lcd1602a_write_buf(&lcd, "helloworld");
         }
     }
-    puts("Main: _ip_to_lcd [ done ]\n");
 }
 
 int main(void)
@@ -129,7 +133,9 @@ int main(void)
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     spr_init();
+
     puts("SmartPowerReader sensor node");
+    
     _init_lcd(&lcd);
     _ip_to_lcd();
 
