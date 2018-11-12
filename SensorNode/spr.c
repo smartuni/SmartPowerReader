@@ -107,18 +107,9 @@ static void *send_data(void *arg)
     coap_pkt_t pdu;
     size_t len;
 
-    /* send data repeatedly with default interval*/
-    uint32_t interval;
-    if (msg_try_receive(&msg) > 0) {
-        interval = msg.content.value;
-    }
-    else {
-        interval = SPR_INTERVAL;        /* use default interval value */
-    }
-
     /* stop send if interval 0 */
-    while (interval) {
-        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, "/measure");       // change server resource '/value' here
+    while (cfg.interval) {
+        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
 
         /* measure current */
         ct_measure_current(&ct_param, &ct_i_data);
@@ -129,7 +120,7 @@ static void *send_data(void *arg)
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
         /* set packet CONFIRMABLE if interval >= 15 minutes */
-        if (interval >= CON_THRESH) {
+        if (cfg.interval >= CON_THRESH) {
             coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
         }
         else {
@@ -146,7 +137,7 @@ static void *send_data(void *arg)
         }
 
         msg_try_receive(&msg);
-        interval = msg.content.value;
+        cfg.interval = msg.content.value;
     }
     /* reset pid to 0 if thread stopped */
     senddata_pid = 0;
