@@ -9,6 +9,8 @@
 */node_modules
 */release/*.jar
 .DS_Store
-Backend/*.bin
+Backend/**/*.bin
+Backend/libs/californium/
+Backend/libs/jacob/
 
 */Californium.properties
