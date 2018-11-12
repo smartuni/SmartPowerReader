@@ -3,7 +3,6 @@ package spr.unit;
 import java.nio.ByteBuffer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
@@ -92,7 +91,7 @@ public class CoapServerUnit extends BaseUnit
 			this.action = action;
 		}
 		
-		public String getURI( ) { return "coap://[" + host + "]:" + port + "/" + path; }
+		public String getURI( ) { return "coap://" + (host.contains(":") ? ("[" + host + "]") : host) + ":" + port + "/" + path; }
 		
 		@Override
 		@Saver
