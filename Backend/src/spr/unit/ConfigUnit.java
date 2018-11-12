@@ -139,7 +139,6 @@ public class ConfigUnit extends BaseUnit
 						cbor.writeMapStart(1);
 						cbor.writeTextString("period");
 						cbor.writeInt32(period);
-						cbor.writeBreak();
 					}
 					catch(IOException ex)
 					{
