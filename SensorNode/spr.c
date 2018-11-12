@@ -155,13 +155,7 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
 
   switch (method_flag) {
       case COAP_PUT: {
-          printf("coap put");
-          /* Limit interval value only to 5 digit (e.g. 15000)
-           * Reserve space for 5 digit interval value + \0 */
-          char payload[16] = { 0 };
-          memcpy(payload, (char *)pdu->payload, pdu->payload_len);
-          //interval = (uint8_t)strtoul(payload, NULL, 10);
-
+          printf("coap put\n");
             if (pdu->content_type == COAP_FORMAT_TEXT
                     || pdu->content_type == COAP_FORMAT_LINK
                     || coap_get_code_class(pdu) == COAP_CLASS_CLIENT_FAILURE
@@ -170,16 +164,12 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
                 printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
                                                               (char *)pdu->payload);
             }
-            else {
+            else if (pdu->content_type == COAP_FORMAT_CBOR) {
+                puts("value handler: got cbor!");
                 dumpbytes(pdu->payload, pdu->payload_len);
             }
 
-          if (pdu->payload_len <= 15) {
-              return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
-          }
-          else {
-              return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-          }
+            return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
       }
   }
   return -1;
