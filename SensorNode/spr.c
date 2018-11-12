@@ -30,28 +30,14 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-#define SPR_INTERVAL (15)       /* Default 15 seconds*/
-
-#define SPR_NOT_CONFIGURED      (0)
-#define SPR_CONFIGURING         (1)
-#define SPR_CONFIGURED          (2)
-
-#define BLINK_QUEUE_SIZE        (8)
 #define SENDDATA_QUEUE_SIZE     (8)
-
-#define LED_NUM         (0)
-
-#define SPR_SENDDATA_STOP           (0)
-#define SPR_SENDDATA_START           (1)
-
-#define CONFIG_PAYLOAD_LEN      (128)
-
-#define COAP_METHOD_PUT         (3)
 
 #define CON_THRESH      (300)
 
-#define BACKEND_REG     "/new-device"
-#define BACKEND_PORT    "9900"
+#define BACKEND_REG     "/new-device"           /**< Backend resource to register new devices */
+#define BACKEND_SEND    "/measure"              /**< Backend resource to accept measurements */
+#define BACKEND_PORT    "9900"                  /**< Port the backend listens to */
+#define SPR_INTERVAL (15)                       /* Default 15 seconds*/
 
 /* ADC pin parameters. */
 #define LINE (0)
@@ -63,13 +49,12 @@ extern void dumpbytes(const uint8_t *buf, size_t len);
 extern bool dumprecursive(CborValue *it, int nestingLevel);
 
 static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-
 /* test/debug */
 static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
 static char base_addr[NANOCOAP_URI_MAX];
-static uint32_t interval = SPR_INTERVAL;
 
+/* variables for senddata thread */
 static kernel_pid_t senddata_pid;
 static char senddata_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
 static msg_t senddata_queue[SENDDATA_QUEUE_SIZE];
@@ -80,22 +65,22 @@ static const coap_resource_t _resources[] = {
     { "/value", COAP_PUT, _value_handler, NULL },
 };
 
-struct spr_config {
-    uint32_t interval;  /* Interval for measuring */
-};
-
-static struct spr_config cfg = { 0 };
-
 static gcoap_listener_t _listener = {
     (coap_resource_t *)&_resources[0],
     sizeof(_resources) / sizeof(_resources[0]),
     NULL
 };
 
+/* configs send to /config */
+struct spr_config {
+    uint32_t interval;  /* Interval for measuring */
+};
+
+static struct spr_config cfg = { 0 };
+
 static void *send_data(void *arg)
 {
     (void)arg;
-    (void)interval;
 
     msg_t msg;
     msg.content.value = 0;
