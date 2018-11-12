@@ -1,7 +1,9 @@
 package spr.unit;
 
 import java.nio.ByteBuffer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
@@ -130,7 +132,9 @@ public class CoapServerUnit extends BaseUnit
 		@Override
 		public String toString( )
 		{
-			return getURI() + "[" + action + " " + payload.length + "B]";
+			String p = Stream.of(payload).map(v -> String.format("%02X", v)).collect(Collectors.joining(" "));
+			
+			return getURI() + "[" + action + " (" + payload.length + "B): " + p + "]";
 		}
 	}
 	

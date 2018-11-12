@@ -1,26 +1,25 @@
 package spr.unit;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 
 import dave.json.JsonConstant;
 import dave.json.JsonObject;
 import dave.json.JsonString;
 import dave.json.JsonValue;
-import dave.json.JsonBuilder;
 import dave.json.JsonCollectors;
 import dave.json.PrettyPrinter;
 import dave.json.SevereIOException;
 import dave.json.StreamBuffer;
 import dave.util.Producer;
-import dave.util.Utils;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
+import jacob.CborEncoder;
 import spr.common.Configuration;
 import spr.net.LocalAddress;
 import spr.net.UniqueAddress;
@@ -123,11 +122,24 @@ public class ConfigUnit extends BaseUnit
 					coap = new UniqueAddress(Units.IDs.COAP, e.location);
 				}
 				
-				byte[] payload = new byte[4];
-				ByteBuffer bb = ByteBuffer.wrap(payload);
-				bb.putInt((int) period);
-//				byte[] payload = (new JsonBuilder()).putLong("period", period).toJSON().toString().getBytes(Utils.CHARSET);
-				CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload, Directive.PUT);
+				ByteArrayOutputStream payload = new ByteArrayOutputStream();
+				try
+				{
+					CborEncoder cbor = new CborEncoder(payload);
+					
+					cbor.writeMapStart(1);
+					cbor.writeTextStringStart();
+					cbor.writeTextString("period");
+					cbor.writeInt32(period);
+					cbor.writeBreak();
+				}
+				catch(IOException ex)
+				{
+					throw new SevereIOException(ex);
+				}
+				
+				
+				CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT);
 				
 				getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 			}

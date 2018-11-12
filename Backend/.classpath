@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/utils.jar"/>
 	<classpathentry kind="lib" path="libs/cf-con.jar"/>
 	<classpathentry kind="lib" path="libs/cf-core.jar"/>
+	<classpathentry kind="lib" path="libs/jscob.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
