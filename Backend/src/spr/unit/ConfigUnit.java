@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.stream.Collectors;
 
 import dave.json.JsonConstant;
 import dave.json.JsonObject;
@@ -55,7 +56,7 @@ public class ConfigUnit extends BaseUnit
 				
 				mConfig.load(JsonValue.read(new StreamBuffer(new FileInputStream(orig))));
 				
-				LOG.log("Loaded %d device entries.", mConfig.stream().count());
+				LOG.log("Loaded %d device entries: %s", mConfig.stream().count(), mConfig.stream().map(e -> e.toString()).collect(Collectors.joining(", ")));
 			}
 			catch(IOException | SevereIOException | IllegalArgumentException | IllegalStateException e)
 			{
@@ -100,51 +101,59 @@ public class ConfigUnit extends BaseUnit
 		}
 		else
 		{
-			Configuration.Entry e = mConfig.get(json.getString("id"));
+			String id = json.getString("id");
+			Configuration.Entry e = mConfig.get(id);
 			
-			if(json.contains("name"))
+			if(e == null)
 			{
-				JsonValue name = json.get("name");
-				
-				e = new Configuration.Entry(e.ip, (name == JsonConstant.NULL ? null : ((JsonString) name).get()), e.period, e.location);
+				LOG.log(Severity.ERROR, "No known device '%s'!", id);
 			}
-			
-			if(json.contains("period"))
+			else
 			{
-				long period = json.getLong("period");
-				
-				e = new Configuration.Entry(e.ip, e.name, period, e.location);
-				
-				Address coap = new LocalAddress(Units.IDs.COAP);
-				
-				if(e.location != null)
+				if(json.contains("name"))
 				{
-					coap = new UniqueAddress(Units.IDs.COAP, e.location);
-				}
-				
-				ByteArrayOutputStream payload = new ByteArrayOutputStream();
-				try
-				{
-					CborEncoder cbor = new CborEncoder(payload);
+					JsonValue name = json.get("name");
 					
-					cbor.writeMapStart(1);
-					cbor.writeTextStringStart();
-					cbor.writeTextString("period");
-					cbor.writeInt32(period);
-					cbor.writeBreak();
+					e = new Configuration.Entry(e.ip, (name == JsonConstant.NULL ? null : ((JsonString) name).get()), e.period, e.location);
 				}
-				catch(IOException ex)
+				
+				if(json.contains("period"))
 				{
-					throw new SevereIOException(ex);
+					long period = json.getLong("period");
+					
+					e = new Configuration.Entry(e.ip, e.name, period, e.location);
+					
+					Address coap = new LocalAddress(Units.IDs.COAP);
+					
+					if(e.location != null)
+					{
+						coap = new UniqueAddress(Units.IDs.COAP, e.location);
+					}
+					
+					ByteArrayOutputStream payload = new ByteArrayOutputStream();
+					try
+					{
+						CborEncoder cbor = new CborEncoder(payload);
+						
+						cbor.writeMapStart(1);
+						cbor.writeTextStringStart();
+						cbor.writeTextString("period");
+						cbor.writeInt32(period);
+						cbor.writeBreak();
+					}
+					catch(IOException ex)
+					{
+						throw new SevereIOException(ex);
+					}
+					
+					
+					CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT);
+					
+					getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 				}
 				
-				
-				CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT);
-				
-				getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
+				updateConfig(e);
 			}
-			
-			updateConfig(e);
 		}
 	}
 	
