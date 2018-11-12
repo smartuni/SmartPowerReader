@@ -57,6 +57,10 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
             printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
                                                           (char *)pdu->payload);
         }
+        else if (pdu->content_type == COAP_FORMAT_CBOR) {
+            puts("Got CBOR Response!");
+            dumpbytes(pdu->payload, pdu->payload_len);
+        }
         else {
             printf(", %u bytes\n", pdu->payload_len);
             od_hex_dump(pdu->payload, pdu->payload_len, OD_WIDTH_DEFAULT);
