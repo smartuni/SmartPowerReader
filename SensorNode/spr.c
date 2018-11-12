@@ -185,46 +185,54 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
         case COAP_GET:
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-            // TODO: change to cbor
-            size_t payload_len = fmt_u16_dec((char *)pdu->payload, cfg.interval);
+            CborEncoder encoder;
+            uint8_t encoder_buf[128];
+            cbor_encoder_init(&encoder, encoder_buf, sizeof(encoder_buf), 0);
 
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+            CborEncoder map;
+            CborError err = cbor_encoder_create_map(&encoder, &map, 1);   /* 1 == number of element in cfg struct */
+            if (err != 0)
+                printf("error: create map %d\n", err);
+
+            err = cbor_encode_text_stringz(&map, "interval");
+            if (err != 0)
+                printf("error: encode string %d\n", err);
+            err = cbor_encode_uint(&map , (uint64_t)cfg.interval);
+            if (err != 0)
+                printf("error: encode interval %d\n", err);
+
+            err = cbor_encoder_close_container(&encoder, &map);
+            if (err != 0)
+                printf("error: close map %d\n", err);
+
+            puts("debug: sending this bytes:");
+            dumpbytes((const uint8_t *)&encoder_buf, sizeof(encoder_buf));
+
+            return gcoap_finish(pdu, sizeof(encoder_buf), COAP_FORMAT_CBOR);
 
         case COAP_PUT: {
-            /* setup buffer to receive payload */
-            uint8_t received[CONFIG_PAYLOAD_LEN];
-            memset(received, 0, CONFIG_PAYLOAD_LEN);
-
-            if (pdu->payload_len > CONFIG_PAYLOAD_LEN) {
-                puts("error: payload overflow");
-                return -1;
-            }
-
-            /* get payload from pdu */
-            memcpy(received, (const void *)pdu->payload, pdu->payload_len);
-
             /* parse payload to CborValue it*/
             CborParser parser;
-            CborValue it;
-            CborError err = cbor_parser_init(received, CONFIG_PAYLOAD_LEN, 0, &parser, &it);
+            CborValue iterator;
+            CborError err = cbor_parser_init(pdu->payload, pdu->payload_len, 0, &parser, &iterator);
             if (!err)
-                err = dumprecursive(&it, 0);
+                err = dumprecursive(&iterator, 0);
+            else
+                printf("error: cbor %d\n", err);
 
-            if (err) {
-                fprintf(stderr, "CBOR parsing failure at offset %d: %s\n",
-                        it.ptr - received, cbor_error_string(err));
-                return 1;
+            /* check if iterator is a map */
+            if (!cbor_value_is_map(&iterator)) {
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
-
-            // TODO: check if cbor (map) valid
-            uint64_t tmp;
-            CborValue interval_cbor;
             /* find interval pair in map */
-            cbor_value_map_find_value(&it, "interval", &interval_cbor);
+            CborValue interval;
+            cbor_value_map_find_value(&iterator, "interval", &interval);
+            if (cbor_value_get_type(&interval) != CborIntegerType) {
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
             /* get value of interval */
-            cbor_value_get_uint64(&interval_cbor, &tmp);
-            /* downcast to uint32_t */
-            cfg.interval = (uint32_t) tmp;
+            cbor_value_get_uint64(&interval, (uint64_t *)&cfg.interval);
+            printf("Got new interval: %lu\n", cfg.interval);
 
             if (cfg.interval != 0) {
                 /* thread not started yet */
