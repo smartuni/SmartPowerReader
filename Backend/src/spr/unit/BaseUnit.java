@@ -14,7 +14,7 @@ import spr.net.common.Message;
 import spr.task.Task;
 import spr.task.Tasks;
 
-public class BaseUnit implements Unit
+public abstract class BaseUnit implements Unit
 {
 	private final Node<Task> mNode;
 	private final Map<String, Consumer<Message<Task>>> mCallbacks;

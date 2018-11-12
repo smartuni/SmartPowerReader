@@ -5,10 +5,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.CoapServer;
 
 import dave.json.Container;
 import dave.json.JsonArray;
+import dave.json.JsonBuilder;
 import dave.json.JsonCollectors;
 import dave.json.JsonNumber;
 import dave.json.JsonObject;
@@ -16,6 +18,8 @@ import dave.json.JsonValue;
 import dave.json.Loader;
 import dave.json.Saveable;
 import dave.json.Saver;
+import dave.util.log.Logger;
+import dave.util.log.Severity;
 import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.task.Task;
@@ -24,14 +28,22 @@ import spr.task.Tasks;
 public class CoapServerUnit extends BaseUnit
 {
 	private final CoapServer mServer;
+	private int mSent;
 
 	public CoapServerUnit(CoapServer s, Node<Task> g)
 	{
 		super(g);
 		
 		mServer = s;
+		mSent = 0;
 		
 		registerMessageHandler(Tasks.Coap.SEND, this::handleSend);
+	}
+	
+	@Override
+	protected JsonValue getStatus( )
+	{
+		return (new JsonBuilder()).putInt("sent", mSent).toJSON();
 	}
 	
 	@Override
@@ -51,25 +63,37 @@ public class CoapServerUnit extends BaseUnit
 		Packet msg = p.getContent().getPayload();
 		
 		CoapClient c = new CoapClient(msg.getURI());
+		CoapResponse r = null;
+		
+		c.setTimeout(TIMEOUT);
+		c.useCONs();
 		
 		switch(msg.action)
 		{
 			case GET:
-				c.get();
+				r = c.get();
 				break;
 
 			case POST:
-				c.post(msg.payload, msg.type);
+				r = c.post(msg.payload, msg.type);
 				break;
 
 			case PUT:
-				c.put(msg.payload, msg.type);
+				r = c.put(msg.payload, msg.type);
 				break;
 
 			case DELETE:
-				c.delete();
+				r = c.delete();
 				break;
-				
+		}
+		
+		if(r.isSuccess())
+		{
+			++mSent;
+		}
+		else
+		{
+			LOG.log(Severity.ERROR, "Coap request failed: %s", r.getCode().toString());
 		}
 	}
 	
@@ -137,7 +161,7 @@ public class CoapServerUnit extends BaseUnit
 		{
 			String p = IntStream.range(0, payload.length).mapToObj(i -> String.format("%02X", payload[i])).collect(Collectors.joining(" "));
 			
-			return getURI() + "[" + action + " (" + payload.length + "B): " + p + "]";
+			return getURI() + " " + action + " (" + payload.length + "B): " + p;
 		}
 	}
 	
@@ -148,4 +172,7 @@ public class CoapServerUnit extends BaseUnit
 		PUT,
 		DELETE
 	}
+	
+	private static final int TIMEOUT = 750;
+	private static final Logger LOG = Logger.get("coap-s");
 }

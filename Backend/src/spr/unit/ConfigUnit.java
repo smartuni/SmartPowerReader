@@ -67,6 +67,21 @@ public class ConfigUnit extends BaseUnit
 		}
 	}
 	
+	@Override
+	protected JsonValue getStatus( )
+	{
+		JsonObject status = new JsonObject();
+		
+		if(mLast != null)
+		{
+			status.putString("file", mLast.getPath());
+		}
+		
+		status.putInt("entries", mConfig.stream().count());
+		
+		return status;
+	}
+	
 	private void handleNew(Message<Task> p)
 	{
 		String ip = p.getContent().getPayload();

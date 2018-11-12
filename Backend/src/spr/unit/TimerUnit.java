@@ -50,7 +50,7 @@ public class TimerUnit extends BaseUnit
 		
 		mBacklog.add(id);
 		
-		mAsync.scheduleAtFixedRate(() -> send(p.getSender(), f), f.time, f.time, TimeUnit.SECONDS);
+		mAsync.scheduleAtFixedRate(() -> send(p.getSender(), f, true), f.time, f.time, TimeUnit.SECONDS);
 	}
 	
 	private void handleScheduleOneshot(Message<Task> p)
@@ -60,7 +60,7 @@ public class TimerUnit extends BaseUnit
 		
 		mBacklog.add(id);
 		
-		mAsync.schedule(() -> send(p.getSender(), f), f.time, TimeUnit.SECONDS);
+		mAsync.schedule(() -> send(p.getSender(), f, false), f.time, TimeUnit.SECONDS);
 	}
 	
 	private void handleScheduleRemove(Message<Task> p)
@@ -68,13 +68,16 @@ public class TimerUnit extends BaseUnit
 		mBacklog.remove(p.getSender().getID() + "." + p.getContent().getPayload());
 	}
 	
-	private void send(Address to, FutureTask f)
+	private void send(Address to, FutureTask f, boolean recurring)
 	{
 		String id = to.getID() + "." + f.id;
 		
 		if(mBacklog.contains(id))
 		{
-			mBacklog.remove(id);
+			if(!recurring)
+			{
+				mBacklog.remove(id);
+			}
 			
 			getNode().send(to, f.task);
 		}
