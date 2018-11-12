@@ -2,6 +2,8 @@ package spr.util;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import dave.util.Producer;
 
@@ -22,6 +24,7 @@ public class FileVersioner implements Producer<File>
 		{
 			String[] files = f.list();
 			String newest = null;
+			List<String> old = new ArrayList<>();
 			
 			if(files != null)
 			{
@@ -31,6 +34,11 @@ public class FileVersioner implements Producer<File>
 					
 					if(newest == null || mGen.compare(files[i], newest) < 0)
 					{
+						if(newest != null)
+						{
+							old.add(newest);
+						}
+						
 						newest = files[i];
 					}
 				}
@@ -39,6 +47,8 @@ public class FileVersioner implements Producer<File>
 			if(newest != null)
 			{
 				mLast = get(newest);
+				
+				old.forEach(fn -> get(fn).delete());
 			}
 		}
 	}
