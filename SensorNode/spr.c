@@ -73,7 +73,7 @@ static gcoap_listener_t _listener = {
 
 /* configs send to /config */
 struct spr_config {
-    uint32_t interval;  /* Interval for measuring */
+    uint64_t interval;  /* Interval for measuring */
 };
 
 static struct spr_config cfg = { 0 };
@@ -108,7 +108,8 @@ static void *send_data(void *arg)
     size_t len;
 
     /* stop send if interval 0 */
-    while (cfg.interval) {
+    uint32_t sleeptime = cfg.interval;
+    while (sleeptime) {
         puts("sending data to pi");
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
 
@@ -138,7 +139,8 @@ static void *send_data(void *arg)
         }
 
         msg_try_receive(&msg);
-        cfg.interval = msg.content.value;
+        xtimer_sleep(sleeptime);
+        sleeptime = cfg.interval;
     }
     /* reset pid to 0 if thread stopped */
     senddata_pid = 0;
@@ -246,40 +248,14 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
                 return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
             /* get value of interval */
-            cbor_value_get_uint64(&interval, (uint64_t *)&cfg.interval);
-            printf("Got new interval: %lu\n", cfg.interval);
+            cbor_value_get_uint64(&interval, &cfg.interval);
+            printf("Got new interval: %llu\n", cfg.interval);
 
-            if (cfg.interval != 0) {
+            if (senddata_pid == 0) {
+                /* start thread send_data */
                 puts("starting senddata thread");
-                /* thread not started yet */
-                if (senddata_pid == 0) {
-                    /* start thread send_data */
-                    puts("starting senddata thread");
-                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
-                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
-                    /* send interval */
-                    msg_t msg;
-                    msg.content.value = cfg.interval;
-                    int ret = msg_try_send(&msg, senddata_pid);
-                    if (ret == 0) {
-                        puts("Receiver queue full");
-                    }
-                    else if (ret < 0) {
-                        puts("ERROR: invalid PID; sendata thread not started");
-                    }
-                }
-                else {
-                    /* update interval */
-                    msg_t msg;
-                    msg.content.value = cfg.interval;
-                    int ret = msg_try_send(&msg, senddata_pid);
-                    if (ret == 0) {
-                        puts("Receiver queue full");
-                    }
-                    else if (ret < 0) {
-                        puts("ERROR: invalid PID; sendata thread not started");
-                    }
-                }
+                senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
+                        THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
             }
             return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
         }

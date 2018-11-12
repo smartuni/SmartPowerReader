@@ -67,6 +67,7 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     int PORT_C = 2;
 
     /* nucleo */
+    /*
     lcd->register_select_pin = GPIO_PIN(PORT_A, 9);
     lcd->read_write_pin = GPIO_PIN(PORT_A, 8);
     lcd->enable_pin = GPIO_PIN(PORT_C, 7);
@@ -82,9 +83,10 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     lcd->dotsize = dotsize;
     lcd->lines = 2;
     lcd->collumns = 16;
+    */
 
     /* Phywave board */
-    /*
+    (void)PORT_B;
     int PORT_E = 4;
     lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
     lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
@@ -101,7 +103,6 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     lcd->dotsize = dotsize;
     lcd->lines = 2;
     lcd->collumns = 16;
-    */
 
     lcd1602a_init(lcd);
 }
