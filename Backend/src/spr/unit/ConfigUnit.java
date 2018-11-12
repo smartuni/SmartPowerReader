@@ -57,7 +57,7 @@ public class ConfigUnit extends BaseUnit
 				
 				mConfig.load(JsonValue.read(new StreamBuffer(new FileInputStream(orig))));
 				
-				LOG.log("Loaded %d device entries: %s", mConfig.stream().count(), mConfig.stream().map(e -> e.toString()).collect(Collectors.joining(", ")));
+				LOG.log("Loaded %d device entries: %s", mConfig.stream().count(), mConfig.stream().map(e -> e.ip).collect(Collectors.joining(", ")));
 			}
 			catch(IOException | SevereIOException | IllegalArgumentException | IllegalStateException e)
 			{
@@ -203,5 +203,5 @@ public class ConfigUnit extends BaseUnit
 	
 	private static final int PORT = 5683;
 	
-	private static final Logger LOG = Logger.get("measure-u");
+	private static final Logger LOG = Logger.get("db-u");
 }

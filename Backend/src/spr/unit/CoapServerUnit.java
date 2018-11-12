@@ -87,13 +87,17 @@ public class CoapServerUnit extends BaseUnit
 				break;
 		}
 		
-		if(r.isSuccess())
+		if(r == null)
 		{
-			++mSent;
+			LOG.log(Severity.ERROR, "Coap time-out!");
+		}
+		else if(!r.isSuccess())
+		{
+			LOG.log(Severity.ERROR, "Coap request failed: %s", r.getCode().toString());
 		}
 		else
 		{
-			LOG.log(Severity.ERROR, "Coap request failed: %s", r.getCode().toString());
+			++mSent;
 		}
 	}
 	
