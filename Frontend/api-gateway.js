@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express();
 const bodyParser = require('body-parser');
+const http = require('http');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(function (req, res, next) {
@@ -73,6 +75,7 @@ function dispatch(payload, cb) {
     });
 }
 
-app.listen('3000', '192.168.1.236', () => {
-    console.log("Gateway is listening on port 3000");
+http.createServer(app).listen(3000, '0.0.0.0', null, () => {
+    console.log('Gateway is listening on port 3000');
 });
+

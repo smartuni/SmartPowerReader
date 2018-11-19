@@ -3,12 +3,20 @@
     <div class="col-3">
       <select name="option" class="form-control col-10" formControlName="selectedDevice">
         <!--<option value="0">{{folder.name}}</option>-->
-        <option *ngFor="let device of deviceList; let i = index" [value]="device" [selected]="i == 0">
-          {{device}}
+        <option *ngFor="let device of sensors; let i = index" [value]="device.id" [selected]="i == 0">
+          {{device.name ? device.name : device.id}}
         </option>
       </select>
-
-      <button type="submit" (click)="onSubmit()" [disabled]="!isFormValid" class="submit-button mt-4">Show</button>
+      <div class="row text-right">
+        <div class="col-auto">
+          <button type="submit" (click)="onSubmit()" [disabled]="!isFormValid" class="submit-button mt-4">Show</button>
+        </div>
+        <div class="col-auto">
+          <button type="button"
+                  class="edit-button mt-4 mr-2"
+                  (click)="editDevice()">Edit</button>
+        </div>
+      </div>
     </div>
     <div class="col">
       <div class="row">
@@ -26,7 +34,7 @@
                        #startDate="ngbDatepicker">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary" (click)="startDate.toggle();activeHover('from')" type="button">
-                    <img src="../../../../../../assets/img/svg/calendar-icon.svg"
+                    <img src="../../../../../assets/img/svg/calendar-icon.svg"
                          style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
                   </button>
                 </div>
@@ -50,7 +58,7 @@
                        #endDate="ngbDatepicker">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary" (click)="endDate.toggle()" type="button">
-                    <img src="../../../../../../assets/img/svg/calendar-icon.svg"
+                    <img src="../../../../../assets/img/svg/calendar-icon.svg"
                          style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
                   </button>
                 </div>

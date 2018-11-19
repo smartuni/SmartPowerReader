@@ -1,8 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Folder} from '../../../../../core/interfaces/folder.interface';
 import {formatDate} from '@angular/common';
 import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
+import {Sensor} from '../../../../core/interfaces/sensor.interface';
+import {ModalService} from '../../../../shared/services/modal.service';
+import {EditComponent} from '../edit/edit.component';
 
 
 @Component({
@@ -12,17 +14,16 @@ import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth
 })
 export class FilterBarComponent implements OnInit {
     form: FormGroup;
-    @Input() folder: Folder;
+    @Input() sensors: Sensor[];
     @Output() onChangedValue = new EventEmitter();
     isLoading: boolean;
-    deviceList: string[] = [];
 
     startTime: Date;
     endTime: Date;
     isFormValid: boolean;
     now: string;
 
-    constructor() {
+    constructor(private modalService: ModalService) {
     }
 
     ngOnInit() {
@@ -43,11 +44,9 @@ export class FilterBarComponent implements OnInit {
                 endTime: new FormControl('23:59')
             }
         );
-        this.deviceList.push('Parent');
-        this.deviceList.push('child1');
-        this.deviceList.push('child2');
-        this.deviceList.push('child3');
-        this.form.controls['selectedDevice'].setValue(this.deviceList[0], {onlySelf: true});
+        if (this.sensors && this.sensors.length > 0) {
+            this.form.controls['selectedDevice'].setValue(this.sensors[0].id, {onlySelf: true});
+        }
 
         const raw = this.form.getRawValue();
         this.startTime = this.combineToDate(raw.startDate, raw.startTime);
@@ -67,6 +66,14 @@ export class FilterBarComponent implements OnInit {
         this.onChangedValue.emit(
             this.form.getRawValue()
         );
+    }
+
+    editDevice() {
+        this.modalService.init(EditComponent, {sensors: this.sensors}, {
+            onClosed: () => {
+                this.modalService.destroy();
+            }
+        });
     }
 
     selectDate(offset: number = 0) {

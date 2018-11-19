@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FooterComponent} from './core/footer/footer.component';
 import {HeaderComponent} from './core/header/header.component';
-import {AddingComponent} from './modules/home/components/side-bar/adding/adding.component';
+import {EditComponent} from './modules/home/components/edit/edit.component';
 import {AppRoutingModule} from './app-routing.module';
 import {HomeModule} from './modules/home/home.module';
 
@@ -23,7 +23,7 @@ import {HomeModule} from './modules/home/home.module';
   ],
   bootstrap: [AppComponent],
   entryComponents: [
-    AddingComponent
+    EditComponent
   ]
 })
 export class AppModule {

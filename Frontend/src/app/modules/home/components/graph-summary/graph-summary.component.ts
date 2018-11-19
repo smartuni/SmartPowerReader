@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {SensorService} from '../../../services/sensor.service';
-import {Sensor} from '../../../../../core/interfaces/sensor.interface';
+import {SensorService} from '../../services/sensor.service';
+import {Sensor} from '../../../../core/interfaces/sensor.interface';
 import {formatDate} from '@angular/common';
-import {actionGetMeasurement} from '../../../constants/constants';
+import {actionGetMeasurement} from '../../constants/constants';
 
 @Component({
     selector: 'app-graph-summary',

@@ -1,0 +1,58 @@
+<div [formGroup]="form">
+  <div class="header text-center">Add device</div>
+  <div class="body">
+
+    <div class="row justify-content-between vertical-align">
+      <div class="first-column">
+        <div class="input-group mt-2 align-items-center">
+          <div class="input-group-prepend">
+                <span class="input-group-text">
+                  DeviceID
+                </span>
+          </div>
+          <div class="input-form">
+            <select name="option" class="form-control" formControlName="deviceId">
+              <option *ngFor="let sensor of sensors; let i = index" [value]="sensor.id">
+                {{sensor.id}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="second-column">
+        <div class="input-group mt-2 align-items-center">
+          <div class="input-group-prepend">
+                <span class="input-group-text">
+                  Name
+                </span>
+          </div>
+          <input type="text" class="form-control" id="deviceName" formControlName="deviceName">
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-between vertical-align mt-2">
+
+      <div class="first-column">
+        <div class="input-group mt-2 align-items-center">
+          <div class="input-group-prepend">
+                <span class="input-group-text">
+                  Period
+                </span>
+          </div>
+          <input type="number" class="form-control col-3" id="period" formControlName="period">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer mt-4">
+    <div class="row justify-content-between">
+      <button type="button" class="cancel-button" (click)="close()">Cancel</button>
+      <button type="button" class="save-button" [disabled]="!isFormValid()" (click)="save()">Save</button>
+    </div>
+  </div>
+
+</div>
