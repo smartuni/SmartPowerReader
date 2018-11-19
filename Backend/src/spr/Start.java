@@ -123,6 +123,8 @@ public class Start
 				Units.put(new UniqueAddress(Units.IDs.DATABASE, remote));
 				Units.put(new UniqueAddress(Units.IDs.FRONTEND, remote));
 				
+				opts.set(Params.MASTER, false);
+				
 				Logger.DEFAULT.log(Severity.INFO, "Assigned remote master [%s]:%d", host, port);
 			}
 			catch(UnknownHostException e)
