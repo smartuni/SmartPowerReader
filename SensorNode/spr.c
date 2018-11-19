@@ -26,6 +26,7 @@
 #include "thread.h"
 #include "saul_reg.h"
 #include "cbor.h"
+#include "net/gnrc/rpl/dodag.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -264,7 +265,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
     return -1;
 }
 
-void _register(char *base_addr)
+static void _register(char *base_addr)
 {
     /* prepare packet to send */
     uint8_t buf[GCOAP_PDU_BUF_SIZE];
@@ -282,6 +283,13 @@ void _register(char *base_addr)
     }
 }
 
+static void find_base_station(char * base_addr)
+{
+    gnrc_rpl_dodag_t dodag = gnrc_rpl_instances[0].dodag;
+    ipv6_addr_t dodag_id = dodag.dodag_id;
+    ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
+}
+
 void spr_init(void)
 {
     /* Initialize the adc on line 0 with 12 bit resolution. */
@@ -291,7 +299,7 @@ void spr_init(void)
     gcoap_register_listener(&_listener);
 
     /* Find RPI/Basisstation */
-    strncpy(base_addr, "fe80::a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
+    find_base_station(base_addr);
 
     xtimer_sleep(2);
     /* Register Basisstation */
