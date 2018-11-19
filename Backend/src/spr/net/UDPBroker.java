@@ -51,6 +51,7 @@ public class UDPBroker<T> extends BaseBroker<T>
 	public void start( )
 	{
 		mRunning = true;
+		mServer.start();
 		mAsync.submit(this::run);
 	}
 	
@@ -59,6 +60,7 @@ public class UDPBroker<T> extends BaseBroker<T>
 	{
 		mRunning = false;
 		mAsync.shutdown();
+		mServer.stop();
 	}
 	
 	private int run( ) throws InterruptedException
