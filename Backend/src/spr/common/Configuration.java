@@ -59,6 +59,12 @@ public class Configuration implements Saveable, Loadable
 		return mData.entrySet().stream().map(e -> e.getValue().save()).collect(JsonCollectors.ofArray());
 	}
 
+	public static enum Status
+	{
+		CONNECTED,
+		DISCONNECTED
+	}
+	
 	@Container
 	public static class Entry implements Saveable
 	{
@@ -66,14 +72,22 @@ public class Configuration implements Saveable, Loadable
 		public final String name;
 		public final long period;
 		public final InetSocketAddress location;
+		public final Status status;
 		
-		public Entry(String ip, String name, long period, InetSocketAddress location)
+		public Entry(String ip, String name, long period, InetSocketAddress location, Status status)
 		{
 			this.ip = ip;
 			this.name = name;
 			this.period = period;
 			this.location = location;
+			this.status = status;
 		}
+		
+		public Entry setIP(String ip) { return new Entry(ip, name, period, location, status); }
+		public Entry setName(String name) { return new Entry(ip, name, period, location, status); }
+		public Entry setPeriod(Long period) { return new Entry(ip, name, period, location, status); }
+		public Entry setLocation(InetSocketAddress location) { return new Entry(ip, name, period, location, status); }
+		public Entry setStatus(Status status) { return new Entry(ip, name, period, location, status); }
 		
 		@Override
 		@Saver
@@ -96,6 +110,7 @@ public class Configuration implements Saveable, Loadable
 			json.putString("name", name);
 			json.putLong("period", period);
 			json.put("location", l);
+			json.putString("status", status.toString());
 			
 			return json;
 		}
@@ -128,7 +143,7 @@ public class Configuration implements Saveable, Loadable
 				}
 			}
 			
-			return new Entry(ip, name == JsonConstant.NULL ? null : ((JsonString) name).get(), period, location);
+			return new Entry(ip, name == JsonConstant.NULL ? null : ((JsonString) name).get(), period, location, Status.DISCONNECTED);
 		}
 		
 		@Override

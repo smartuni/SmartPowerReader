@@ -13,8 +13,12 @@ import dave.json.JsonConstant;
 import dave.json.JsonObject;
 import dave.json.JsonString;
 import dave.json.JsonValue;
+import dave.json.Loader;
+import dave.json.Container;
 import dave.json.JsonCollectors;
 import dave.json.PrettyPrinter;
+import dave.json.Saveable;
+import dave.json.Saver;
 import dave.json.SevereIOException;
 import dave.json.StreamBuffer;
 import dave.util.Producer;
@@ -22,6 +26,7 @@ import dave.util.log.Logger;
 import dave.util.log.Severity;
 import jacob.CborEncoder;
 import spr.common.Configuration;
+import spr.common.Configuration.Status;
 import spr.net.LocalAddress;
 import spr.net.UniqueAddress;
 import spr.net.common.Address;
@@ -48,6 +53,8 @@ public class ConfigUnit extends BaseUnit
 		registerMessageHandler(Tasks.Configuration.NEW, this::handleNew);
 		registerMessageHandler(Tasks.Configuration.CONFIGURE, this::handleConfigure);
 		registerMessageHandler(Tasks.Configuration.QUERY, this::handleQuery);
+		registerMessageHandler(Tasks.Configuration.SET_STATUS, this::handleStatus);
+		registerMessageHandler(CALLBACK_ID, this::handleDisconnect);
 		
 		if(orig != null)
 		{
@@ -97,14 +104,19 @@ public class ConfigUnit extends BaseUnit
 		
 		if(e == null)
 		{
-			e = new Configuration.Entry(ip, null, 0, location);
+			e = new Configuration.Entry(ip, null, 0, location, Status.DISCONNECTED);
 		}
 		else
 		{
-			e = new Configuration.Entry(ip, e.name, e.period, location);
+			e = e.setIP(ip).setLocation(location);
 		}
 		
 		updateConfig(e);
+		
+		if(e.period > 0)
+		{
+			pushConfiguration(e);
+		}
 	}
 	
 	private void handleConfigure(Message<Task> p)
@@ -130,40 +142,16 @@ public class ConfigUnit extends BaseUnit
 				{
 					JsonValue name = json.get("name");
 					
-					e = new Configuration.Entry(e.ip, (name == JsonConstant.NULL ? null : ((JsonString) name).get()), e.period, e.location);
+					e = e.setName(name == JsonConstant.NULL ? null : ((JsonString) name).get());
 				}
 				
 				if(json.contains("period"))
 				{
 					long period = json.getLong("period");
 					
-					e = new Configuration.Entry(e.ip, e.name, period, e.location);
+					e = e.setPeriod(period);
 					
-					Address coap = new LocalAddress(Units.IDs.COAP);
-					
-					if(e.location != null)
-					{
-						coap = new UniqueAddress(Units.IDs.COAP, e.location);
-					}
-					
-					ByteArrayOutputStream payload = new ByteArrayOutputStream();
-					try
-					{
-						CborEncoder cbor = new CborEncoder(payload);
-						
-						cbor.writeMapStart(1);
-						cbor.writeTextString("period");
-						cbor.writeInt32(period);
-					}
-					catch(IOException ex)
-					{
-						throw new SevereIOException(ex);
-					}
-					
-					
-					CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT, Resource.Format.CBOR);
-					
-					getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
+					pushConfiguration(e);
 				}
 				
 				updateConfig(e);
@@ -176,6 +164,88 @@ public class ConfigUnit extends BaseUnit
 		JsonValue json = mConfig.stream().map(Configuration.Entry::save).collect(JsonCollectors.ofArray());
 		
 		getNode().send(p.getSender(), new Task(p.getContent(), Tasks.Configuration.DELIVER, json));
+	}
+	
+	private void handleStatus(Message<Task> p)
+	{
+		StatusReport rep = p.getContent().getPayload();
+		
+		Configuration.Entry e = mConfig.get(rep.id);
+		
+		if(e == null)
+		{
+			LOG.log(Severity.WARNING, "Trying to set status of unknown device %s!", rep.id);
+			
+			InetSocketAddress location = null;
+			
+			if(p.getSender() instanceof UniqueAddress)
+			{
+				location = ((UniqueAddress) p.getSender()).getRemote();
+			}
+			
+			e = new Configuration.Entry(rep.id, null, 0, location, rep.status);
+		}
+		else if(e.status != rep.status)
+		{
+			e = e.setStatus(rep.status);
+			
+			updateConfig(e);
+		}
+		
+		resetTimer(e);
+		
+		if(rep.status == Status.CONNECTED)
+		{
+			setTimer(e);
+		}
+	}
+	
+	private void handleDisconnect(Message<Task> p)
+	{
+		String id = p.getContent().getPayload();
+		
+		Configuration.Entry e = mConfig.get(id);
+		
+		if(e == null)
+		{
+			LOG.log(Severity.WARNING, "Received disconnect timer notification for non-existent node %s", id);
+		}
+		else
+		{
+			e = e.setStatus(Status.DISCONNECTED);
+			
+			updateConfig(e);
+		}
+	}
+	
+	private void pushConfiguration(Configuration.Entry e)
+	{
+		Address coap = new LocalAddress(Units.IDs.COAP);
+		
+		if(e.location != null)
+		{
+			coap = new UniqueAddress(Units.IDs.COAP, e.location);
+		}
+		
+		ByteArrayOutputStream payload = new ByteArrayOutputStream();
+		try
+		{
+			CborEncoder cbor = new CborEncoder(payload);
+			
+			cbor.writeMapStart(1);
+			cbor.writeTextString("period");
+			cbor.writeInt32(e.period);
+		}
+		catch(IOException ex)
+		{
+			throw new SevereIOException(ex);
+		}
+		
+		CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT, Resource.Format.CBOR);
+		
+		getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
+		
+		setTimer(e);
 	}
 	
 	private void updateConfig(Configuration.Entry e)
@@ -200,8 +270,69 @@ public class ConfigUnit extends BaseUnit
 		
 		mLast = f;
 	}
+
+	private void resetTimer(Configuration.Entry e)
+	{
+		getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.REMOVE, newSession(), callbackID(e.ip)));
+	}
+	
+	private void setTimer(Configuration.Entry e)
+	{
+		resetTimer(e);
+		
+		if(e.period > 0)
+		{
+			getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.ONE_SHOT, newSession(), 
+					new TimerUnit.FutureTask(callbackID(e.ip), new Task(CALLBACK_ID, 0, e.ip), (int) e.period)));
+		}
+	}
+	
+	private String callbackID(String id) { return CALLBACK_ID + "_" + id; }
+	
+	@Container
+	public static final class StatusReport implements Saveable
+	{
+		public final String id;
+		public final Status status;
+		
+		public StatusReport(String id, Status status)
+		{
+			this.id = id;
+			this.status = status;
+		}
+		
+		@Override
+		@Saver
+		public JsonValue save( )
+		{
+			JsonObject json = new JsonObject();
+			
+			json.putString("id", id);
+			json.putString("status", status.toString());
+			
+			return json;
+		}
+		
+		@Loader
+		public static StatusReport load(JsonValue json)
+		{
+			JsonObject o = (JsonObject) json;
+			
+			String id = o.getString("id");
+			Status status = Status.valueOf(o.getString("status"));
+			
+			return new StatusReport(id, status);
+		}
+		
+		@Override
+		public String toString( )
+		{
+			return id + ": " + status.toString();
+		}
+	}
 	
 	private static final int PORT = 5683;
+	private static final String CALLBACK_ID = "disconnect";
 	
 	private static final Logger LOG = Logger.get("db-u");
 }
