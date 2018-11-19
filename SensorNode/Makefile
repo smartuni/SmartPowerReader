@@ -29,6 +29,8 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-mega2560 arduino-uno \
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_gpio
 
+# Used pkg
+USEPKG += tinycbor
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present

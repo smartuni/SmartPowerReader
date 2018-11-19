@@ -25,47 +25,36 @@
 #include "xtimer.h"
 #include "thread.h"
 #include "saul_reg.h"
+#include "cbor.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-#define SPR_INTERVAL (15)       /* Default 15 seconds*/
-
-#define SPR_NOT_CONFIGURED      (0)
-#define SPR_CONFIGURING         (1)
-#define SPR_CONFIGURED          (2)
-
-#define BLINK_QUEUE_SIZE        (8)
 #define SENDDATA_QUEUE_SIZE     (8)
 
-#define LED_NUM         (0)
+#define CON_THRESH      (300)
 
-#define SPR_SENDDATA_STOP           (0)
-#define SPR_SENDDATA_START           (1)
-
-#define COAP_METHOD_PUT         (3)
+#define BACKEND_REG     "/new-device"           /**< Backend resource to register new devices */
+#define BACKEND_SEND    "/measure"              /**< Backend resource to accept measurements */
+#define BACKEND_PORT    "9900"                  /**< Port the backend listens to */
+#define SPR_INTERVAL (15)                       /* Default 15 seconds*/
 
 /* ADC pin parameters. */
 #define LINE (0)
 #define RES ADC_RES_12BIT /*< Use 'ADC_RES_10BIT' for arduino's. */
 
 extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
+extern void indent(int nestingLevel);
+extern void dumpbytes(const uint8_t *buf, size_t len);
+extern bool dumprecursive(CborValue *it, int nestingLevel);
 
 static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-
 /* test/debug */
 static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 
-static uint32_t interval = SPR_INTERVAL;
-static uint8_t config_status = 0;
-static uint8_t start_status = 0;
+static char base_addr[NANOCOAP_URI_MAX];
 
-static kernel_pid_t blink_pid;
-static char blink_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
-static msg_t blink_queue[BLINK_QUEUE_SIZE];
-
+/* variables for senddata thread */
 static kernel_pid_t senddata_pid;
 static char senddata_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
 static msg_t senddata_queue[SENDDATA_QUEUE_SIZE];
@@ -73,8 +62,6 @@ static msg_t senddata_queue[SENDDATA_QUEUE_SIZE];
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
     { "/config", COAP_GET | COAP_PUT, _config_handler, NULL },
-    { "/interval", COAP_GET | COAP_PUT, _interval_handler, NULL },
-    { "/start", COAP_GET, _start_handler, NULL },
     { "/value", COAP_PUT, _value_handler, NULL },
 };
 
@@ -84,45 +71,16 @@ static gcoap_listener_t _listener = {
     NULL
 };
 
-static void *blink_light(void *arg)
-{
-    (void)arg;
+/* configs send to /config */
+struct spr_config {
+    uint32_t interval;  /* Interval for measuring */
+};
 
-    msg_t msg;
-    msg.content.value = 1;
-
-    /* Value to turn LED on/off */
-    phydat_t on, off;
-    memset(&on, 0, sizeof(on));
-    memset(&off, 0, sizeof(off));
-    on.val[0] = 1;
-    off.val[0] = 0;
-
-    /* get LED from SAUL */
-    saul_reg_t *led;
-    led = saul_reg_find_nth(LED_NUM);
-
-    msg_init_queue(blink_queue, BLINK_QUEUE_SIZE);
-
-    int continue_loop = 1;
-    while (continue_loop) {
-        /* turn LED on and off */
-        saul_reg_write(led, &on);
-        xtimer_sleep(1);
-        saul_reg_write(led, &off);
-        xtimer_sleep(1);
-
-        msg_try_receive(&msg);
-        continue_loop = msg.content.value;
-    }
-
-    return NULL;
-}
+static struct spr_config cfg = { 0 };
 
 static void *send_data(void *arg)
 {
     (void)arg;
-    (void)interval;
 
     msg_t msg;
     msg.content.value = 1;
@@ -149,10 +107,10 @@ static void *send_data(void *arg)
     coap_pkt_t pdu;
     size_t len;
 
-    /* send data repeatedly */
-    int continue_loop = 1;
-    while (continue_loop) {
-        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, "/value");       // change server resource '/value' here
+    /* stop send if interval 0 */
+    while (cfg.interval) {
+        puts("sending data to pi");
+        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
 
         /* measure current */
         ct_measure_current(&ct_param, &ct_i_data);
@@ -162,21 +120,28 @@ static void *send_data(void *arg)
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
-        /* explicitly set packet to NON-confirmable */
-        coap_hdr_set_type(pdu.hdr, COAP_TYPE_NON);
+        /* set packet CONFIRMABLE if interval >= 15 minutes */
+        if (cfg.interval >= CON_THRESH) {
+            coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+        }
+        else {
+            coap_hdr_set_type(pdu.hdr, COAP_TYPE_NON);
+        }
 
         /* finish the packet */
         len = gcoap_finish(&pdu, sizeof (apparent), COAP_FORMAT_TEXT);
 
         /* send the packet */
         puts("Sending measurent to pi");
-        if (!send(&buf[0], len, "fd00:1:2:3:a02d:51f7:cdf4:a686", "5683")) {  // FIXME: change address
+        if (!send(&buf[0], len, base_addr, BACKEND_PORT)) {  // FIXME: change address
                 puts("gcoap_cli: msg send failed");
         }
 
         msg_try_receive(&msg);
-        continue_loop = msg.content.value;
+        cfg.interval = msg.content.value;
     }
+    /* reset pid to 0 if thread stopped */
+    senddata_pid = 0;
 
     return NULL;
 }
@@ -191,74 +156,24 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
 
   switch (method_flag) {
       case COAP_PUT: {
-          printf("coap put");
-          /* Limit interval value only to 5 digit (e.g. 15000)
-           * Reserve space for 5 digit interval value + \0 */
-          char payload[16] = { 0 };
-          memcpy(payload, (char *)pdu->payload, pdu->payload_len);
-          //interval = (uint8_t)strtoul(payload, NULL, 10);
+          printf("coap put\n");
+            if (pdu->content_type == COAP_FORMAT_TEXT
+                    || pdu->content_type == COAP_FORMAT_LINK
+                    || coap_get_code_class(pdu) == COAP_CLASS_CLIENT_FAILURE
+                    || coap_get_code_class(pdu) == COAP_CLASS_SERVER_FAILURE) {
+                /* Expecting diagnostic payload in failure cases */
+                printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
+                                                              (char *)pdu->payload);
+            }
+            else if (pdu->content_type == COAP_FORMAT_CBOR) {
+                puts("value handler: got cbor!");
+                dumpbytes(pdu->payload, pdu->payload_len);
+            }
 
-          if (pdu->payload_len) {
-              if (pdu->content_type == COAP_FORMAT_TEXT
-                      || pdu->content_type == COAP_FORMAT_LINK
-                      || coap_get_code_class(pdu) == COAP_CLASS_CLIENT_FAILURE
-                      || coap_get_code_class(pdu) == COAP_CLASS_SERVER_FAILURE) {
-                  /* Expecting diagnostic payload in failure cases */
-                  printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
-                                                                (char *)pdu->payload);
-              }
-              else {
-                  printf(", %u bytes\n", pdu->payload_len);
-                  od_hex_dump(pdu->payload, pdu->payload_len, OD_WIDTH_DEFAULT);
-              }
-          }
-          else {
-              printf(", empty payload\n");
-          }
-
-          if (pdu->payload_len <= 128) {
-              return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
-          }
-          else {
-              return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-          }
+            return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
       }
   }
   return -1;
-}
-
-static ssize_t _interval_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
-{
-    (void)ctx;
-
-    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
-
-    switch (method_flag) {
-        case COAP_GET:
-            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-
-            /* write the response buffer with the request count value */
-            size_t payload_len = fmt_u16_dec((char *)pdu->payload, interval);
-
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
-
-        case COAP_PUT: {
-            /* Limit interval value only to 5 digit (e.g. 15000)
-             * Reserve space for 5 digit interval value + \0 */
-            char payload[6] = { 0 };
-            memcpy(payload, (char *)pdu->payload, pdu->payload_len);
-            interval = (uint8_t)strtoul(payload, NULL, 10);
-
-            if (pdu->payload_len <= 5) {
-                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
-            }
-            else {
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-            }
-        }
-    }
-
-    return -1;
 }
 
 static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
@@ -269,84 +184,82 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
     switch (method_flag) {
         case COAP_GET:
-            /* return configuration status
-             * 0 - not configured, 1 - being configured
-             * 2 - configured */
-
+            if (pdu->content_type == COAP_FORMAT_CBOR) {
+                puts("config handler: got cbor!");
+                dumpbytes(pdu->payload, pdu->payload_len);
+            }
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-            /* write the response buffer with the request count value */
-            size_t payload_len = fmt_u16_dec((char *)pdu->payload, config_status);
+            CborEncoder encoder;
+            uint8_t encoder_buf[128];
+            cbor_encoder_init(&encoder, encoder_buf, sizeof(encoder_buf), 0);
 
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+            CborEncoder map;
+            CborError err = cbor_encoder_create_map(&encoder, &map, 1);   /* 1 == number of element in cfg struct */
+            if (err != 0)
+                printf("error: create map %d\n", err);
+
+            err = cbor_encode_text_stringz(&map, "interval");
+            if (err != 0)
+                printf("error: encode string %d\n", err);
+            err = cbor_encode_uint(&map , (uint64_t)cfg.interval);
+            if (err != 0)
+                printf("error: encode interval %d\n", err);
+
+            err = cbor_encoder_close_container(&encoder, &map);
+            if (err != 0)
+                printf("error: close map %d\n", err);
+
+            puts("debug: sending this bytes:");
+            dumpbytes((const uint8_t *)&encoder_buf, sizeof(encoder_buf));
+
+            return gcoap_finish(pdu, sizeof(encoder_buf), COAP_FORMAT_CBOR);
 
         case COAP_PUT: {
-            char payload[3] = { 0 };
-            memcpy(payload, (char *)pdu->payload, pdu->payload_len);
-            config_status = (uint8_t)strtoul(payload, NULL, 10);
-
-            if (config_status == SPR_NOT_CONFIGURED || config_status == SPR_CONFIGURED) {
-                    /* stop thread blink_light */
-                    msg_t msg;
-                    msg.content.value = 0;
-                    int ret = msg_try_send(&msg, blink_pid);
-                    if (ret == 0) {
-                        puts("Receiver queue full");
-                    }
-                    else if (ret < 0) {
-                        puts("ERROR: invalid PID");
-                    }
+            puts("got put at config handler");
+            if (pdu->content_type == COAP_FORMAT_CBOR) {
+                dumpbytes(pdu->payload, pdu->payload_len);
             }
-            else if (config_status == SPR_CONFIGURING) {
-                    /* start thread blink_ligth LED to signal which sensor node is being configured */
-                    blink_pid = thread_create(blink_stack, sizeof(blink_stack),
-                            THREAD_PRIORITY_MAIN - 1, 0, blink_light, NULL, "blink");
-            }
-            else {
-                /* value not valid */
+            /* parse payload to CborValue it*/
+            CborParser parser;
+            CborValue iterator;
+            CborError err = cbor_parser_init(pdu->payload, pdu->payload_len, 0, &parser, &iterator);
+            /* check if iterator is a map */
+            if (!cbor_value_is_map(&iterator)) {
+                puts("not map");
                 return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
-
-            if (pdu->payload_len <= 2) {
-                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
+            if (!err) {
+                CborValue copy;
+                memcpy(&copy, &iterator, sizeof(iterator));
+                puts("dumping payload:");
+                err = dumprecursive(&copy, 0);
             }
-            else {
+            else
+                printf("error: cbor %d\n", err);
+
+            /* find interval pair in map */
+            CborValue interval;
+            cbor_value_map_find_value(&iterator, "period", &interval);
+            if (cbor_value_get_type(&interval) != CborIntegerType) {
+                puts("not integer");
                 return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
-        }
-    }
+            /* get value of interval */
+            cbor_value_get_uint64(&interval, (uint64_t *)&cfg.interval);
+            printf("Got new interval: %lu\n", cfg.interval);
 
-    return -1;
-}
-
-static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
-{
-    (void)ctx;
-
-    /* send ACK response */
-    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
-
-    switch (method_flag) {
-        case COAP_GET:
-            /* return start send status
-             * 0 - not started , 1 - started */
-
-            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-
-            /* write the response buffer with the request count value */
-            size_t payload_len = fmt_u16_dec((char *)pdu->payload, start_status);
-
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
-        case COAP_PUT: {
-            char payload[3] = { 0 };
-            memcpy(payload, (char *)pdu->payload, pdu->payload_len);
-            start_status = (uint8_t)strtoul(payload, NULL, 10);
-
-            if (start_status == SPR_SENDDATA_STOP) {
-                    /* stop thread senddata */
+            if (cfg.interval != 0) {
+                puts("starting senddata thread");
+                /* thread not started yet */
+                if (senddata_pid == 0) {
+                    /* start thread send_data */
+                    puts("starting senddata thread");
+                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
+                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
+                    /* send interval */
                     msg_t msg;
-                    msg.content.value = 0;
-                    puts("stopping thread senddata");
+                    msg.content.value = cfg.interval;
                     int ret = msg_try_send(&msg, senddata_pid);
                     if (ret == 0) {
                         puts("Receiver queue full");
@@ -354,33 +267,43 @@ static ssize_t _start_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
                     else if (ret < 0) {
                         puts("ERROR: invalid PID; sendata thread not started");
                     }
+                }
+                else {
+                    /* update interval */
+                    msg_t msg;
+                    msg.content.value = cfg.interval;
+                    int ret = msg_try_send(&msg, senddata_pid);
+                    if (ret == 0) {
+                        puts("Receiver queue full");
+                    }
+                    else if (ret < 0) {
+                        puts("ERROR: invalid PID; sendata thread not started");
+                    }
+                }
             }
-            else if (start_status == SPR_SENDDATA_START) {
-                    /* start thread send_data */
-                    puts("starting senddata thread");
-                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
-                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
-            }
-            else {
-                /* value not valid */
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-            }
-
-            if (pdu->payload_len <= 2) {
-                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
-            }
-            else {
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-            }
+            return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
         }
     }
 
     return -1;
 }
 
-static void _register(void)
+void _register(char *base_addr)
 {
-    (void)send;
+    /* prepare packet to send */
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    coap_pkt_t pdu;
+    size_t len;
+
+    /* send POST to /new-device */
+    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_POST, BACKEND_REG);
+    /* set confirmable */
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+    /* we have no payload */
+    len = gcoap_finish(&pdu, 0, COAP_FORMAT_NONE);
+    if (!send(&buf[0], len, base_addr, BACKEND_PORT)) {
+        puts("gcoap_cli: msg send failed");
+    }
 }
 
 void spr_init(void)
@@ -392,8 +315,9 @@ void spr_init(void)
     gcoap_register_listener(&_listener);
 
     /* Find RPI/Basisstation */
-    //...
+    strncpy(base_addr, "fe80::a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
 
+    xtimer_sleep(2);
     /* Register Basisstation */
-    (void)_register;
+    _register(base_addr);
 }
