@@ -105,6 +105,7 @@ public class UDPBroker<T> extends BaseBroker<T>
 		try
 		{
 			mServer.send(e.to.getRemote(), msg.save());
+			System.out.println(msg.save().toString());
 		}
 		catch(IOException ex)
 		{
