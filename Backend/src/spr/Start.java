@@ -111,9 +111,12 @@ public class Start
 			
 			if(a.hasArgument(o_master)) try
 			{
-				String m = a.getArgument(o_master);
-				String host = m.substring(0, m.lastIndexOf(':'));
-				int port = Integer.parseInt(m.substring(m.lastIndexOf(':') + 1));
+				if(a.hasArgument(o_tcp_port))
+					throw new IllegalArgumentException("Only master may have a master-port!");
+				
+				String m = a.getArgument(o_master); int i = m.lastIndexOf(':');
+				String host = m.substring(0, i);
+				int port = Integer.parseInt(m.substring(i + 1));
 				InetSocketAddress remote = new InetSocketAddress(InetAddress.getByName(host), port);
 
 				Units.put(new UniqueAddress(Units.IDs.CONFIG, remote));
