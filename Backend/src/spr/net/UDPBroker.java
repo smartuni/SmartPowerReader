@@ -82,8 +82,6 @@ public class UDPBroker<T> extends BaseBroker<T>
 		
 		msg = new Message<>(from, msg.getRecipient(), msg.getContent());
 		
-		LOG.log("%s", msg.toString());
-		
 		mCallback.accept(msg);
 	}
 
@@ -107,7 +105,6 @@ public class UDPBroker<T> extends BaseBroker<T>
 		try
 		{
 			mServer.send(e.to.getRemote(), msg.save());
-			System.out.println(msg.save().toString());
 		}
 		catch(IOException ex)
 		{
