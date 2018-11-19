@@ -58,7 +58,6 @@ static char base_addr[NANOCOAP_URI_MAX];
 /* variables for senddata thread */
 static kernel_pid_t senddata_pid;
 static char senddata_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
-static msg_t senddata_queue[SENDDATA_QUEUE_SIZE];
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
@@ -82,11 +81,6 @@ static struct spr_config cfg = { 0 };
 static void *send_data(void *arg)
 {
     (void)arg;
-
-    msg_t msg;
-    msg.content.value = 1;
-
-    msg_init_queue(senddata_queue, SENDDATA_QUEUE_SIZE);
 
     /* Current transformer parameters needed for current calculations. */
     ct_parameter_t ct_param;
@@ -139,7 +133,6 @@ static void *send_data(void *arg)
                 puts("gcoap_cli: msg send failed");
         }
 
-        msg_try_receive(&msg);
         xtimer_sleep(sleeptime);
         sleeptime = cfg.interval;
     }
@@ -258,6 +251,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
                 senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
                         THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
             }
+            thread_wakeup(senddata_pid);
             return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
         }
     }

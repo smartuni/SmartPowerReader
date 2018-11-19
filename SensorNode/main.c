@@ -32,31 +32,17 @@ extern int lcd_write_cmd(int argc, char **argv);
 extern int testcurrent_cmd(int argc, char **argv);
 extern int testsend_cmd(int argc, char **argv);
 extern int gcoap_cli_cmd(int argc, char **argv);
-extern void _register(char *base_addr);
 extern void spr_init(void);
 
 lcd1602a_dev_t lcd;
 lcd1602a_iface_t iface = MODE_4BIT;
 lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
-/* wrapper for _register */
-static int register_debug(int argc, char **argv)
-{
-    if (argc < 2) {
-        puts("error: not enough arguments");
-        return -1;
-    }
-
-    printf("info: got address %s\n", argv[1]);
-    _register(argv[1]);
-    return 0;
-}
 
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { "testsend", "test send data", testsend_cmd },
     { "testcurrent", "Dump's the current and apparent-power", testcurrent_cmd },
     { "lcdwrite", "Writes something to the LCD!", lcd_write_cmd },
-    { "register", "Register to base station", register_debug },
     { NULL, NULL, NULL }
 };
 
