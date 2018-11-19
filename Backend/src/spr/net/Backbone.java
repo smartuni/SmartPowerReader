@@ -45,6 +45,8 @@ public class Backbone<T> extends BaseBroker<T>
 	@Override
 	public void accept(Message<T> msg)
 	{
+		LOG.log("%s", msg.toString());
+		
 		for(Handler<T> h : mHandlers)
 		{
 			if(h.filter.test(msg))
