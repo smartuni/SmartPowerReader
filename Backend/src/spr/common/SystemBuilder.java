@@ -130,12 +130,8 @@ public class SystemBuilder
 		@Override
 		public void installOn(SystemBuilder builder)
 		{
-			FileVersioner config_files = new FileVersioner((new File("config")).toPath(), new FilenameGenerator());
-			
 			builder.install(new SystemUnit(new Node<>(Units.IDs.SYSTEM)));
 			builder.install(new TimerUnit(new Node<>(Units.IDs.TIMER)));
-			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File("config/" + id + ".bin")), new Node<>(Units.IDs.DATABASE)));
-			builder.install(new ConfigUnit(config_files.get(), config_files, new Node<>(Units.IDs.CONFIG)));
 		}
 	}
 	
@@ -159,6 +155,18 @@ public class SystemBuilder
 			{
 				throw new SevereIOException(e);
 			}
+		}
+	}
+	
+	public static class MasterModule implements Module
+	{
+		@Override
+		public void installOn(SystemBuilder builder)
+		{
+			FileVersioner config_files = new FileVersioner((new File("config")).toPath(), new FilenameGenerator());
+			
+			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File("config/" + id + ".bin")), new Node<>(Units.IDs.DATABASE)));
+			builder.install(new ConfigUnit(config_files.get(), config_files, new Node<>(Units.IDs.CONFIG)));
 		}
 	}
 	
