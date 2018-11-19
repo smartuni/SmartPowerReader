@@ -92,7 +92,7 @@ public class Configuration implements Saveable, Loadable
 				l = o;
 			}
 			
-			json.putString("ip", ip);
+			json.putString("id", ip);
 			json.putString("name", name);
 			json.putLong("period", period);
 			json.put("location", l);
@@ -105,7 +105,7 @@ public class Configuration implements Saveable, Loadable
 		{
 			JsonObject o = (JsonObject) json;
 			
-			String ip = o.getString("ip");
+			String ip = o.getString("id");
 			JsonValue name = o.get("name");
 			long period = o.getLong("period");
 			JsonValue l = o.get("location");

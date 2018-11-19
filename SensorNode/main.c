@@ -32,17 +32,31 @@ extern int lcd_write_cmd(int argc, char **argv);
 extern int testcurrent_cmd(int argc, char **argv);
 extern int testsend_cmd(int argc, char **argv);
 extern int gcoap_cli_cmd(int argc, char **argv);
+extern void _register(char *base_addr);
 extern void spr_init(void);
 
 lcd1602a_dev_t lcd;
 lcd1602a_iface_t iface = MODE_4BIT;
 lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
+/* wrapper for _register */
+static int register_debug(int argc, char **argv)
+{
+    if (argc < 2) {
+        puts("error: not enough arguments");
+        return -1;
+    }
+
+    printf("info: got address %s\n", argv[1]);
+    _register(argv[1]);
+    return 0;
+}
 
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { "testsend", "test send data", testsend_cmd },
     { "testcurrent", "Dump's the current and apparent-power", testcurrent_cmd },
     { "lcdwrite", "Writes something to the LCD!", lcd_write_cmd },
+    { "register", "Register to base station", register_debug },
     { NULL, NULL, NULL }
 };
 
@@ -52,9 +66,7 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     int PORT_B = 1;
     int PORT_C = 2;
 
-    puts("Main: _init_lcd..\n");
-
-    /* NOTE: Make sure the pins are working for your board! */
+    /* nucleo */
     lcd->register_select_pin = GPIO_PIN(PORT_A, 9);
     lcd->read_write_pin = GPIO_PIN(PORT_A, 8);
     lcd->enable_pin = GPIO_PIN(PORT_C, 7);
@@ -68,21 +80,37 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
     lcd->data_pins[7] = GPIO_PIN(PORT_B, 10);
     lcd->iface = iface;
     lcd->dotsize = dotsize;
-    /* functions set in init */
-    /* controls set in init */
-    /* modes set in init */
-    /* row_offset set in init */
     lcd->lines = 2;
     lcd->collumns = 16;
 
-    lcd1602a_init(lcd);
+    /* Phywave board */
+    /*
+    int PORT_E = 4;
+    lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
+    lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
+    lcd->enable_pin = GPIO_PIN(PORT_A, 2);
+    lcd->data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    lcd->data_pins[1] = 0; // Not used.
+    lcd->data_pins[2] = 0; // Not used.
+    lcd->data_pins[3] = 0; // Not used.
+    lcd->data_pins[4] = GPIO_PIN(PORT_A, 1);
+    lcd->data_pins[5] = GPIO_PIN(PORT_C, 4);
+    lcd->data_pins[6] = GPIO_PIN(PORT_C, 7);
+    lcd->data_pins[7] = GPIO_PIN(PORT_C, 5);
+    lcd->iface = iface;
+    lcd->dotsize = dotsize;
+    lcd->lines = 2;
+    lcd->collumns = 16;
+    */
 
-    puts("Main: _init_lcd [ done ]\n");
+    lcd1602a_init(lcd);
 }
 
 static inline void _ip_to_lcd(void)
 {
-    puts("Main: _ip_to_lcd print IPv6..\n");
+    /*
+     * NOTE: MAKE SURE TO USE A BOARD WITH NETWORK SUPPORT (or it won't work).
+     */
 
     /* get interfaces and print their addresses */
     gnrc_netif_t *netif = NULL;
@@ -100,10 +128,18 @@ static inline void _ip_to_lcd(void)
 
             ipv6_addr_to_str(ipv6_addr, &ipv6_addrs[i], IPV6_ADDR_MAX_STR_LEN);
             printf("My address is %s\n", ipv6_addr);
-            lcd1602a_write_buf(&lcd, ipv6_addr);
+            for (int k = 0; k < 16; k++) {
+              lcd1602a_write(&lcd, ipv6_addr[k]);
+            }
+            lcd1602a_cursor_set(&lcd, 0, 1);
+            for (int k = 16; k < 32; k++) {
+              lcd1602a_write(&lcd, ipv6_addr[k]);
+            }
+            //lcd1602a_write_buf(&lcd, ipv6_addr);
+            //lcd1602a_cursor_set(&lcd, 0, 1);
+            //lcd1602a_write_buf(&lcd, "helloworld");
         }
     }
-    puts("Main: _ip_to_lcd [ done ]\n");
 }
 
 int main(void)
@@ -111,7 +147,9 @@ int main(void)
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     spr_init();
+
     puts("SmartPowerReader sensor node");
+    
     _init_lcd(&lcd);
     _ip_to_lcd();
 

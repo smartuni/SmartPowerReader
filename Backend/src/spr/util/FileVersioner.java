@@ -27,7 +27,9 @@ public class FileVersioner implements Producer<File>
 			{
 				for(int i = 0 ; i < files.length ; ++i)
 				{
-					if(newest == null || mGen.compare(files[i], newest) > 0)
+					if(!files[i].endsWith(".conf")) continue;
+					
+					if(newest == null || mGen.compare(files[i], newest) < 0)
 					{
 						newest = files[i];
 					}
@@ -51,6 +53,6 @@ public class FileVersioner implements Producer<File>
 	@Override
 	public File produce()
 	{
-		return mLast = get(mGen.produce());
+		return mLast = get(mGen.produce() + ".conf");
 	}
 }

@@ -45,6 +45,8 @@ public class LocalBroker<T> extends BaseBroker<T>
 	{
 		if(!(msg.getRecipient() instanceof LocalAddress))
 			throw new IllegalArgumentException(msg.toString());
+
+		LOG.log("%s", msg.toString());
 		
 		if(msg.getRecipient().equals(LocalAddress.BROADCAST))
 		{
@@ -57,8 +59,6 @@ public class LocalBroker<T> extends BaseBroker<T>
 			
 			if(r != null)
 			{
-				LOG.log("%s", msg.toString());
-				
 				r.accept(msg);
 			}
 			else

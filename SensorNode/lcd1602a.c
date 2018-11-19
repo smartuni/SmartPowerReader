@@ -85,7 +85,7 @@ static inline void _send(lcd1602a_dev_t * dev, uint8_t value, uint8_t rs_mode)
     gpio_write(dev->register_select_pin, rs_mode);
     gpio_write(dev->read_write_pin, LOW);
 
-    /* A 4-Bit interface needs to write its 8-Bit value two times. */
+    /* A 4-Bit interface needs to write a 8-Bit value a second time but shifted. */
     if (dev->functions & LCD1602A_8BIT_MODE) {
         _write(dev, value);
     } else {
@@ -108,6 +108,8 @@ static inline void _command(lcd1602a_dev_t * dev, uint8_t cmd)
 
 void lcd1602a_init(lcd1602a_dev_t * dev)
 {
+    DEBUG("LCD1602A: Init -> Start\n");
+
     /* Initialize some values by default with zero. */
     dev->functions = 0x00;
     dev->controls = 0x00;
@@ -120,16 +122,16 @@ void lcd1602a_init(lcd1602a_dev_t * dev)
     /* First make some default initializations. */
     if (!(dev->iface & LCD1602A_8BIT_MODE)) {
         dev->functions = LCD1602A_4BIT_MODE | LCD1602A_1LINE | LCD1602A_5x8DOTS;
-        DEBUG("lcd: _init: 4-Bit interface, 1-Line, 5x8Dots (per default)\n");
+        DEBUG("LCD1602A: Init -> Functions: Use 4-Bit Interface, 1-Line, 5x8Dots\n");
     } else {
         dev->functions = LCD1602A_8BIT_MODE | LCD1602A_1LINE | LCD1602A_5x8DOTS;
-        DEBUG("lcd: _init: 8-Bit interface, 1-Line, 5x8Dots (per default)\n");
+        DEBUG("LCD1602A: Init -> Functions: Use 8-Bit Interface, 1-Line, 5x8Dots\n");
     }
 
     /* Assign functionality bit, when LCD should use 2 lines. */
     if (dev->lines > 1) {
         dev->functions |= LCD1602A_2LINE;
-        DEBUG("LCD: _power_up: Use 2 Lines\n");
+        DEBUG("LCD1602A: Init -> Functions: Use 2 Lines instead\n");
     }
 
     /* Needed for positioning the cursor. */
@@ -141,14 +143,16 @@ void lcd1602a_init(lcd1602a_dev_t * dev)
     /* If a 1 line display can have 10 pixel high font. */
     if ((dev->dotsize != LCD1602A_5x8DOTS) && (dev->lines == 1)) {
         dev->functions |= LCD1602A_5x10DOTS;
-        DEBUG("LCD: _power_up: Use 5 x 10 Dots\n");
+        DEBUG("LCD1602A: Init -> Functions: Use 5x10Dots instead\n");
     }
 
     /* Initialize all used pins as output. */
     gpio_init(dev->register_select_pin, GPIO_OUT);
+    DEBUG("LCD1602A: Init -> GPIO_INIT Register-Select-Pin as GPIO_OUT\n");
     gpio_init(dev->read_write_pin, GPIO_OUT);
+    DEBUG("LCD1602A: Init -> GPIO_INIT Read-Write-Pin as GPIO_OUT\n");
     gpio_init(dev->enable_pin, GPIO_OUT);
-    DEBUG("LCD: _power_up: rs-, rw-, e-Pin set as GPIO_OUT\n");
+    DEBUG("LCD1602A: Init -> GPIO_INIT Enable-Pin as GPIO_OUT\n");
 
     /* Initialize the data pins; Make sure to use the correct range. */
     int start = 0;
@@ -159,17 +163,19 @@ void lcd1602a_init(lcd1602a_dev_t * dev)
     }
 
     for (int i = start; i < MAX_DATA_PINS; i++) {
-        DEBUG("LCD: _power_up: D%i-Pin set as GPIO_OUT \n", i);
         gpio_init(dev->data_pins[i], GPIO_OUT);
+        DEBUG("LCD1602A: Init -> GPIO_INIT D%i-Pin as GPIO_OUT\n", i);
     }
 
     /* Wait at least 40 ms to let the power rise above 2.7V */
     xtimer_usleep(50LU * US_PER_MS);
 
     gpio_write(dev->register_select_pin, LOW);
+    DEBUG("LCD1602A: Init -> GPIO_WRITE Register-Select-Pin: LOW\n");
     gpio_write(dev->enable_pin, LOW);
+    DEBUG("LCD1602A: Init -> GPIO_WRITE Enable-Pin: LOW\n");
     gpio_write(dev->read_write_pin, LOW);
-    DEBUG("LCD: _power_up: rs-, rw-, e-Pin are LOW now\n");
+    DEBUG("LCD1602A: Init -> GPIO_WRITE Read-Write-Pin: LOW\n");
 
     if (!(dev->functions & LCD1602A_8BIT_MODE)) {
         _write(dev, 0x03);
@@ -179,14 +185,14 @@ void lcd1602a_init(lcd1602a_dev_t * dev)
         _write(dev, 0x03);
         xtimer_usleep(150);
         _write(dev, 0x02);
-        DEBUG("LCD: _power_up: 4-Bit mode\n");
+        DEBUG("LCD1602A: Init -> 4-Bit mode\n");
     } else {
         _command(dev, LCD1602A_FUNCTION_SET | dev->functions);
         xtimer_usleep(4500);
         _command(dev, LCD1602A_FUNCTION_SET | dev->functions);
         xtimer_usleep(150);
         _command(dev, LCD1602A_FUNCTION_SET | dev->functions);
-        DEBUG("LCD: _power_up: 8-Bit mode\n");
+        DEBUG("LCD1602A: Init -> 8-Bit mode\n");
     }
 
     /* Set No. of lines, dot size, etc. */
@@ -203,13 +209,13 @@ void lcd1602a_init(lcd1602a_dev_t * dev)
     dev->modes = LCD1602A_ENTRY_LEFT | LCD1602A_ENTRY_SHIFT_DEC;
     _command(dev, LCD1602A_ENTRY_MODE_SET | dev->modes);
 
-    DEBUG("LCD: _init: init done\n");
+    DEBUG("LCD1602A: Init -> Completed\n");
 }
 
 void lcd1602a_write_buf(lcd1602a_dev_t * dev, char * buf)
 {
     int len = (int)strlen(buf);
-    DEBUG("LCD: write_buf -> len: %d\n", len);
+    DEBUG("LCD1602A: Write_buf -> Length: %d\n", len);
 
     /* Use write method for every character in the buffer. */
     for (int i = 0; i < len; i++) {
@@ -219,27 +225,27 @@ void lcd1602a_write_buf(lcd1602a_dev_t * dev, char * buf)
 
 void lcd1602a_write(lcd1602a_dev_t * dev, uint8_t value)
 {
-    DEBUG("LCD: write -> '%c'\n", (char)value);
+    DEBUG("LCD1602A: Write -> '%c'\n", (char)value);
     _send(dev, value, HIGH);
 }
 
 void lcd1602a_display_on(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Display -> Enable\n");
+    DEBUG("LCD1602A: Display -> Enable\n");
     dev->controls |= LCD1602A_DISPLAY_ON;
     _command(dev, LCD1602A_DISPLAY_ON_OFF | dev->controls);
 }
 
 void lcd1602a_display_off(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Display -> Disable\n");
+    DEBUG("LCD1602A: Display -> Disable\n");
     dev->controls &= ~LCD1602A_DISPLAY_ON;
     _command(dev, LCD1602A_DISPLAY_ON_OFF | dev->controls);
 }
 
 void lcd1602a_display_clear(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Display -> Clear\n");
+    DEBUG("LCD1602A: Display -> Clear\n");
     _command(dev, LCD1602A_CLEAR_DISPLAY);
     /* It needs about two seconds to settle. */
     xtimer_usleep(2000);
@@ -247,82 +253,82 @@ void lcd1602a_display_clear(lcd1602a_dev_t * dev)
 
 void lcd1602a_cursor_on(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Cursor -> Enable\n");
+    DEBUG("LCD1602A: Cursor -> Enable\n");
     dev->controls |= LCD1602A_CURSOR_ON;
     _command(dev, LCD1602A_DISPLAY_ON_OFF | dev->controls);
 }
 
 void lcd1602a_cursor_off(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Cursor -> Disable\n");
+    DEBUG("LCD1602A: Cursor -> Disable\n");
     dev->controls &= ~LCD1602A_CURSOR_ON;
     _command(dev, LCD1602A_DISPLAY_ON_OFF | dev->controls);
 }
 
 void lcd1602a_cursor_reset(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Cursor -> Reset\n");
+    DEBUG("LCD1602A: Cursor -> Reset\n");
     _command(dev, LCD1602A_RETURN_HOME);
     xtimer_usleep(2000);
 }
 
 void lcd1602a_cursor_set(lcd1602a_dev_t * dev, uint8_t col, uint8_t row)
 {
-    DEBUG("LCD: Cursor -> Set col/row %i/%i\n", col, row);
+    DEBUG("LCD1602A: Cursor -> Set col/row %i/%i\n", col, row);
     row = (row > 0) ? 1 : 0; // Lazy check if between 0 and 1.
     _command(dev, LCD1602A_SET_DDRAM_ADDRESS | (col + dev->row_offset[row]));
 }
 
 void lcd1602a_blink_on(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Blink -> Enable\n");
+    DEBUG("LCD1602A: Blink -> Enable\n");
     dev->controls |= LCD1602A_BLINK_ON;
     _command(dev, LCD1602A_DISPLAY_ON_OFF | dev->controls);
 }
 
 void lcd1602a_blink_off(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Blink -> Disable\n");
+    DEBUG("LCD1602A: Blink -> Disable\n");
     dev->controls &= ~LCD1602A_BLINK_ON;
     _command(dev, LCD1602A_DISPLAY_ON_OFF | dev->controls);
 }
 
 void lcd1602a_scroll_left(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Scroll -> Left\n");
+    DEBUG("LCD1602A: Scroll -> Left\n");
     _command(dev, LCD1602A_CURSOR_OR_DISPLAY_SHIFT | LCD1602A_DISPLAY_MOVE | LCD1602A_MOVE_LEFT);
 }
 
 void lcd1602a_scroll_right(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Scroll -> Right\n");
+    DEBUG("LCD1602A: Scroll -> Right\n");
     _command(dev, LCD1602A_CURSOR_OR_DISPLAY_SHIFT | LCD1602A_DISPLAY_MOVE | LCD1602A_MOVE_RIGHT);
 }
 
 void lcd1602a_left_to_right(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Text -> LeftToRight\n");
+    DEBUG("LCD1602A: Text -> LeftToRight\n");
     dev->modes |= LCD1602A_ENTRY_LEFT;
     _command(dev, LCD1602A_ENTRY_MODE_SET | dev->modes);
 }
 
 void lcd1602a_right_to_left(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Text -> RightToLeft\n");
+    DEBUG("LCD1602A: Text -> RightToLeft\n");
     dev->modes &= ~LCD1602A_ENTRY_LEFT;
     _command(dev, LCD1602A_ENTRY_MODE_SET | dev->modes);
 }
 
 void lcd1602a_autoscroll_on(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Autoscroll -> Enable\n");
+    DEBUG("LCD1602A: Autoscroll -> Enable\n");
     dev->modes |= LCD1602A_ENTRY_SHIFT_INC;
     _command(dev, LCD1602A_ENTRY_MODE_SET | dev->modes);
 }
 
 void lcd1602a_autoscroll_off(lcd1602a_dev_t * dev)
 {
-    DEBUG("LCD: Autoscroll -> Disable\n");
+    DEBUG("LCD1602A: Autoscroll -> Disable\n");
     dev->modes &= ~LCD1602A_ENTRY_SHIFT_INC;
     _command(dev, LCD1602A_ENTRY_MODE_SET | dev->modes);
 }

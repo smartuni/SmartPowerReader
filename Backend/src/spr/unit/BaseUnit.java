@@ -3,6 +3,7 @@ package spr.unit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import dave.json.JsonString;
 import dave.json.JsonValue;
@@ -47,6 +48,8 @@ public class BaseUnit implements Unit
 	{
 		if(mCallbacks.put(task, cb) != null)
 			BASE_LOG.log(Severity.INFO, "Overwritten message handler for task '%s'", task);
+		
+		BASE_LOG.log("Node %s registered handler for %s", getNode().getID(), task);
 	}
 
 	@Override
@@ -60,7 +63,8 @@ public class BaseUnit implements Unit
 		}
 		else
 		{
-			BASE_LOG.log(Severity.WARNING, "Received message with no registered callback! [%s]", msg);
+			BASE_LOG.log(Severity.WARNING, "Node %s received message with no registered callback! [%s]", getNode().getID(), msg);
+			BASE_LOG.log(Severity.INFO, "Node %s responds to %s", getNode().getID(), mCallbacks.keySet().stream().collect(Collectors.joining(", ")));
 		}
 	}
 	

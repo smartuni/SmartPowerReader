@@ -91,6 +91,7 @@ public class FrontendUnit extends BaseUnit
 	private void actUpdateDevice(Packet p)
 	{
 		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.CONFIGURE, p.id, p.content));
+		getNode().send(Units.IDs.FRONTEND, new Task(Tasks.Frontend.ABORT, newSession(), p.id));
 	}
 	
 	private Entry get(int id)
@@ -206,6 +207,8 @@ public class FrontendUnit extends BaseUnit
 			try
 			{
 				JsonValue r = c.receive();
+				
+				LOG.log("Received from front-end %s", r.toString());
 				
 				mConnected.add(entry);
 				mRequests.add(new Packet(entry.id, r));

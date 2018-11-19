@@ -90,7 +90,7 @@ public class CoapServerUnit extends BaseUnit
 			this.action = action;
 		}
 		
-		public String getURI( ) { return "coap://" + host + ":" + port + "/" + path; }
+		public String getURI( ) { return "coap://[" + host + "]:" + port + "/" + path; }
 		
 		@Override
 		@Saver

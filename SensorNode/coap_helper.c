@@ -17,6 +17,7 @@
 
 #include "ct_sensor.h"
 #include "lcd1602a.h"
+#include "cbor.h"
 
 /* Current transformer parameters needed for current calculations. */
 ct_parameter_t ct_param;
@@ -25,6 +26,137 @@ ct_i_data_t ct_i_data;
 
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
+
+void indent(int nestingLevel)
+{
+    while (nestingLevel--)
+        puts("  ");
+}
+
+void dumpbytes(const uint8_t *buf, size_t len)
+{
+    while (len--)
+        printf("%02X ", *buf++);
+}
+
+bool dumprecursive(CborValue *it, int nestingLevel)
+{
+    while (!cbor_value_at_end(it)) {
+        CborError err;
+        CborType type = cbor_value_get_type(it);
+
+        indent(nestingLevel);
+        switch (type) {
+        case CborArrayType:
+        case CborMapType: {
+            // recursive type
+            CborValue recursed;
+            assert(cbor_value_is_container(it));
+            puts(type == CborArrayType ? "Array[" : "Map[");
+            err = cbor_value_enter_container(it, &recursed);
+            if (err)
+                return err;       // parse error
+            err = dumprecursive(&recursed, nestingLevel + 1);
+            if (err)
+                return err;       // parse error
+            err = cbor_value_leave_container(it, &recursed);
+            if (err)
+                return err;       // parse error
+            indent(nestingLevel);
+            puts("]");
+            continue;
+        }
+
+        case CborIntegerType: {
+            int64_t val;
+            cbor_value_get_int64(it, &val);     // can't fail
+            printf("%d\n", (int)val);
+            break;
+        }
+
+        case CborByteStringType: {
+            uint8_t *buf;
+            size_t n;
+            err = cbor_value_dup_byte_string(it, &buf, &n, it);
+            if (err)
+                return err;     // parse error
+            dumpbytes(buf, n);
+            puts("");
+            free(buf);
+            continue;
+        }
+
+        case CborTextStringType: {
+            char *buf;
+            size_t n;
+            err = cbor_value_dup_text_string(it, &buf, &n, it);
+            if (err)
+                return err;     // parse error
+            puts(buf);
+            free(buf);
+            continue;
+        }
+
+        case CborTagType: {
+            CborTag tag;
+            cbor_value_get_tag(it, &tag);       // can't fail
+            printf("Tag(%lld)\n", (long long)tag);
+            break;
+        }
+
+        case CborSimpleType: {
+            uint8_t type;
+            cbor_value_get_simple_type(it, &type);  // can't fail
+            printf("simple(%u)\n", type);
+            break;
+        }
+
+        case CborNullType:
+            puts("null");
+            break;
+
+        case CborUndefinedType:
+            puts("undefined");
+            break;
+
+        case CborBooleanType: {
+            bool val;
+            cbor_value_get_boolean(it, &val);       // can't fail
+            puts(val ? "true" : "false");
+            break;
+        }
+
+        case CborDoubleType: {
+            double val;
+            if (false) {
+                float f;
+        case CborFloatType:
+                cbor_value_get_float(it, &f);
+                val = f;
+            } else {
+                cbor_value_get_double(it, &val);
+            }
+            printf("%g\n", val);
+            break;
+        }
+        case CborHalfFloatType: {
+            uint16_t val;
+            cbor_value_get_half_float(it, &val);
+            printf("__f16(%04x)\n", val);
+            break;
+        }
+
+        case CborInvalidType:
+            assert(false);      // can't happen
+            break;
+        }
+
+        err = cbor_value_advance_fixed(it);
+        if (err)
+            return err;
+    }
+    return CborNoError;
+}
 /*
  * Response callback.
  * Handles response sent by server after sending the request
@@ -56,6 +188,10 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
             /* Expecting diagnostic payload in failure cases */
             printf(", %u bytes\n%.*s\n", pdu->payload_len, pdu->payload_len,
                                                           (char *)pdu->payload);
+        }
+        else if (pdu->content_type == COAP_FORMAT_CBOR) {
+            puts("Got CBOR Response!");
+            dumpbytes(pdu->payload, pdu->payload_len);
         }
         else {
             printf(", %u bytes\n", pdu->payload_len);
