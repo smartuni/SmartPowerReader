@@ -28,15 +28,15 @@ export class EditComponent implements OnInit {
 
     save() {
         const formValue = this.form.getRawValue();
-        const newValues = {
+        const editedSensor = {
             id: formValue.deviceId,
             period: formValue.period
         };
 
         if (formValue.deviceName)
-            newValues['name'] = formValue.deviceName;
-        this.sensorService.updateSensors(newValues).subscribe(res => {
-            this.onClosed.emit(null);
+            editedSensor['name'] = formValue.deviceName;
+        this.sensorService.updateSensors(editedSensor).subscribe(res => {
+            this.onClosed.emit(editedSensor);
         });
     }
 

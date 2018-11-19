@@ -2,10 +2,13 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {formatDate} from '@angular/common';
 import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
-import {Sensor} from '../../../../core/interfaces/sensor.interface';
+import {Sensor} from 'core/interfaces/sensor.interface';
 import {ModalService} from '../../../../shared/services/modal.service';
 import {EditComponent} from '../edit/edit.component';
-import {SensorStatus} from '../../../../core/enum/sensor-status.enum';
+import {SensorStatus} from 'core/enum/sensor-status.enum';
+import {select, Store} from '@ngrx/store';
+import * as fromRoot from 'store/reducers';
+import {UpdateSensorsSAction} from 'store/actions/sensors';
 
 
 @Component({
@@ -15,7 +18,7 @@ import {SensorStatus} from '../../../../core/enum/sensor-status.enum';
 })
 export class FilterBarComponent implements OnInit {
     form: FormGroup;
-    @Input() sensors: Sensor[];
+    sensors: Sensor[];
     @Output() onChangedValue = new EventEmitter();
     isLoading: boolean;
 
@@ -28,7 +31,8 @@ export class FilterBarComponent implements OnInit {
 
     testData: Sensor[];
 
-    constructor(private modalService: ModalService) {
+    constructor(private modalService: ModalService,
+                private store: Store<fromRoot.State>) {
     }
 
     ngOnInit() {
@@ -60,17 +64,19 @@ export class FilterBarComponent implements OnInit {
                 endTime: new FormControl('23:59')
             }
         );
-        if (this.sensors && this.sensors.length > 0) {
-            this.form.controls['selectedDevice'].setValue(this.sensors[0].id, {onlySelf: true});
-        }
 
         const raw = this.form.getRawValue();
         this.startTime = this.combineToDate(raw.startDate, raw.startTime);
         this.endTime = this.combineToDate(raw.endDate, raw.endTime);
         this.isFormValid = this.startTime < this.endTime;
 
+        this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
+            if (sensors) {
+                this.sensors = sensors;
+                this.isLoading = false;
+            }
+        });
 
-        this.isLoading = false;
         this.form.valueChanges.subscribe(data => {
             const rawValue = this.form.getRawValue();
             this.startTime = this.combineToDate(rawValue.startDate, rawValue.startTime);
@@ -89,7 +95,10 @@ export class FilterBarComponent implements OnInit {
 
     editDevice() {
         this.modalService.init(EditComponent, {sensors: this.sensors}, {
-            onClosed: () => {
+            onClosed: (editedSensor: Sensor) => {
+                const index = this.sensors.findIndex(sensor => sensor.id === editedSensor.id);
+                this.sensors[index] = editedSensor;
+                this.store.dispatch(new UpdateSensorsSAction(this.sensors));
                 this.modalService.destroy();
             }
         });

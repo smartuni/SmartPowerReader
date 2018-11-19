@@ -1,7 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Sensor} from '../../../core/interfaces/sensor.interface';
+import {Sensor} from 'core/interfaces/sensor.interface';
 import {GraphSummaryComponent} from '../components/graph-summary/graph-summary.component';
 import {SensorService} from '../services/sensor.service';
+import {Store} from '@ngrx/store';
+import * as fromRoot from 'store/reducers';
+import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingAction} from 'store/actions/sensors';
 
 @Component({
     selector: 'app-homepage',
@@ -16,7 +19,8 @@ export class HomePageComponent implements OnInit {
 
     @ViewChild(GraphSummaryComponent) graphSummaryComponent: GraphSummaryComponent;
 
-    constructor(private sensorService: SensorService) {
+    constructor(private sensorService: SensorService,
+                private store: Store<fromRoot.State>) {
     }
 
     ngOnInit() {
@@ -43,10 +47,15 @@ export class HomePageComponent implements OnInit {
     }
 
     private getAllSensors() {
-        this.sensorService.getAllSenors().subscribe(res => {
-            this.sensors = res;
+        this.store.dispatch(new SensorsLoadingAction());
+        this.sensorService.getAllSenors().subscribe(sensorList => {
+            this.store.dispatch(new SensorsLoadedSuccessAction(sensorList));
+            this.sensors = sensorList;
+            this.isLoading = false;
+        }, error1 => {
+            this.store.dispatch(new SensorsLoadedFailAction());
+            this.isLoading = false;
         });
-        this.isLoading = false;
 
     }
 

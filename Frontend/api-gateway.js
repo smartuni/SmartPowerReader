@@ -12,7 +12,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.get('/sensors/:sensorId', (req, res) => {
-    console.log('Incoming request...');
+    console.log('getSensorData Incoming request...');
     const payload = {
         action: req.query.action,
         id: req.query.id,
@@ -20,7 +20,6 @@ app.get('/sensors/:sensorId', (req, res) => {
         to: parseInt(req.query.to),
         count: parseInt(req.query.count)
     };
-    console.log('payload', payload);
     dispatch(payload, (data) => {
         res.end(data);
     })
@@ -30,7 +29,7 @@ app.get('/sensors/:sensorId', (req, res) => {
 app.get('/sensors', (req, res) => {
     console.log('Incoming request...');
     const payload = {
-        action: 'query-devices',
+        action: req.query.action,
     };
     console.log('payload', payload);
     dispatch(payload, (data) => {
@@ -42,12 +41,11 @@ app.get('/sensors', (req, res) => {
 app.put('/sensors', (req, res) => {
     console.log('Incoming request...');
     const payload = {
-        action: 'put-device',
+        action: req.query.action,
         id: req.body.id,
         name: req.body.name,
         period: parseInt(req.body.period)
     };
-    console.log('payload', payload);
     dispatch(payload, (data) => {
         res.end(data);
     })

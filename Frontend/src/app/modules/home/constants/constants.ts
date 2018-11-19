@@ -1,3 +1,3 @@
-export const actionGetMeasurement = 'query-measurement';
-export const actionGetSensors = 'query-devices';
-export const actionUpdateSensor = 'put-device';
+export const GET_MEASUREMENT = 'query-measurement';
+export const GET_SENSORS = 'query-devices';
+export const UPDATE_SENSORS = 'put-device';

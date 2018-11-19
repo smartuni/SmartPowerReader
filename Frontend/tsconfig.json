@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "src",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -18,6 +18,20 @@
       "dom",
       "es2015",
       "es6"
-    ]
+    ],
+    "paths": {
+      "environments": [
+        "environments/*"
+      ],
+      "assets/*": [
+        "assets/*"
+      ],
+      "store/*": [
+        "app/store/*"
+      ],
+      "core/*": [
+        "app/core/*"
+      ]
+    }
   }
 }

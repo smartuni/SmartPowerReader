@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {SensorService} from '../../services/sensor.service';
-import {Sensor} from '../../../../core/interfaces/sensor.interface';
+import {Sensor} from 'core/interfaces/sensor.interface';
 import {formatDate} from '@angular/common';
-import {actionGetMeasurement} from '../../constants/constants';
+import {GET_MEASUREMENT} from '../../constants/constants';
 
 @Component({
     selector: 'app-graph-summary',
@@ -47,7 +47,7 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
         console.log('selectedDeviceIds', selectedDeviceIds, from, to);
         for (let i = 0; i < selectedDeviceIds.length; i++) {
             const params = {
-                action: actionGetMeasurement,
+                action: GET_MEASUREMENT,
                 id: selectedDeviceIds[i],
                 from: from,
                 to: to,
@@ -68,7 +68,6 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                 this.results.push(newSensor);
                 if (i === selectedDeviceIds.length - 1) {
                     console.log('in if', this.results);
-                    // this.indexTicks = JSON.parse(JSON.stringify(this.indexTicks));
                     this.isLoading = false;
                 }
             });
