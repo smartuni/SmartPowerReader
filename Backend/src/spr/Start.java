@@ -29,6 +29,7 @@ import spr.common.SystemBuilder.BaseModule;
 import spr.common.SystemBuilder.DistributedNetwork;
 import spr.common.SystemBuilder.FrontendModule;
 import spr.common.SystemBuilder.MasterModule;
+import spr.common.SystemBuilder.NetworkModule;
 import spr.common.SystemBuilder.NodeLogicModule;
 import spr.net.UniqueAddress;
 import spr.unit.Units;
@@ -57,6 +58,7 @@ public class Start
 			SystemBuilder sys = new SystemBuilder(new DistributedNetwork());
 			
 			sys.install(new BaseModule());
+			sys.install(new NetworkModule((int) options.get(Params.UDP_PORT)));
 			sys.install(new NodeLogicModule(coap_endpoints));
 			
 			if(((boolean) options.get(Params.MASTER)))
