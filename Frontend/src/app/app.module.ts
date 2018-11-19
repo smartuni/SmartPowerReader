@@ -7,24 +7,25 @@ import {HeaderComponent} from './core/header/header.component';
 import {EditComponent} from './modules/home/components/edit/edit.component';
 import {AppRoutingModule} from './app-routing.module';
 import {HomeModule} from './modules/home/home.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    FooterComponent,
-    HeaderComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HomeModule,
-  ],
-  providers: [
-  ],
-  bootstrap: [AppComponent],
-  entryComponents: [
-    EditComponent
-  ]
+    declarations: [
+        AppComponent,
+        FooterComponent,
+        HeaderComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        HomeModule,
+    ],
+    providers: [],
+    bootstrap: [AppComponent],
+    entryComponents: [
+        EditComponent
+    ]
 })
 export class AppModule {
 }

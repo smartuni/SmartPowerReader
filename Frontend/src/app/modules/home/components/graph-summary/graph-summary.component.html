@@ -11,7 +11,7 @@
             [yAxisLabel]="yAxisLabel"
             [roundDomains]="roundDomains"
             [autoScale]="autoScale"
-            [xAxisTickFormatting]="isLessThan3Days ? axisFormatTime :axisFormatDate">
+            [xAxisTickFormatting]="isLessThan3Days ? axisFormatTime : (isLessThan1Month ? axisFormatDate : axisFormatMonth)">
         <!--<ng-template #tooltipTemplate let-model="model">-->
         <!--<div >{{model.series}}</div>-->
         <!--<div >{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</div>-->

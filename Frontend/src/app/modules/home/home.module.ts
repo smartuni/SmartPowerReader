@@ -11,27 +11,33 @@ import {AmazingTimePickerModule} from 'amazing-time-picker';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SensorService} from './services/sensor.service';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {MatDatepickerModule, MatFormFieldModule, MatIconModule, MatNativeDateModule, MatSelectModule} from '@angular/material';
 
 
 @NgModule({
-  imports: [
-    SharedModule,
-    HomeRoutingModule,
-    NgbModule,
-    AmazingTimePickerModule,
-    NgxChartsModule,
-    BrowserAnimationsModule,
-    NoopAnimationsModule
-  ],
-  declarations: [
-    HomePageComponent,
-    EditComponent,
-    FilterBarComponent,
-    GraphSummaryComponent
-  ],
-  providers: [
-    SensorService
-  ]
+    imports: [
+        SharedModule,
+        HomeRoutingModule,
+        NgbModule,
+        AmazingTimePickerModule,
+        NgxChartsModule,
+        BrowserAnimationsModule,
+        NoopAnimationsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatIconModule
+    ],
+    declarations: [
+        HomePageComponent,
+        EditComponent,
+        FilterBarComponent,
+        GraphSummaryComponent
+    ],
+    providers: [
+        SensorService
+    ]
 })
 export class HomeModule {
 }

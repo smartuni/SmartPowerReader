@@ -15,7 +15,7 @@ app.get('/sensors/:sensorId', (req, res) => {
     console.log('Incoming request...');
     const payload = {
         action: req.query.action,
-        id: req.params.sensorId,
+        id: req.query.id,
         from: parseInt(req.query.from),
         to: parseInt(req.query.to),
         count: parseInt(req.query.count)
@@ -56,7 +56,7 @@ app.put('/sensors', (req, res) => {
 
 function dispatch(payload, cb) {
     const socket = require('net').Socket();
-    socket.connect(9901, '0.0.0.0', () => {
+    socket.connect(9901, '192.168.1.236', () => {
         console.log('connect');
         socket.write(JSON.stringify(payload) + '\n');
         let result = "";

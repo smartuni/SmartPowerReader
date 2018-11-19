@@ -1,87 +1,110 @@
 <div class="filter-container" *ngIf="!isLoading">
-  <div class="row mt-4" [formGroup]="form">
-    <div class="col-3">
-      <select name="option" class="form-control col-10" formControlName="selectedDevice">
-        <!--<option value="0">{{folder.name}}</option>-->
-        <option *ngFor="let device of sensors; let i = index" [value]="device.id" [selected]="i == 0">
-          {{device.name ? device.name : device.id}}
-        </option>
-      </select>
-      <div class="row text-right">
-        <div class="col-auto">
-          <button type="submit" (click)="onSubmit()" [disabled]="!isFormValid" class="submit-button mt-4">Show</button>
-        </div>
-        <div class="col-auto">
-          <button type="button"
-                  class="edit-button mt-4 mr-2"
-                  (click)="editDevice()">Edit</button>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="row">
-        <div class="col-6">
-          <div class="row vertical-align">
-            <div class="col-2 pl-0 header">From</div>
-            <div class="col-6">
-              <div class="input-group from align-items-center">
-                <input class="form-control" id="startDate"
-                       (click)="activeHover('from')"
-                       placeholder="yyyy-mm-dd"
-                       name="startDate"
-                       formControlName="startDate"
-                       ngbDatepicker
-                       #startDate="ngbDatepicker">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" (click)="startDate.toggle();activeHover('from')" type="button">
-                    <img src="../../../../../assets/img/svg/calendar-icon.svg"
-                         style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
-                  </button>
+    <div class="row mt-4" [formGroup]="form">
+        <div class="col-3">
+
+            <mat-form-field class="col-10">
+                <mat-select multiple placeholder="Select device">
+                    <mat-option (onSelectionChange)="change($event)"
+                                *ngFor="let device of sensors; let i = index"
+                                [value]="device.id">
+                        <div class="row">
+                            <div class="col-auto">
+                                {{device.name ? device.name : device.id}}
+                            </div>
+                            <div class="col text-right">
+                                <mat-icon class="fas fa-check" *ngIf="device.status === 'connected'"></mat-icon>
+                                <mat-icon class="fas fa-ban" *ngIf="device.status === 'disconnected'"></mat-icon>
+
+                            </div>
+                        </div>
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div class="row text-right">
+                <div class="col-auto">
+                    <button type="submit" (click)="onSubmit()" [disabled]="!isFormValid" class="submit-button mt-1">
+                        Show
+                    </button>
                 </div>
-              </div>
-            </div>
-            <div class="col-3 input-field inline">
-              <input align="middle" formControlName="startTime" type="time" onlyPM='true'>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-6">
-          <div class="row vertical-align">
-            <div class="col-2 header">To</div>
-            <div class="col-6">
-              <div class="input-group align-items-center">
-                <input class="form-control" id="endDate"
-                       placeholder="yyyy-mm-dd"
-                       formControlName="endDate"
-                       ngbDatepicker
-                       #endDate="ngbDatepicker">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" (click)="endDate.toggle()" type="button">
-                    <img src="../../../../../assets/img/svg/calendar-icon.svg"
-                         style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
-                  </button>
+                <div class="col-auto">
+                    <button type="button"
+                            class="edit-button mt-1 mr-2"
+                            (click)="editDevice()">Configuration
+                    </button>
                 </div>
-              </div>
             </div>
-            <div class="col-3 ">
-              <input align="middle" formControlName="endTime" type="time" onlyPM="true">
-            </div>
-          </div>
         </div>
-      </div>
-      <div class="row mt-4 justify-content-between">
-        <button class="filter-button" type="button" (click)="selectDate()">Today</button>
-        <button class="filter-button" type="button" (click)="selectDate(-1)">Yesterday</button>
-        <button class="filter-button" type="button" (click)="selectWeek(-1, -1)">Last week</button>
-        <button class="filter-button" type="button" (click)="selectMonth()">This month</button>
-        <button class="filter-button" type="button" (click)="selectMonth(-1, -1)">Last month</button>
-        <button class="filter-button" type="button" (click)="selectMonth(-3, -1)">Last 3 months</button>
-        <button class="filter-button" type="button" (click)="selectYear()">This year</button>
-        <button class="filter-button" type="button" (click)="selectYear(-1)">Last Year</button>
+        <div class="col">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row vertical-align">
+                        <div class="col-2 pl-0 header">From</div>
+                        <div class="col-6">
+                            <div class="input-group from align-items-center">
+                                <input class="form-control" id="startDate"
+                                       (click)="activeHover('from')"
+                                       placeholder="yyyy-mm-dd"
+                                       name="startDate"
+                                       formControlName="startDate"
+                                       ngbDatepicker
+                                       #startDate="ngbDatepicker">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary"
+                                            (click)="startDate.toggle();activeHover('from')" type="button">
+                                        <img src="../../../../../assets/img/svg/calendar-icon.svg"
+                                             style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 input-field inline">
+                            <input align="middle" formControlName="startTime" type="time" onlyPM='true'>
+                        </div>
+                    </div>
+                </div>
 
-      </div>
+                <div class="col-6">
+                    <div class="row vertical-align">
+                        <div class="col-2 header">To</div>
+                        <div class="col-6">
+                            <div class="input-group align-items-center">
+                                <input class="form-control" id="endDate"
+                                       placeholder="yyyy-mm-dd"
+                                       formControlName="endDate"
+                                       ngbDatepicker
+                                       #endDate="ngbDatepicker">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" (click)="endDate.toggle()" type="button">
+                                        <img src="../../../../../assets/img/svg/calendar-icon.svg"
+                                             style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 ">
+                            <input align="middle" formControlName="endTime" type="time" onlyPM="true">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4 mr-2 justify-content-between">
+                <button class="filter-button" type="button" (click)="selectDate()">Today</button>
+                <button class="filter-button" type="button" (click)="selectDate(-1)">Yesterday</button>
+                <button class="filter-button" type="button" (click)="selectWeek(-1, -1)">Last week</button>
+                <button class="filter-button" type="button" (click)="selectMonth()">This month</button>
+                <button class="filter-button" type="button" (click)="selectMonth(-1, -1)">Last month</button>
+                <button class="filter-button" type="button" (click)="selectMonth(-3, -1)">Last 3 months</button>
+                <button class="filter-button" type="button" (click)="selectYear()">This year</button>
+                <button class="filter-button" type="button" (click)="selectYear(-1)">Last Year</button>
+
+            </div>
+        </div>
+
     </div>
-
-  </div>
 </div>
+
+
+
+
+

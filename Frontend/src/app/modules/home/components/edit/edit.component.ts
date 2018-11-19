@@ -12,6 +12,7 @@ import {Sensor} from '../../../../core/interfaces/sensor.interface';
 export class EditComponent implements OnInit {
     form: FormGroup;
     sensors: Sensor[];
+    selectedSensor: Sensor;
     @Output() onClosed = new EventEmitter();
 
     constructor(private sensorService: SensorService) {
@@ -41,6 +42,12 @@ export class EditComponent implements OnInit {
 
     isFormValid() {
         return !this.form.invalid;
+    }
+
+    onChangeSensor(event) {
+        const id = event.target.value;
+        this.selectedSensor = this.sensors.find(sensor => sensor.id === id);
+        console.log(this.selectedSensor);
     }
 
 }

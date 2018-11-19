@@ -5,6 +5,7 @@ import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth
 import {Sensor} from '../../../../core/interfaces/sensor.interface';
 import {ModalService} from '../../../../shared/services/modal.service';
 import {EditComponent} from '../edit/edit.component';
+import {SensorStatus} from '../../../../core/enum/sensor-status.enum';
 
 
 @Component({
@@ -23,11 +24,28 @@ export class FilterBarComponent implements OnInit {
     isFormValid: boolean;
     now: string;
 
+    selectedDevices = [];
+
+    testData: Sensor[];
+
     constructor(private modalService: ModalService) {
     }
 
     ngOnInit() {
         this.isLoading = true;
+        this.testData = [
+            {
+                id: 'test12',
+                name: '345',
+                period: 456,
+                status: SensorStatus.CONNECTED
+            },
+            {
+                id: 'thahah',
+                name: 'hoho',
+                period: 456,
+                status: SensorStatus.DISCONNECTED
+            }];
         this.now = formatDate(new Date(), 'yyyy-MM-dd', 'en');
         const todayArr = this.now.split('-');
         const today = {
@@ -35,11 +53,9 @@ export class FilterBarComponent implements OnInit {
             month: +todayArr[1],
             day: +todayArr[2]
         };
-        console.log('today', today);
         this.form = new FormGroup({
                 startDate: new FormControl(today),
                 endDate: new FormControl(today),
-                selectedDevice: new FormControl(''),
                 startTime: new FormControl('00:00'),
                 endTime: new FormControl('23:59')
             }
@@ -53,6 +69,7 @@ export class FilterBarComponent implements OnInit {
         this.endTime = this.combineToDate(raw.endDate, raw.endTime);
         this.isFormValid = this.startTime < this.endTime;
 
+
         this.isLoading = false;
         this.form.valueChanges.subscribe(data => {
             const rawValue = this.form.getRawValue();
@@ -63,8 +80,10 @@ export class FilterBarComponent implements OnInit {
     }
 
     onSubmit() {
+        const rawValue = this.form.getRawValue();
+        rawValue['selectedDevices'] = this.selectedDevices;
         this.onChangedValue.emit(
-            this.form.getRawValue()
+            rawValue
         );
     }
 
@@ -126,6 +145,18 @@ export class FilterBarComponent implements OnInit {
 
     activeHover(className) {
         console.log(document.getElementsByClassName('input-group ' + className).item(0));
+    }
+
+
+    change(event) {
+        if (event.isUserInput) {
+            if (event.source.selected)
+                this.selectedDevices.push(event.source.value);
+            else {
+                const index = this.selectedDevices.findIndex(id => event.source.value === id);
+                this.selectedDevices.splice(index, 1);
+            }
+        }
     }
 
 }

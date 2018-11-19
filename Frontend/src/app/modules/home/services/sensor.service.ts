@@ -12,8 +12,8 @@ export class SensorService {
     constructor(private httpClient: HttpClient) {
     }
 
-    getData(params: any): Observable<Sensor[]> {
-        return this.httpClient.get<Sensor[]>(`${environment.sensorUrl}/${params.id}`, {params: params});
+    getData(params: any): Observable<any> {
+        return this.httpClient.get<Sensor[]>(`${environment.sensorUrl}/devices`, {params: params});
     }
 
     getAllSenors(): Observable<Sensor[]> {
@@ -23,5 +23,6 @@ export class SensorService {
     updateSensors(body: any): Observable<Object> {
         return this.httpClient.put<Object>(`${environment.sensorUrl}`, body);
     }
+
 
 }
