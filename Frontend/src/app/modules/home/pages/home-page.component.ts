@@ -4,6 +4,9 @@ import {SensorService} from '../services/sensor.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
 import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingAction} from 'store/actions/sensors';
+import {interval} from 'rxjs';
+import {flatMap} from 'tslint/lib/utils';
+import {tap} from 'rxjs/internal/operators';
 
 @Component({
     selector: 'app-homepage',
@@ -22,9 +25,16 @@ export class HomePageComponent implements OnInit {
     }
 
     ngOnInit() {
-        setTimeout(() => {
-            this.getAllSensors();
-        }, 500);
+        // interval(60 * 60 * 1000)
+        //     .pipe(
+        //         tap(() => {
+                    setTimeout(() => {
+                        this.getAllSensors();
+                    }, 500);
+                // })
+            // )
+            // .subscribe();
+
 
     }
 
@@ -45,29 +55,11 @@ export class HomePageComponent implements OnInit {
     }
 
     private getAllSensors() {
-        // this.isLoading = true;
         this.store.dispatch(new SensorsLoadingAction());
-        // const testData = [
-        //     {
-        //         id: 'test12',
-        //         name: '345',
-        //         period: 456,
-        //         status: SensorStatus.CONNECTED
-        //     },
-        //     {
-        //         id: 'thahah',
-        //         name: 'hoho',
-        //         period: 456,
-        //         status: SensorStatus.DISCONNECTED
-        //     }];
-        // this.store.dispatch(new SensorsLoadedSuccessAction(testData));
-        // this.isLoading = false;
         this.sensorService.getAllSenors().subscribe(sensorList => {
             this.store.dispatch(new SensorsLoadedSuccessAction(sensorList));
-            // this.isLoading = false;
         }, error1 => {
             this.store.dispatch(new SensorsLoadedFailAction());
-            // this.isLoading = false;
         });
 
     }

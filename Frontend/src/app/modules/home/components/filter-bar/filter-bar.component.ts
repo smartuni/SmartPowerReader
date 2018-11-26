@@ -17,7 +17,7 @@ import {UpdateSensorsSAction} from 'store/actions/sensors';
 })
 export class FilterBarComponent implements OnInit {
     form: FormGroup;
-    sensors: Sensor[];
+    sensors: Sensor[] = [];
     @Output() onChangedValue = new EventEmitter();
     isLoading: boolean;
 

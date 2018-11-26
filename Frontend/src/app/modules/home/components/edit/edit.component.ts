@@ -33,12 +33,12 @@ export class EditComponent implements OnInit {
         const editedSensor = {
             id: formValue.deviceId,
             period: formValue.period,
-            status: this.selectedSensor.status
+            status: this.selectedSensor.status,
+            name: !formValue.deviceName || (formValue.deviceName && formValue.deviceName.length === 0)
+                ? null
+                : formValue.deviceName
         };
 
-        if (formValue.deviceName) {
-            editedSensor['name'] = formValue.deviceName;
-        }
         this.sensorService.updateSensors(editedSensor).subscribe(res => {
             this.onUpdated.emit(editedSensor);
         });

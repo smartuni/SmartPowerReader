@@ -76,4 +76,10 @@ input[type="time"]:focus {
   box-shadow: 0px 0px 1px 3px rgba(68,139,252,1);
 }
 
+.description {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 
