@@ -5,7 +5,6 @@ import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth
 import {Sensor} from 'core/interfaces/sensor.interface';
 import {ModalService} from '../../../../shared/services/modal.service';
 import {EditComponent} from '../edit/edit.component';
-import {SensorStatus} from 'core/enum/sensor-status.enum';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
 import {UpdateSensorsSAction} from 'store/actions/sensors';
@@ -57,10 +56,8 @@ export class FilterBarComponent implements OnInit {
 
         setTimeout(() => {
             this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
-                console.log(sensors);
                 this.sensors = sensors;
                 this.isLoading = false;
-
             });
         }, 500);
 

@@ -29,7 +29,6 @@ export class HomePageComponent implements OnInit {
     }
 
     onChangedValue(data) {
-        console.log(data);
         this.from = this.convertToDate(data['startDate'], data['startTime']).valueOf();
         this.to = this.convertToDate(data['endDate'], data['endTime']).valueOf();
         this.graphSummaryComponent.drawGraph(data.selectedDevices, this.from, this.to);

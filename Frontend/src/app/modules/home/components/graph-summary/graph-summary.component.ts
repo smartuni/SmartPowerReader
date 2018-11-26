@@ -44,7 +44,6 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
         this.isLoaded = false;
         this.isLessThan3Days = false;
         this.results = [];
-        console.log('selectedDeviceIds', selectedDevices, from, to);
         for (let i = 0; i < selectedDevices.length; i++) {
             const params = {
                 action: GET_MEASUREMENT,
@@ -68,14 +67,12 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                     } as Sensor;
                     this.results.push(newSensor);
                     if (i === selectedDevices.length - 1) {
-                        console.log('in if', this.results);
                         this.isLoading = false;
                     }
                 });
             }, 2000);
         }
         this.isLessThan3Days = to - from <= 86340000 * 3;
-        console.log('to - from', to, from, to - from, 86340000 * 28, to - from <= 86340000 * 28);
         this.isLessThan1Month = to - from <= 86340000 * 28;
 
 

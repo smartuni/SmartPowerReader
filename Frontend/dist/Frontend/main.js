@@ -402,7 +402,7 @@ var EditComponent = /** @class */ (function () {
         this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
             deviceId: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
             deviceName: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](),
-            period: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](1, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(1)])
+            period: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](1, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(0)])
         });
     };
     EditComponent.prototype.save = function () {
@@ -410,7 +410,8 @@ var EditComponent = /** @class */ (function () {
         var formValue = this.form.getRawValue();
         var editedSensor = {
             id: formValue.deviceId,
-            period: formValue.period
+            period: formValue.period,
+            status: this.selectedSensor.status
         };
         if (formValue.deviceName) {
             editedSensor['name'] = formValue.deviceName;
@@ -425,7 +426,8 @@ var EditComponent = /** @class */ (function () {
     EditComponent.prototype.onChangeSensor = function (event) {
         var id = event.target.value;
         this.selectedSensor = this.sensors.find(function (sensor) { return sensor.id === id; });
-        console.log(this.selectedSensor);
+        this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
+        this.form.controls['period'].setValue(this.selectedSensor.period ? this.selectedSensor.period : 1);
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
@@ -534,7 +536,6 @@ var FilterBarComponent = /** @class */ (function () {
         this.isFormValid = this.startTime < this.endTime;
         setTimeout(function () {
             _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_6__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_7__["getSensors"])).subscribe(function (sensors) {
-                console.log(sensors);
                 _this.sensors = sensors;
                 _this.isLoading = false;
             });
@@ -724,7 +725,6 @@ var GraphSummaryComponent = /** @class */ (function () {
         this.isLoaded = false;
         this.isLessThan3Days = false;
         this.results = [];
-        console.log('selectedDeviceIds', selectedDevices, from, to);
         var _loop_1 = function (i) {
             var params = {
                 action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_MEASUREMENT"],
@@ -747,7 +747,6 @@ var GraphSummaryComponent = /** @class */ (function () {
                     };
                     _this.results.push(newSensor);
                     if (i === selectedDevices.length - 1) {
-                        console.log('in if', _this.results);
                         _this.isLoading = false;
                     }
                 });
@@ -757,7 +756,6 @@ var GraphSummaryComponent = /** @class */ (function () {
             _loop_1(i);
         }
         this.isLessThan3Days = to - from <= 86340000 * 3;
-        console.log('to - from', to, from, to - from, 86340000 * 28, to - from <= 86340000 * 28);
         this.isLessThan1Month = to - from <= 86340000 * 28;
     };
     GraphSummaryComponent.prototype.ngAfterViewInit = function () {
@@ -989,7 +987,6 @@ var HomePageComponent = /** @class */ (function () {
         }, 500);
     };
     HomePageComponent.prototype.onChangedValue = function (data) {
-        console.log(data);
         this.from = this.convertToDate(data['startDate'], data['startTime']).valueOf();
         this.to = this.convertToDate(data['endDate'], data['endTime']).valueOf();
         this.graphSummaryComponent.drawGraph(data.selectedDevices, this.from, this.to);

@@ -8,7 +8,6 @@ const http = require('http');
 
 const serverUrl = '0.0.0.0';
 const port = 9901;
-console.log(__dirname, path.join(__dirname, 'dist/Frontend'));
 app.use(express.static(path.join(__dirname, 'dist/Frontend')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));

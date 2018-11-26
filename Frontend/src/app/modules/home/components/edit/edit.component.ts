@@ -22,7 +22,7 @@ export class EditComponent implements OnInit {
         this.form = new FormGroup({
             deviceId: new FormControl(''),
             deviceName: new FormControl(),
-            period: new FormControl(1, [Validators.min(1)])
+            period: new FormControl(1, [Validators.min(0)])
         });
     }
 
@@ -30,12 +30,12 @@ export class EditComponent implements OnInit {
         const formValue = this.form.getRawValue();
         const editedSensor = {
             id: formValue.deviceId,
-            period: formValue.period
+            period: formValue.period,
+            status: this.selectedSensor.status
         };
 
         if (formValue.deviceName) {
             editedSensor['name'] = formValue.deviceName;
-
         }
         this.sensorService.updateSensors(editedSensor).subscribe(res => {
             this.onClosed.emit(editedSensor);
@@ -49,7 +49,8 @@ export class EditComponent implements OnInit {
     onChangeSensor(event) {
         const id = event.target.value;
         this.selectedSensor = this.sensors.find(sensor => sensor.id === id);
-        console.log(this.selectedSensor);
-    }
+        this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
+        this.form.controls['period'].setValue(this.selectedSensor.period ? this.selectedSensor.period : 1);
+        }
 
 }
