@@ -6,14 +6,14 @@
                 <mat-select multiple placeholder="Select device">
                     <mat-option (onSelectionChange)="change($event)"
                                 *ngFor="let device of sensors; let i = index"
-                                [value]="device.id">
+                                [value]="device">
                         <div class="row">
                             <div class="col-auto">
                                 {{device.name ? device.name : device.id}}
                             </div>
                             <div class="col text-right">
-                                <mat-icon class="fas fa-check" *ngIf="device.status === 'connected'"></mat-icon>
-                                <mat-icon class="fas fa-ban" *ngIf="device.status === 'disconnected'"></mat-icon>
+                                <mat-icon class="fas fa-check" *ngIf="device.status === 'CONNECTED'"></mat-icon>
+                                <mat-icon class="fas fa-ban" *ngIf="device.status === 'DISCONNECTED'"></mat-icon>
 
                             </div>
                         </div>

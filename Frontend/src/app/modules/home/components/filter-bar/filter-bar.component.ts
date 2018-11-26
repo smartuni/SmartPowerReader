@@ -29,8 +29,6 @@ export class FilterBarComponent implements OnInit {
 
     selectedDevices = [];
 
-    testData: Sensor[];
-
     constructor(private modalService: ModalService,
                 private store: Store<fromRoot.State>) {
     }
@@ -59,6 +57,7 @@ export class FilterBarComponent implements OnInit {
 
         setTimeout(() => {
             this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
+                console.log(sensors);
                 this.sensors = sensors;
                 this.isLoading = false;
 
@@ -147,11 +146,12 @@ export class FilterBarComponent implements OnInit {
 
 
     change(event) {
+        const device = event.source.value as Sensor;
         if (event.isUserInput) {
             if (event.source.selected)
-                this.selectedDevices.push(event.source.value);
+                this.selectedDevices.push([device.id, device.name]);
             else {
-                const index = this.selectedDevices.findIndex(id => event.source.value === id);
+                const index = this.selectedDevices.findIndex(item => device.id === item[0]);
                 this.selectedDevices.splice(index, 1);
             }
         }

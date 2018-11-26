@@ -406,6 +406,7 @@ var EditComponent = /** @class */ (function () {
         });
     };
     EditComponent.prototype.save = function () {
+        var _this = this;
         var formValue = this.form.getRawValue();
         var editedSensor = {
             id: formValue.deviceId,
@@ -414,9 +415,9 @@ var EditComponent = /** @class */ (function () {
         if (formValue.deviceName) {
             editedSensor['name'] = formValue.deviceName;
         }
-        // this.sensorService.updateSensors(editedSensor).subscribe(res => {
-        this.onClosed.emit(editedSensor);
-        // });
+        this.sensorService.updateSensors(editedSensor).subscribe(function (res) {
+            _this.onClosed.emit(editedSensor);
+        });
     };
     EditComponent.prototype.isFormValid = function () {
         return !this.form.invalid;
@@ -452,7 +453,7 @@ var EditComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-10\">\n                <mat-select multiple placeholder=\"Select device\">\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device.id\">\n                        <div class=\"row\">\n                            <div class=\"col-auto\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col text-right\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'connected'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'disconnected'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Configuration\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 input-field inline\">\n                            <input align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 \">\n                            <input align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
+module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-10\">\n                <mat-select multiple placeholder=\"Select device\">\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device\">\n                        <div class=\"row\">\n                            <div class=\"col-auto\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col text-right\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'CONNECTED'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'DISCONNECTED'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Configuration\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 input-field inline\">\n                            <input align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 \">\n                            <input align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
 
 /***/ }),
 
@@ -533,6 +534,7 @@ var FilterBarComponent = /** @class */ (function () {
         this.isFormValid = this.startTime < this.endTime;
         setTimeout(function () {
             _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_6__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_7__["getSensors"])).subscribe(function (sensors) {
+                console.log(sensors);
                 _this.sensors = sensors;
                 _this.isLoading = false;
             });
@@ -611,11 +613,12 @@ var FilterBarComponent = /** @class */ (function () {
         console.log(document.getElementsByClassName('input-group ' + className).item(0));
     };
     FilterBarComponent.prototype.change = function (event) {
+        var device = event.source.value;
         if (event.isUserInput) {
             if (event.source.selected)
-                this.selectedDevices.push(event.source.value);
+                this.selectedDevices.push([device.id, device.name]);
             else {
-                var index = this.selectedDevices.findIndex(function (id) { return event.source.value === id; });
+                var index = this.selectedDevices.findIndex(function (item) { return device.id === item[0]; });
                 this.selectedDevices.splice(index, 1);
             }
         }
@@ -715,17 +718,17 @@ var GraphSummaryComponent = /** @class */ (function () {
     }
     GraphSummaryComponent.prototype.ngOnInit = function () {
     };
-    GraphSummaryComponent.prototype.drawGraph = function (selectedDeviceIds, from, to) {
+    GraphSummaryComponent.prototype.drawGraph = function (selectedDevices, from, to) {
         var _this = this;
         this.isLoading = true;
         this.isLoaded = false;
         this.isLessThan3Days = false;
         this.results = [];
-        console.log('selectedDeviceIds', selectedDeviceIds, from, to);
+        console.log('selectedDeviceIds', selectedDevices, from, to);
         var _loop_1 = function (i) {
             var params = {
                 action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_MEASUREMENT"],
-                id: selectedDeviceIds[i],
+                id: selectedDevices[i][0],
                 from: from,
                 to: to,
                 count: 100
@@ -739,18 +742,18 @@ var GraphSummaryComponent = /** @class */ (function () {
                     series.sort(function (a, b) { return a.name < b.name ? 1 : (a.name > b.name ? 1 : 0); });
                     var newSensor = {
                         id: params.id,
-                        name: params.id,
+                        name: selectedDevices[i][1] ? selectedDevices[i][1] : params.id,
                         series: series
                     };
                     _this.results.push(newSensor);
-                    if (i === selectedDeviceIds.length - 1) {
+                    if (i === selectedDevices.length - 1) {
                         console.log('in if', _this.results);
                         _this.isLoading = false;
                     }
                 });
             }, 2000);
         };
-        for (var i = 0; i < selectedDeviceIds.length; i++) {
+        for (var i = 0; i < selectedDevices.length; i++) {
             _loop_1(i);
         }
         this.isLessThan3Days = to - from <= 86340000 * 3;

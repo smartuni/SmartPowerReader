@@ -37,9 +37,9 @@ export class EditComponent implements OnInit {
             editedSensor['name'] = formValue.deviceName;
 
         }
-        // this.sensorService.updateSensors(editedSensor).subscribe(res => {
-        this.onClosed.emit(editedSensor);
-        // });
+        this.sensorService.updateSensors(editedSensor).subscribe(res => {
+            this.onClosed.emit(editedSensor);
+        });
     }
 
     isFormValid() {

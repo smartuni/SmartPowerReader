@@ -39,16 +39,16 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     ngOnInit() {
     }
 
-    drawGraph(selectedDeviceIds: string[], from: number, to: number) {
+    drawGraph(selectedDevices: any[], from: number, to: number) {
         this.isLoading = true;
         this.isLoaded = false;
         this.isLessThan3Days = false;
         this.results = [];
-        console.log('selectedDeviceIds', selectedDeviceIds, from, to);
-        for (let i = 0; i < selectedDeviceIds.length; i++) {
+        console.log('selectedDeviceIds', selectedDevices, from, to);
+        for (let i = 0; i < selectedDevices.length; i++) {
             const params = {
                 action: GET_MEASUREMENT,
-                id: selectedDeviceIds[i],
+                id: selectedDevices[i][0],
                 from: from,
                 to: to,
                 count: 100
@@ -63,11 +63,11 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                     series.sort((a, b) => a.name < b.name ? 1 : (a.name > b.name ? 1 : 0));
                     const newSensor = {
                         id: params.id,
-                        name: params.id,
+                        name: selectedDevices[i][1] ? selectedDevices[i][1] : params.id,
                         series: series
                     } as Sensor;
                     this.results.push(newSensor);
-                    if (i === selectedDeviceIds.length - 1) {
+                    if (i === selectedDevices.length - 1) {
                         console.log('in if', this.results);
                         this.isLoading = false;
                     }

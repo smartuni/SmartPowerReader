@@ -1,4 +1,4 @@
 export enum SensorStatus {
-    DISCONNECTED = 'disconnected',
-    CONNECTED = 'connected'
+    DISCONNECTED = 'DISCONNECTED',
+    CONNECTED = 'CONNECTED'
 }
