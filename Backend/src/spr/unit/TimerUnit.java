@@ -1,6 +1,5 @@
 package spr.unit;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,8 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import dave.json.JsonBuilder;
 import dave.json.JsonValue;
-import dave.util.log.Logger;
-import dave.util.log.Severity;
 import spr.net.common.Address;
 import spr.net.common.Node;
 import spr.net.common.Message;
@@ -31,7 +28,7 @@ public class TimerUnit extends BaseUnit
 		
 		mAsync = Executors.newSingleThreadScheduledExecutor();
 		mBacklog = ConcurrentHashMap.newKeySet();
-		mRefs = new HashMap<>();
+		mRefs = new ConcurrentHashMap<>();
 		
 		registerMessageHandler(Tasks.Timer.Schedule.PERIODIC, this::handleSchedulePeriodic);
 		registerMessageHandler(Tasks.Timer.Schedule.ONE_SHOT, this::handleScheduleOneshot);
@@ -75,8 +72,6 @@ public class TimerUnit extends BaseUnit
 	
 	private void remove(String id)
 	{
-		Logger.DEFAULT.log(Severity.INFO, "timer removing '%s'", id);
-		
 		mBacklog.remove(id);
 		
 		Future<?> f = mRefs.remove(id);
