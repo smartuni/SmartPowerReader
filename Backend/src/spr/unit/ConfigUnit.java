@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import dave.json.JsonConstant;
@@ -41,6 +43,7 @@ public class ConfigUnit extends BaseUnit
 {
 	private final Configuration mConfig;
 	private final Producer<File> mGen;
+	private final Set<String> mOpen;
 	private File mLast;
 	
 	public ConfigUnit(File orig, Producer<File> gen, Node<Task> g)
@@ -49,6 +52,7 @@ public class ConfigUnit extends BaseUnit
 		
 		mConfig = new Configuration();
 		mGen = gen;
+		mOpen = new HashSet<>();
 		
 		registerMessageHandler(Tasks.Configuration.NEW, this::handleNew);
 		registerMessageHandler(Tasks.Configuration.CONFIGURE, this::handleConfigure);
@@ -273,7 +277,13 @@ public class ConfigUnit extends BaseUnit
 
 	private void resetTimer(Configuration.Entry e)
 	{
-		getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.REMOVE, newSession(), callbackID(e.ip)));
+		String id = callbackID(e.ip);
+		
+		if(mOpen.contains(id))
+		{
+			mOpen.remove(id);
+			getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.REMOVE, newSession(), id));
+		}
 	}
 	
 	private void setTimer(Configuration.Entry e)
@@ -282,8 +292,11 @@ public class ConfigUnit extends BaseUnit
 		
 		if(e.period > 0)
 		{
+			String id = callbackID(e.ip);
+			
 			getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.ONE_SHOT, newSession(), 
-					new TimerUnit.FutureTask(callbackID(e.ip), new Task(CALLBACK_ID, 0, e.ip), (int) (e.period * 3 / 2))));
+					new TimerUnit.FutureTask(id, new Task(CALLBACK_ID, 0, e.ip), (int) (e.period * 3 / 2))));
+			mOpen.add(id);
 		}
 	}
 	
