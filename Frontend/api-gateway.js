@@ -9,7 +9,7 @@ const port = 9901;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static('./dist/Frontend'));
+app.use(express.static('/dist/Frontend'));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
