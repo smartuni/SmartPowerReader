@@ -80,10 +80,13 @@ export class FilterBarComponent implements OnInit {
 
     editDevice() {
         this.modalService.init(EditComponent, {sensors: this.sensors}, {
-            onClosed: (editedSensor: Sensor) => {
+            onUpdated: (editedSensor: Sensor) => {
                 const index = this.sensors.findIndex(sensor => sensor.id === editedSensor.id);
                 this.sensors[index] = editedSensor;
                 this.store.dispatch(new UpdateSensorsSAction(this.sensors));
+                this.modalService.destroy();
+            },
+            onClosed: () => {
                 this.modalService.destroy();
             }
         });

@@ -14,6 +14,8 @@ export class EditComponent implements OnInit {
     sensors: Sensor[];
     selectedSensor: Sensor;
     @Output() onClosed = new EventEmitter();
+    @Output() onUpdated = new EventEmitter();
+
 
     constructor(private sensorService: SensorService) {
     }
@@ -22,7 +24,7 @@ export class EditComponent implements OnInit {
         this.form = new FormGroup({
             deviceId: new FormControl(''),
             deviceName: new FormControl(),
-            period: new FormControl(1, [Validators.min(0)])
+            period: new FormControl(0, [Validators.min(0)])
         });
     }
 
@@ -38,7 +40,7 @@ export class EditComponent implements OnInit {
             editedSensor['name'] = formValue.deviceName;
         }
         this.sensorService.updateSensors(editedSensor).subscribe(res => {
-            this.onClosed.emit(editedSensor);
+            this.onUpdated.emit(editedSensor);
         });
     }
 
@@ -51,5 +53,9 @@ export class EditComponent implements OnInit {
         this.selectedSensor = this.sensors.find(sensor => sensor.id === id);
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
         this.form.controls['period'].setValue(this.selectedSensor.period ? this.selectedSensor.period : 1);
-        }
+    }
+
+    close() {
+        this.onClosed.emit();
+    }
 }
