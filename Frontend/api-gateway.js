@@ -15,7 +15,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.get('/sensors/:sensorId', (req, res) => {
-    console.log('getSensorData Incoming request...');
+    console.log('getSensorData...');
     const payload = {
         action: req.query.action,
         id: req.query.id,
@@ -30,11 +30,11 @@ app.get('/sensors/:sensorId', (req, res) => {
 });
 
 app.get('/sensors', (req, res) => {
-    console.log('Incoming request...');
+    console.log('Get all sensors');
     const payload = {
         action: req.query.action,
     };
-    // console.log('payload', payload);
+    console.log('payload', payload);
     dispatch(payload, (data) => {
         res.end(data);
     })
@@ -42,7 +42,7 @@ app.get('/sensors', (req, res) => {
 });
 
 app.put('/sensors', (req, res) => {
-    console.log('Incoming request...');
+    console.log('update sensors');
     const payload = {
         action: req.query.action,
         id: req.body.id,
