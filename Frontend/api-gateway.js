@@ -1,5 +1,7 @@
 
 const express = require('express');
+var path = require('path');
+
 const app = express();
 const bodyParser = require('body-parser');
 const http = require('http');
@@ -7,9 +9,9 @@ const http = require('http');
 const serverUrl = '0.0.0.0';
 const port = 9901;
 
+app.use(express.static(path.join(__dirname, 'dist/Frontend')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(__dirname + '/dist/Frontend'));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -19,8 +21,7 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', function(req, res) {
-    //res.send('Hello World!');
-    res.sendfile('./Frontend/index.html');
+    res.sendFile(path.join(__dirname, 'dist/Frontend/index.html'));
 });
 app.get('/sensors/:sensorId', (req, res) => {
     console.log('getSensorData...');
