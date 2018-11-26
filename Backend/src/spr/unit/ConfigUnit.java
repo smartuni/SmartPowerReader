@@ -283,7 +283,7 @@ public class ConfigUnit extends BaseUnit
 		if(e.period > 0)
 		{
 			getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.ONE_SHOT, newSession(), 
-					new TimerUnit.FutureTask(callbackID(e.ip), new Task(CALLBACK_ID, 0, e.ip), (int) e.period)));
+					new TimerUnit.FutureTask(callbackID(e.ip), new Task(CALLBACK_ID, 0, e.ip), (int) (e.period * 3 / 2))));
 		}
 	}
 	
