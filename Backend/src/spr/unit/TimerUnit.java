@@ -1,8 +1,10 @@
 package spr.unit;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +20,7 @@ public class TimerUnit extends BaseUnit
 {
 	private final ScheduledExecutorService mAsync;
 	private final Set<String> mBacklog;
+	private final Map<String, Future<?>> mRefs;
 	
 	public TimerUnit(Node<Task> g)
 	{
@@ -25,6 +28,7 @@ public class TimerUnit extends BaseUnit
 		
 		mAsync = Executors.newSingleThreadScheduledExecutor();
 		mBacklog = ConcurrentHashMap.newKeySet();
+		mRefs = new ConcurrentHashMap<>();
 		
 		registerMessageHandler(Tasks.Timer.Schedule.PERIODIC, this::handleSchedulePeriodic);
 		registerMessageHandler(Tasks.Timer.Schedule.ONE_SHOT, this::handleScheduleOneshot);
@@ -47,34 +51,56 @@ public class TimerUnit extends BaseUnit
 	{
 		FutureTask f = p.getContent().getPayload();
 		String id = p.getSender().getID() + "." + f.id;
+		Future<?> cb = mAsync.scheduleAtFixedRate(() -> send(p.getSender(), f, true), f.time, f.time, TimeUnit.SECONDS);
 		
-		mBacklog.add(id);
-		
-		mAsync.scheduleAtFixedRate(() -> send(p.getSender(), f), f.time, f.time, TimeUnit.SECONDS);
+		add(id, cb);
 	}
 	
 	private void handleScheduleOneshot(Message<Task> p)
 	{
 		FutureTask f = p.getContent().getPayload();
 		String id = p.getSender().getID() + "." + f.id;
+		Future<?> cb = mAsync.schedule(() -> send(p.getSender(), f, false), f.time, TimeUnit.SECONDS);
 		
-		mBacklog.add(id);
-		
-		mAsync.schedule(() -> send(p.getSender(), f), f.time, TimeUnit.SECONDS);
+		add(id, cb);
 	}
 	
 	private void handleScheduleRemove(Message<Task> p)
 	{
-		mBacklog.remove(p.getSender().getID() + "." + p.getContent().getPayload());
+		remove(p.getSender().getID() + "." + p.getContent().getPayload());
 	}
 	
-	private void send(Address to, FutureTask f)
+	private void remove(String id)
+	{
+		mBacklog.remove(id);
+		
+		Future<?> f = mRefs.remove(id);
+		
+		if(f != null)
+		{
+			f.cancel(false);
+		}
+	}
+	
+	private void add(String id, Future<?> f)
+	{
+		remove(id);
+		
+		mBacklog.add(id);
+		mRefs.put(id, f);
+	}
+	
+	private void send(Address to, FutureTask f, boolean recurring)
 	{
 		String id = to.getID() + "." + f.id;
 		
 		if(mBacklog.contains(id))
 		{
-			mBacklog.remove(id);
+			if(!recurring)
+			{
+				mBacklog.remove(id);
+				mRefs.remove(id);
+			}
 			
 			getNode().send(to, f.task);
 		}

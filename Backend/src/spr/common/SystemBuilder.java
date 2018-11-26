@@ -8,21 +8,19 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 
-import dave.net.server.Server;
 import dave.util.Distributor;
 import dave.json.SevereIOException;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.client.SimpleStorage;
 import spr.net.Backbone;
-import spr.net.FakeBroker;
 import spr.net.LocalBroker;
-import spr.net.common.Broker;
+import spr.net.UDPBroker;
+import spr.net.UniqueAddress;
 import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.resource.HelloResource;
@@ -30,7 +28,6 @@ import spr.resource.MeasurementResource;
 import spr.task.Task;
 import spr.unit.CoapServerUnit;
 import spr.unit.ConfigUnit;
-import spr.unit.ConnectionUnit;
 import spr.unit.FrontendUnit;
 import spr.unit.LocalDatabaseUnit;
 import spr.unit.SystemUnit;
@@ -89,12 +86,7 @@ public class SystemBuilder
 		return this;
 	}
 	
-	public SystemBuilder install(Predicate<Message<Task>> f, Broker<Task> n)
-	{
-		mNetwork.register(f, n);
-		
-		return this;
-	}
+	public Backbone<Task> network( ) { return mNetwork; }
 	
 	public SystemBuilder install(Module m)
 	{
@@ -130,12 +122,24 @@ public class SystemBuilder
 		@Override
 		public void installOn(SystemBuilder builder)
 		{
-			FileVersioner config_files = new FileVersioner((new File("config")).toPath(), new FilenameGenerator());
-			
 			builder.install(new SystemUnit(new Node<>(Units.IDs.SYSTEM)));
 			builder.install(new TimerUnit(new Node<>(Units.IDs.TIMER)));
-			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File("config/" + id + ".bin")), new Node<>(Units.IDs.DATABASE)));
-			builder.install(new ConfigUnit(config_files.get(), config_files, new Node<>(Units.IDs.CONFIG)));
+		}
+	}
+	
+	public static class NetworkModule implements Module
+	{
+		private final int mUDPPort;
+		
+		public NetworkModule(int p)
+		{
+			mUDPPort = p;
+		}
+		
+		@Override
+		public void installOn(SystemBuilder builder)
+		{
+			builder.network().register(p -> p.getRecipient() instanceof UniqueAddress, new UDPBroker<>(builder.network(), mUDPPort));
 		}
 	}
 	
@@ -162,39 +166,51 @@ public class SystemBuilder
 		}
 	}
 	
-	public static class NetworkModule implements Module
+	public static class MasterModule implements Module
 	{
-		private final int mPort;
-		private int mNext;
-		
-		public NetworkModule(int p)
-		{
-			mPort = p;
-			mNext = 0;
-		}
-		
 		@Override
 		public void installOn(SystemBuilder builder)
 		{
-			try
-			{
-				Server s = Server.createTCPServer(mPort, c -> {
-					synchronized(this)
-					{
-						Unit u = new ConnectionUnit(c, uu -> builder.uninstall(uu), new Node<>(Units.IDs.CONNECTION + "-" + (mNext++)));
-						
-						builder.install(u);
-					}
-				});
-				
-				builder.install(msg -> false, new FakeBroker<>("tcp", s));
-			}
-			catch(IOException e)
-			{
-				throw new SevereIOException(e);
-			}
+			FileVersioner config_files = new FileVersioner((new File("config")).toPath(), new FilenameGenerator());
+			
+			builder.install(new LocalDatabaseUnit(id -> new SimpleStorage(new File("config/" + id + ".bin")), new Node<>(Units.IDs.DATABASE)));
+			builder.install(new ConfigUnit(config_files.get(), config_files, new Node<>(Units.IDs.CONFIG)));
 		}
 	}
+	
+//	public static class NetworkModule implements Module
+//	{
+//		private final int mPort;
+//		private int mNext;
+//		
+//		public NetworkModule(int p)
+//		{
+//			mPort = p;
+//			mNext = 0;
+//		}
+//		
+//		@Override
+//		public void installOn(SystemBuilder builder)
+//		{
+//			try
+//			{
+//				Server s = Server.createTCPServer(mPort, c -> {
+//					synchronized(this)
+//					{
+//						Unit u = new ConnectionUnit(c, uu -> builder.uninstall(uu), new Node<>(Units.IDs.CONNECTION + "-" + (mNext++)));
+//						
+//						builder.install(u);
+//					}
+//				});
+//				
+//				builder.install(msg -> false, new FakeBroker<>("tcp", s));
+//			}
+//			catch(IOException e)
+//			{
+//				throw new SevereIOException(e);
+//			}
+//		}
+//	}
 	
 	public static class NodeLogicModule implements Module
 	{

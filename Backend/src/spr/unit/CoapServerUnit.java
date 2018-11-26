@@ -1,13 +1,16 @@
 package spr.unit;
 
 import java.nio.ByteBuffer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.CoapServer;
 
 import dave.json.Container;
 import dave.json.JsonArray;
+import dave.json.JsonBuilder;
 import dave.json.JsonCollectors;
 import dave.json.JsonNumber;
 import dave.json.JsonObject;
@@ -15,6 +18,8 @@ import dave.json.JsonValue;
 import dave.json.Loader;
 import dave.json.Saveable;
 import dave.json.Saver;
+import dave.util.log.Logger;
+import dave.util.log.Severity;
 import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.task.Task;
@@ -23,14 +28,22 @@ import spr.task.Tasks;
 public class CoapServerUnit extends BaseUnit
 {
 	private final CoapServer mServer;
+	private int mSent;
 
 	public CoapServerUnit(CoapServer s, Node<Task> g)
 	{
 		super(g);
 		
 		mServer = s;
+		mSent = 0;
 		
 		registerMessageHandler(Tasks.Coap.SEND, this::handleSend);
+	}
+	
+	@Override
+	protected JsonValue getStatus( )
+	{
+		return (new JsonBuilder()).putInt("sent", mSent).toJSON();
 	}
 	
 	@Override
@@ -50,25 +63,41 @@ public class CoapServerUnit extends BaseUnit
 		Packet msg = p.getContent().getPayload();
 		
 		CoapClient c = new CoapClient(msg.getURI());
+		CoapResponse r = null;
+		
+		c.setTimeout(TIMEOUT);
+		c.useCONs();
 		
 		switch(msg.action)
 		{
 			case GET:
-				c.get();
+				r = c.get();
 				break;
 
 			case POST:
-				c.post(msg.payload, 0);
+				r = c.post(msg.payload, msg.type);
 				break;
 
 			case PUT:
-				c.put(msg.payload, 0);
+				r = c.put(msg.payload, msg.type);
 				break;
 
 			case DELETE:
-				c.delete();
+				r = c.delete();
 				break;
-				
+		}
+		
+		if(r == null)
+		{
+			LOG.log(Severity.ERROR, "Coap time-out!");
+		}
+		else if(!r.isSuccess())
+		{
+			LOG.log(Severity.ERROR, "Coap request failed: %s", r.getCode().toString());
+		}
+		else
+		{
+			++mSent;
 		}
 	}
 	
@@ -80,17 +109,19 @@ public class CoapServerUnit extends BaseUnit
 		public final String path;
 		public final byte[] payload;
 		public final Directive action;
+		public final int type;
 		
-		public Packet(String host, int port, String path, byte[] payload, Directive action)
+		public Packet(String host, int port, String path, byte[] payload, Directive action, int type)
 		{
 			this.host = host;
 			this.port = port;
 			this.path = path;
 			this.payload = payload;
 			this.action = action;
+			this.type = type;
 		}
 		
-		public String getURI( ) { return "coap://[" + host + "]:" + port + "/" + path; }
+		public String getURI( ) { return "coap://" + (host.contains(":") ? ("[" + host + "]") : host) + ":" + port + "/" + path; }
 		
 		@Override
 		@Saver
@@ -103,6 +134,7 @@ public class CoapServerUnit extends BaseUnit
 			json.putString("path", path);
 			json.put("payload", IntStream.range(0, payload.length).mapToObj(i -> new JsonNumber(payload[i])).collect(JsonCollectors.ofArray()));
 			json.putString("action", action.toString());
+			json.putInt("type", type);
 			
 			return json;
 		}
@@ -116,6 +148,7 @@ public class CoapServerUnit extends BaseUnit
 			int port = o.getInt("port");
 			String path = o.getString("path");
 			Directive action = Directive.valueOf(o.getString("action"));
+			int type = o.getInt("type");
 			
 			JsonArray p = o.getArray("payload");
 			ByteBuffer bb = ByteBuffer.allocate(p.size());
@@ -124,13 +157,15 @@ public class CoapServerUnit extends BaseUnit
 			
 			byte[] payload = bb.array();
 			
-			return new Packet(host, port, path, payload, action);
+			return new Packet(host, port, path, payload, action, type);
 		}
 		
 		@Override
 		public String toString( )
 		{
-			return getURI() + "[" + action + " " + payload.length + "B]";
+			String p = IntStream.range(0, payload.length).mapToObj(i -> String.format("%02X", payload[i])).collect(Collectors.joining(" "));
+			
+			return getURI() + " " + action + " (" + payload.length + "B): " + p;
 		}
 	}
 	
@@ -141,4 +176,7 @@ public class CoapServerUnit extends BaseUnit
 		PUT,
 		DELETE
 	}
+	
+	private static final int TIMEOUT = 1000;
+	private static final Logger LOG = Logger.get("coap-s");
 }

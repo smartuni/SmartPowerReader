@@ -4,6 +4,7 @@
 	<property name="jar.dir" value="release" />
 	<property name="lib.dir" value="libs" />
 	<property name="main.class" value="spr.Start" />
+	<property name="args" value="" />
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}/" includes="*.jar" />
@@ -25,7 +26,7 @@
 				<path refid="classpath" />
 				<path location="${jar.dir}/${ant.project.name}.jar" />
 			</classpath>
-<!--			<arg value="${args}" /> -->
+			<arg value="${args}" />
 		</java>
 	</target>
 

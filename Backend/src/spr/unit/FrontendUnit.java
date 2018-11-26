@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import dave.json.JsonArray;
+import dave.json.JsonBuilder;
 import dave.json.JsonObject;
 import dave.json.JsonValue;
 import dave.net.server.Connection;
@@ -53,6 +54,12 @@ public class FrontendUnit extends BaseUnit
 		registerMessageHandler(Tasks.Database.DELIVER, this::handleMeasurements);
 		registerMessageHandler(Tasks.Configuration.DELIVER, this::handleDevices);
 		registerMessageHandler(Tasks.Frontend.ABORT, this::handleAbort);
+	}
+	
+	@Override
+	protected JsonValue getStatus( )
+	{
+		return (new JsonBuilder()).putInt("requests", mNextID).toJSON();
 	}
 	
 	@Override

@@ -36,6 +36,12 @@ public class LocalDatabaseUnit extends BaseUnit
 		registerMessageHandler(Tasks.Database.DELETE, this::handleDelete);
 	}
 	
+	@Override
+	protected JsonValue getStatus( )
+	{
+		return (new JsonBuilder()).putInt("devices", mDatabase.size()).toJSON();
+	}
+	
 	private Storage get(String id)
 	{
 		Storage s = mDatabase.get(id);

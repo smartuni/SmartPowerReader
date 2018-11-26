@@ -69,6 +69,7 @@ public final class Tasks
 		public static final String CONFIGURE = "config.configure";
 		public static final String QUERY = "config.query";
 		public static final String DELIVER = "config.deliver";
+		public static final String SET_STATUS = "config.set-status";
 		
 		private Configuration( ) { }
 	}

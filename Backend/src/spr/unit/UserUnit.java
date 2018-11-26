@@ -56,6 +56,8 @@ public class UserUnit extends BaseUnit
 		
 		System.out.println("Generating 100 datapoints for " + id + " starting @" + (new Date()).toString() + " with 1h distance");
 		
+		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.NEW, newSession(), id));
+		
 		for(int i = 0 ; i < 100 ; ++i)
 		{
 			getNode().send(Units.IDs.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, now, value)));

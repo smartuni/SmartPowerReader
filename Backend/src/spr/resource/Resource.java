@@ -21,6 +21,16 @@ public abstract class Resource extends CoapResource
 	public static final String MEASUREMENT = "measure";
 	public static final String HELLO = "new-device";
 	
+	public static final class Format
+	{
+		public static final int PLAINTEXT = 0;
+		public static final int BYTESTREAM = 42;
+		public static final int JSON = 50;
+		public static final int CBOR = 60;
+		
+		private Format( ) { }
+	}
+	
 	protected Gateway<Task> getNode( ) { return mGateway; }
 	protected long newSession( ) { return mSession++; }
 }

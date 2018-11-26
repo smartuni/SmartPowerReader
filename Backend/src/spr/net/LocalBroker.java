@@ -46,8 +46,6 @@ public class LocalBroker<T> extends BaseBroker<T>
 		if(!(msg.getRecipient() instanceof LocalAddress))
 			throw new IllegalArgumentException(msg.toString());
 
-		LOG.log("%s", msg.toString());
-		
 		if(msg.getRecipient().equals(LocalAddress.BROADCAST))
 		{
 			mNodes.values().stream().forEach(n -> n.accept(msg));

@@ -16,7 +16,7 @@ public class FilenameGenerator implements ConsecutiveProducer<String>
 	@Override
 	public int compare(String a, String b)
 	{
-		return 0;
+		return a.compareTo(b);
 	}
 
     public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss_");
