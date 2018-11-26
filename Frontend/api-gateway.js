@@ -16,11 +16,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, PUT");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
     next();
 });
 
-app.get('/', function(req, res) {
+app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'dist/Frontend/index.html'));
 });
 app.get('/sensors/:sensorId', (req, res) => {
