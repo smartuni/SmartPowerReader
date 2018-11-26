@@ -17,6 +17,11 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Methods", "GET, PUT");
     next();
 });
+
+app.get('/', function(req, res) {
+    //res.send('Hello World!');
+    res.sendfile('./Frontend/index.html');
+});
 app.get('/sensors/:sensorId', (req, res) => {
     console.log('getSensorData...');
     const payload = {
