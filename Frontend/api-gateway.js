@@ -1,4 +1,5 @@
-const express = require('express')
+
+const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const http = require('http');
@@ -8,6 +9,8 @@ const port = 9901;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'dist')));
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -78,5 +81,6 @@ function dispatch(payload, cb) {
 
 http.createServer(app).listen(3000, '0.0.0.0', null, () => {
     console.log('Gateway is listening on port 3000');
+
 });
 
