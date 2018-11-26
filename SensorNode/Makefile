@@ -39,6 +39,8 @@ USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules
 USEMODULE += gnrc_ipv6_default
 USEMODULE += gcoap
+# RPL module for multi-hop networking
+USEMODULE += gnrc_rpl
 # Additional networking modules that can be dropped if not needed
 USEMODULE += gnrc_icmpv6_echo
 

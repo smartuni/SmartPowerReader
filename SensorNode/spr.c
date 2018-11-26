@@ -26,6 +26,7 @@
 #include "thread.h"
 #include "saul_reg.h"
 #include "cbor.h"
+#include "net/gnrc/rpl/dodag.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -57,7 +58,6 @@ static char base_addr[NANOCOAP_URI_MAX];
 /* variables for senddata thread */
 static kernel_pid_t senddata_pid;
 static char senddata_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
-static msg_t senddata_queue[SENDDATA_QUEUE_SIZE];
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
@@ -73,7 +73,7 @@ static gcoap_listener_t _listener = {
 
 /* configs send to /config */
 struct spr_config {
-    uint32_t interval;  /* Interval for measuring */
+    uint64_t interval;  /* Interval for measuring */
 };
 
 static struct spr_config cfg = { 0 };
@@ -81,11 +81,6 @@ static struct spr_config cfg = { 0 };
 static void *send_data(void *arg)
 {
     (void)arg;
-
-    msg_t msg;
-    msg.content.value = 1;
-
-    msg_init_queue(senddata_queue, SENDDATA_QUEUE_SIZE);
 
     /* Current transformer parameters needed for current calculations. */
     ct_parameter_t ct_param;
@@ -108,7 +103,8 @@ static void *send_data(void *arg)
     size_t len;
 
     /* stop send if interval 0 */
-    while (cfg.interval) {
+    uint32_t sleeptime = cfg.interval;
+    while (sleeptime) {
         puts("sending data to pi");
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
 
@@ -137,8 +133,8 @@ static void *send_data(void *arg)
                 puts("gcoap_cli: msg send failed");
         }
 
-        msg_try_receive(&msg);
-        cfg.interval = msg.content.value;
+        xtimer_sleep(sleeptime);
+        sleeptime = cfg.interval;
     }
     /* reset pid to 0 if thread stopped */
     senddata_pid = 0;
@@ -246,41 +242,16 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
                 return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
             /* get value of interval */
-            cbor_value_get_uint64(&interval, (uint64_t *)&cfg.interval);
-            printf("Got new interval: %lu\n", cfg.interval);
+            cbor_value_get_uint64(&interval, &cfg.interval);
+            printf("Got new interval: %llu\n", cfg.interval);
 
-            if (cfg.interval != 0) {
+            if (senddata_pid == 0) {
+                /* start thread send_data */
                 puts("starting senddata thread");
-                /* thread not started yet */
-                if (senddata_pid == 0) {
-                    /* start thread send_data */
-                    puts("starting senddata thread");
-                    senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
-                            THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
-                    /* send interval */
-                    msg_t msg;
-                    msg.content.value = cfg.interval;
-                    int ret = msg_try_send(&msg, senddata_pid);
-                    if (ret == 0) {
-                        puts("Receiver queue full");
-                    }
-                    else if (ret < 0) {
-                        puts("ERROR: invalid PID; sendata thread not started");
-                    }
-                }
-                else {
-                    /* update interval */
-                    msg_t msg;
-                    msg.content.value = cfg.interval;
-                    int ret = msg_try_send(&msg, senddata_pid);
-                    if (ret == 0) {
-                        puts("Receiver queue full");
-                    }
-                    else if (ret < 0) {
-                        puts("ERROR: invalid PID; sendata thread not started");
-                    }
-                }
+                senddata_pid = thread_create(senddata_stack, sizeof(senddata_stack),
+                        THREAD_PRIORITY_MAIN - 1, 0, send_data, NULL, "senddata");
             }
+            thread_wakeup(senddata_pid);
             return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
         }
     }
@@ -288,7 +259,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
     return -1;
 }
 
-void _register(char *base_addr)
+static void _register(char *base_addr)
 {
     /* prepare packet to send */
     uint8_t buf[GCOAP_PDU_BUF_SIZE];
@@ -306,6 +277,13 @@ void _register(char *base_addr)
     }
 }
 
+static void find_base_station(char * base_addr)
+{
+    gnrc_rpl_dodag_t dodag = gnrc_rpl_instances[0].dodag;
+    ipv6_addr_t dodag_id = dodag.dodag_id;
+    ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
+}
+
 void spr_init(void)
 {
     /* Initialize the adc on line 0 with 12 bit resolution. */
@@ -315,6 +293,8 @@ void spr_init(void)
     gcoap_register_listener(&_listener);
 
     /* Find RPI/Basisstation */
+    find_base_station(base_addr);
+    // hardcode the base address for test
     strncpy(base_addr, "fe80::a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
 
     xtimer_sleep(2);
