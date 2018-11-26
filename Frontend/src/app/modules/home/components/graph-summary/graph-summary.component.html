@@ -24,7 +24,7 @@
                 <!--<a *ngIf="isLessThan3Days" style=" font-size: 1.2em;"><br />{{model.name | date: 'HH:mm'}}</a>-->
                 <!--<a *ngIf="isLessThan3Days" style=" font-size: 1.3em; font-weight: 600;"><br />&#183;</a><br />-->
                 <!--<a style=" font-size: 1.2em; font-weight: 600;">{{model.name | date: 'dd.MM.yyyy'}} &#183; </a>-->
-                <a>{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</a><br/>
+                <a>{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yyyy' }}</a><br/>
                 <a style=" font-size: 1em; font-weight: 600;">{{model.value | number: '1.5'}}</a>
                 <!--</div>-->
             </div>

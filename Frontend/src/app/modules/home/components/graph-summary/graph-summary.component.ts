@@ -18,9 +18,8 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     showYAxis = true;
     showLegend = true;
     showXAxisLabel = true;
-    xAxisLabel = 'Number';
     showYAxisLabel = true;
-    yAxisLabel = 'Color Value';
+    yAxisLabel = 'Power Meter';
     roundDomains = true;
     autoScale = true;
     ticks = [];
@@ -73,7 +72,7 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
             }, 2000);
         }
         this.isLessThan3Days = to - from <= 86340000 * 3;
-        this.isLessThan1Month = to - from <= 86340000 * 28;
+        this.isLessThan1Month = to - from <= 86340000 * 38;
 
 
     }

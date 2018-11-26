@@ -651,7 +651,7 @@ var FilterBarComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"!isLoading\" class=\"row mt-4 graph-wrapper\">\n    <ngx-charts-line-chart\n            class=\"mt-3\"\n            [results]=\"results\"\n            [xAxis]=\"showXAxis\"\n            [yAxis]=\"showYAxis\"\n            [legend]=\"showLegend\"\n            [showXAxisLabel]=\"showXAxisLabel\"\n            [showYAxisLabel]=\"showYAxisLabel\"\n            [xAxisLabel]=\"xAxisLabel\"\n            [yAxisLabel]=\"yAxisLabel\"\n            [roundDomains]=\"roundDomains\"\n            [autoScale]=\"autoScale\"\n            [xAxisTickFormatting]=\"isLessThan3Days ? axisFormatTime : (isLessThan1Month ? axisFormatDate : axisFormatMonth)\">\n        <!--<ng-template #tooltipTemplate let-model=\"model\">-->\n        <!--<div >{{model.series}}</div>-->\n        <!--<div >{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</div>-->\n        <!--<div >{{model.value}}</div>-->\n        <!--</ng-template>-->\n        <ng-template #tooltipTemplate let-model=\"model\">\n            <div class=\"area-tooltip-container\">\n                <!--<div *ngFor=\"let tooltipItem of model | json \" class=\"tooltip-item\" style=\"text-align: center;\">-->\n                <a style=\" font-size: 1.2em; color: deepskyblue;\">{{model.series}}</a><br/>\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.2em;\"><br />{{model.name | date: 'HH:mm'}}</a>-->\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.3em; font-weight: 600;\"><br />&#183;</a><br />-->\n                <!--<a style=\" font-size: 1.2em; font-weight: 600;\">{{model.name | date: 'dd.MM.yyyy'}} &#183; </a>-->\n                <a>{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</a><br/>\n                <a style=\" font-size: 1em; font-weight: 600;\">{{model.value | number: '1.5'}}</a>\n                <!--</div>-->\n            </div>\n        </ng-template>\n\n        <!--<ng-template #seriesTooltipTemplate let-model=\"model\">-->\n\n\n        <!--</ng-template>-->\n    </ngx-charts-line-chart>\n\n</div>\n\n"
+module.exports = "<div *ngIf=\"!isLoading\" class=\"row mt-4 graph-wrapper\">\n    <ngx-charts-line-chart\n            class=\"mt-3\"\n            [results]=\"results\"\n            [xAxis]=\"showXAxis\"\n            [yAxis]=\"showYAxis\"\n            [legend]=\"showLegend\"\n            [showXAxisLabel]=\"showXAxisLabel\"\n            [showYAxisLabel]=\"showYAxisLabel\"\n            [xAxisLabel]=\"xAxisLabel\"\n            [yAxisLabel]=\"yAxisLabel\"\n            [roundDomains]=\"roundDomains\"\n            [autoScale]=\"autoScale\"\n            [xAxisTickFormatting]=\"isLessThan3Days ? axisFormatTime : (isLessThan1Month ? axisFormatDate : axisFormatMonth)\">\n        <!--<ng-template #tooltipTemplate let-model=\"model\">-->\n        <!--<div >{{model.series}}</div>-->\n        <!--<div >{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</div>-->\n        <!--<div >{{model.value}}</div>-->\n        <!--</ng-template>-->\n        <ng-template #tooltipTemplate let-model=\"model\">\n            <div class=\"area-tooltip-container\">\n                <!--<div *ngFor=\"let tooltipItem of model | json \" class=\"tooltip-item\" style=\"text-align: center;\">-->\n                <a style=\" font-size: 1.2em; color: deepskyblue;\">{{model.series}}</a><br/>\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.2em;\"><br />{{model.name | date: 'HH:mm'}}</a>-->\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.3em; font-weight: 600;\"><br />&#183;</a><br />-->\n                <!--<a style=\" font-size: 1.2em; font-weight: 600;\">{{model.name | date: 'dd.MM.yyyy'}} &#183; </a>-->\n                <a>{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yyyy' }}</a><br/>\n                <a style=\" font-size: 1em; font-weight: 600;\">{{model.value | number: '1.5'}}</a>\n                <!--</div>-->\n            </div>\n        </ng-template>\n\n        <!--<ng-template #seriesTooltipTemplate let-model=\"model\">-->\n\n\n        <!--</ng-template>-->\n    </ngx-charts-line-chart>\n\n</div>\n\n"
 
 /***/ }),
 
@@ -703,9 +703,8 @@ var GraphSummaryComponent = /** @class */ (function () {
         this.showYAxis = true;
         this.showLegend = true;
         this.showXAxisLabel = true;
-        this.xAxisLabel = 'Number';
         this.showYAxisLabel = true;
-        this.yAxisLabel = 'Color Value';
+        this.yAxisLabel = 'Power Meter';
         this.roundDomains = true;
         this.autoScale = true;
         this.ticks = [];
@@ -756,7 +755,7 @@ var GraphSummaryComponent = /** @class */ (function () {
             _loop_1(i);
         }
         this.isLessThan3Days = to - from <= 86340000 * 3;
-        this.isLessThan1Month = to - from <= 86340000 * 28;
+        this.isLessThan1Month = to - from <= 86340000 * 38;
     };
     GraphSummaryComponent.prototype.ngAfterViewInit = function () {
         setTimeout(function (_) {
