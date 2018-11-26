@@ -52,5 +52,4 @@ export class EditComponent implements OnInit {
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
         this.form.controls['period'].setValue(this.selectedSensor.period ? this.selectedSensor.period : 1);
         }
-
 }
