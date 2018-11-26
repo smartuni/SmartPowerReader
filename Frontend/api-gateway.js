@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const http = require('http');
 
-const serverUrl = '192.168.1.236';
+const serverUrl = '0.0.0.0';
 const port = 9901;
 
 app.use(bodyParser.json());
