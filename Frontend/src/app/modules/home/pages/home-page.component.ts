@@ -7,6 +7,8 @@ import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingActio
 import {interval} from 'rxjs';
 import {flatMap} from 'tslint/lib/utils';
 import {tap} from 'rxjs/internal/operators';
+import {Router} from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-homepage',
@@ -22,6 +24,7 @@ export class HomePageComponent implements OnInit {
 
     constructor(private sensorService: SensorService,
                 private store: Store<fromRoot.State>) {
+
     }
 
     ngOnInit() {

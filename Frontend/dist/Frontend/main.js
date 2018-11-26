@@ -1058,8 +1058,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorService", function() { return SensorService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
-/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
-/* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../constants/constants */ "./src/app/modules/home/constants/constants.ts");
+/* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants/constants */ "./src/app/modules/home/constants/constants.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1072,25 +1071,27 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
-
 var SensorService = /** @class */ (function () {
     function SensorService(httpClient) {
         this.httpClient = httpClient;
+        var url = window.location.href;
+        this.host = url.split(/http:\/\/|:/)[1];
+        this.url = 'http://' + this.host + ':3000';
     }
     SensorService.prototype.getData = function (params) {
-        return this.httpClient.get(environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl + "/devices", { params: params });
+        return this.httpClient.get(this.url + "/devices", { params: params });
     };
     SensorService.prototype.getAllSenors = function () {
         var params = {
-            action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_SENSORS"]
+            action: _constants_constants__WEBPACK_IMPORTED_MODULE_2__["GET_SENSORS"]
         };
-        return this.httpClient.get("" + environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl, { params: params });
+        return this.httpClient.get("" + this.url, { params: params });
     };
     SensorService.prototype.updateSensors = function (body) {
         var params = {
-            action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["UPDATE_SENSORS"]
+            action: _constants_constants__WEBPACK_IMPORTED_MODULE_2__["UPDATE_SENSORS"]
         };
-        return this.httpClient.put("" + environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl, body, { params: params });
+        return this.httpClient.put("" + this.url, body, { params: params });
     };
     SensorService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
