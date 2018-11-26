@@ -3,6 +3,9 @@ const app = express();
 const bodyParser = require('body-parser');
 const http = require('http');
 
+const serverUrl = '192.168.1.236';
+const port = 9901;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(function (req, res, next) {
@@ -31,7 +34,7 @@ app.get('/sensors', (req, res) => {
     const payload = {
         action: req.query.action,
     };
-    console.log('payload', payload);
+    // console.log('payload', payload);
     dispatch(payload, (data) => {
         res.end(data);
     })
@@ -54,12 +57,12 @@ app.put('/sensors', (req, res) => {
 
 function dispatch(payload, cb) {
     const socket = require('net').Socket();
-    socket.connect(9901, '192.168.1.236', () => {
+    socket.connect(port, serverUrl, () => {
         console.log('connect');
         socket.write(JSON.stringify(payload) + '\n');
         let result = "";
         socket.on('data', (data) => {
-            console.log('data', data.toString());
+            // console.log('data', data.toString());
             result += data.toString();
         });
         socket.on('error', function (error) {

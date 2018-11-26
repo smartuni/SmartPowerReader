@@ -37,19 +37,6 @@ export class FilterBarComponent implements OnInit {
 
     ngOnInit() {
         this.isLoading = true;
-        this.testData = [
-            {
-                id: 'test12',
-                name: '345',
-                period: 456,
-                status: SensorStatus.CONNECTED
-            },
-            {
-                id: 'thahah',
-                name: 'hoho',
-                period: 456,
-                status: SensorStatus.DISCONNECTED
-            }];
         this.now = formatDate(new Date(), 'yyyy-MM-dd', 'en');
         const todayArr = this.now.split('-');
         const today = {
@@ -70,12 +57,14 @@ export class FilterBarComponent implements OnInit {
         this.endTime = this.combineToDate(raw.endDate, raw.endTime);
         this.isFormValid = this.startTime < this.endTime;
 
-        this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
-            if (sensors) {
+        setTimeout(() => {
+            this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
                 this.sensors = sensors;
                 this.isLoading = false;
-            }
-        });
+
+            });
+        }, 500);
+
 
         this.form.valueChanges.subscribe(data => {
             const rawValue = this.form.getRawValue();

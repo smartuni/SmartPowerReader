@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Sensor} from 'core/interfaces/sensor.interface';
 import {GraphSummaryComponent} from '../components/graph-summary/graph-summary.component';
 import {SensorService} from '../services/sensor.service';
 import {Store} from '@ngrx/store';
@@ -12,7 +11,6 @@ import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingActio
     styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-    sensors: Sensor[];
     from: number;
     to: number;
     isLoading = true;
@@ -24,8 +22,9 @@ export class HomePageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isLoading = true;
-        this.getAllSensors();
+        setTimeout(() => {
+            this.getAllSensors();
+        }, 500);
 
     }
 
@@ -47,14 +46,29 @@ export class HomePageComponent implements OnInit {
     }
 
     private getAllSensors() {
+        // this.isLoading = true;
         this.store.dispatch(new SensorsLoadingAction());
+        // const testData = [
+        //     {
+        //         id: 'test12',
+        //         name: '345',
+        //         period: 456,
+        //         status: SensorStatus.CONNECTED
+        //     },
+        //     {
+        //         id: 'thahah',
+        //         name: 'hoho',
+        //         period: 456,
+        //         status: SensorStatus.DISCONNECTED
+        //     }];
+        // this.store.dispatch(new SensorsLoadedSuccessAction(testData));
+        // this.isLoading = false;
         this.sensorService.getAllSenors().subscribe(sensorList => {
             this.store.dispatch(new SensorsLoadedSuccessAction(sensorList));
-            this.sensors = sensorList;
-            this.isLoading = false;
+            // this.isLoading = false;
         }, error1 => {
             this.store.dispatch(new SensorsLoadedFailAction());
-            this.isLoading = false;
+            // this.isLoading = false;
         });
 
     }

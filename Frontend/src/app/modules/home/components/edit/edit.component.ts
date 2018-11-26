@@ -33,11 +33,13 @@ export class EditComponent implements OnInit {
             period: formValue.period
         };
 
-        if (formValue.deviceName)
+        if (formValue.deviceName) {
             editedSensor['name'] = formValue.deviceName;
-        this.sensorService.updateSensors(editedSensor).subscribe(res => {
-            this.onClosed.emit(editedSensor);
-        });
+
+        }
+        // this.sensorService.updateSensors(editedSensor).subscribe(res => {
+        this.onClosed.emit(editedSensor);
+        // });
     }
 
     isFormValid() {

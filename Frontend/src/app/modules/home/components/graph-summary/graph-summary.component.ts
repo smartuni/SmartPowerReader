@@ -53,24 +53,26 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                 to: to,
                 count: 100
             };
-            this.sensorService.getData(params).subscribe((res) => {
-                const series = res.map(s => ({
-                    name: s.timestamp,
-                    value: s.value
-                }));
+            setTimeout(() => {
+                this.sensorService.getData(params).subscribe((res) => {
+                    const series = res.map(s => ({
+                        name: s.timestamp,
+                        value: s.value
+                    }));
 
-                series.sort((a, b) => a.name < b.name ? 1 : (a.name > b.name ? 1 : 0));
-                const newSensor = {
-                    id: params.id,
-                    name: params.id,
-                    series: series
-                } as Sensor;
-                this.results.push(newSensor);
-                if (i === selectedDeviceIds.length - 1) {
-                    console.log('in if', this.results);
-                    this.isLoading = false;
-                }
-            });
+                    series.sort((a, b) => a.name < b.name ? 1 : (a.name > b.name ? 1 : 0));
+                    const newSensor = {
+                        id: params.id,
+                        name: params.id,
+                        series: series
+                    } as Sensor;
+                    this.results.push(newSensor);
+                    if (i === selectedDeviceIds.length - 1) {
+                        console.log('in if', this.results);
+                        this.isLoading = false;
+                    }
+                });
+            }, 2000);
         }
         this.isLessThan3Days = to - from <= 86340000 * 3;
         console.log('to - from', to, from, to - from, 86340000 * 28, to - from <= 86340000 * 28);
@@ -94,6 +96,7 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
     axisFormatTime(val) {
         return formatDate(new Date(val), 'MMM dd HH:mm', 'en');
     }
+
     axisFormatDate(val) {
         return formatDate(new Date(val), 'dd MMM', 'en');
     }
