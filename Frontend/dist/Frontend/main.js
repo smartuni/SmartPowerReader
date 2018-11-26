@@ -157,18 +157,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var _core_footer_footer_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./core/footer/footer.component */ "./src/app/core/footer/footer.component.ts");
-/* harmony import */ var _core_header_header_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./core/header/header.component */ "./src/app/core/header/header.component.ts");
+/* harmony import */ var core_footer_footer_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core/footer/footer.component */ "./src/app/core/footer/footer.component.ts");
+/* harmony import */ var core_header_header_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core/header/header.component */ "./src/app/core/header/header.component.ts");
 /* harmony import */ var _modules_home_components_edit_edit_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/home/components/edit/edit.component */ "./src/app/modules/home/components/edit/edit.component.ts");
 /* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./app-routing.module */ "./src/app/app-routing.module.ts");
 /* harmony import */ var _modules_home_home_module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/home/home.module */ "./src/app/modules/home/home.module.ts");
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var _store_reducers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./store/reducers */ "./src/app/store/reducers/index.ts");
+/* harmony import */ var _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ngrx/store-devtools */ "./node_modules/@ngrx/store-devtools/fesm5/store-devtools.js");
+/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
+
+
 
 
 
@@ -185,14 +193,16 @@ var AppModule = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_2__["AppComponent"],
-                _core_footer_footer_component__WEBPACK_IMPORTED_MODULE_3__["FooterComponent"],
-                _core_header_header_component__WEBPACK_IMPORTED_MODULE_4__["HeaderComponent"],
+                core_footer_footer_component__WEBPACK_IMPORTED_MODULE_3__["FooterComponent"],
+                core_header_header_component__WEBPACK_IMPORTED_MODULE_4__["HeaderComponent"],
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
                 _app_routing_module__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"],
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__["BrowserAnimationsModule"],
                 _modules_home_home_module__WEBPACK_IMPORTED_MODULE_7__["HomeModule"],
+                _ngrx_store__WEBPACK_IMPORTED_MODULE_9__["StoreModule"].forRoot(_store_reducers__WEBPACK_IMPORTED_MODULE_10__["reducers"], { metaReducers: _store_reducers__WEBPACK_IMPORTED_MODULE_10__["metaReducers"] }),
+                !environments_environment__WEBPACK_IMPORTED_MODULE_12__["environment"].production ? _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_11__["StoreDevtoolsModule"].instrument() : [],
             ],
             providers: [],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_2__["AppComponent"]],
@@ -204,25 +214,6 @@ var AppModule = /** @class */ (function () {
     return AppModule;
 }());
 
-
-
-/***/ }),
-
-/***/ "./src/app/core/enum/sensor-status.enum.ts":
-/*!*************************************************!*\
-  !*** ./src/app/core/enum/sensor-status.enum.ts ***!
-  \*************************************************/
-/*! exports provided: SensorStatus */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorStatus", function() { return SensorStatus; });
-var SensorStatus;
-(function (SensorStatus) {
-    SensorStatus["DISCONNECTED"] = "disconnected";
-    SensorStatus["CONNECTED"] = "connected";
-})(SensorStatus || (SensorStatus = {}));
 
 
 /***/ }),
@@ -362,7 +353,7 @@ var HeaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Add device</div>\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align\">\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  DeviceID\n                </span>\n                    </div>\n                    <div class=\"input-form\">\n                        <select  class=\"form-control\" formControlName=\"deviceId\"\n                                (change)=\"onChangeSensor($event)\">\n                            <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                                {{sensor.id}}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"second-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Name\n                </span>\n                    </div>\n                    <input type=\"text\"\n                           class=\"form-control\"\n                           id=\"deviceName\"\n                           formControlName=\"deviceName\"\n                           [value]=\"selectedSensor && selectedSensor.name  ? selectedSensor.name : null\">\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-2\">\n\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Period\n                </span>\n                    </div>\n                    <input type=\"number\"\n                           class=\"form-control col-3\"\n                           id=\"period\"\n                           formControlName=\"period\"\n                           [value]=\"selectedSensor && selectedSensor.period ? selectedSensor.period : null\">\n                </div>\n            </div>\n\n        </div>\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
+module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align\">\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  DeviceID\n                </span>\n                    </div>\n                    <div class=\"input-form\">\n                        <select  class=\"form-control\" formControlName=\"deviceId\"\n                                (change)=\"onChangeSensor($event)\">\n                            <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                                {{sensor.id}}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"second-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Name\n                </span>\n                    </div>\n                    <input type=\"text\"\n                           class=\"form-control\"\n                           id=\"deviceName\"\n                           formControlName=\"deviceName\"\n                           [value]=\"selectedSensor && selectedSensor.name  ? selectedSensor.name : null\">\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-2\">\n\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Period\n                </span>\n                    </div>\n                    <input type=\"number\"\n                           class=\"form-control col-3\"\n                           id=\"period\"\n                           formControlName=\"period\"\n                           [value]=\"selectedSensor && selectedSensor.period ? selectedSensor.period : null\">\n                </div>\n            </div>\n\n        </div>\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
 
 /***/ }),
 
@@ -415,17 +406,17 @@ var EditComponent = /** @class */ (function () {
         });
     };
     EditComponent.prototype.save = function () {
-        var _this = this;
         var formValue = this.form.getRawValue();
-        var newValues = {
+        var editedSensor = {
             id: formValue.deviceId,
             period: formValue.period
         };
-        if (formValue.deviceName)
-            newValues['name'] = formValue.deviceName;
-        this.sensorService.updateSensors(newValues).subscribe(function (res) {
-            _this.onClosed.emit(null);
-        });
+        if (formValue.deviceName) {
+            editedSensor['name'] = formValue.deviceName;
+        }
+        // this.sensorService.updateSensors(editedSensor).subscribe(res => {
+        this.onClosed.emit(editedSensor);
+        // });
     };
     EditComponent.prototype.isFormValid = function () {
         return !this.form.invalid;
@@ -461,7 +452,7 @@ var EditComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-9\">\n                <mat-select multiple placeholder=\"Select device\">\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                *ngFor=\"let device of testData; let i = index\"\n                                [value]=\"device.id\">\n                        <div class=\"row\">\n                            <div class=\"col-auto\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col text-right\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'connected'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'disconnected'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Edit\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 input-field inline\">\n                            <input align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 \">\n                            <input align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
+module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-10\">\n                <mat-select multiple placeholder=\"Select device\">\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device.id\">\n                        <div class=\"row\">\n                            <div class=\"col-auto\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col text-right\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'connected'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'disconnected'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Configuration\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 input-field inline\">\n                            <input align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 \">\n                            <input align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
 
 /***/ }),
 
@@ -472,7 +463,7 @@ module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <di
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".header {\n  font-size: 25px; }\n\ninput[type=\"time\"] {\n  display: inline-block;\n  padding: .375rem .75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group {\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group .btn-outline-secondary {\n    border-right: 0;\n    border-bottom: 0;\n    border-top: 0; }\n\n.input-group .form-control {\n    border: none; }\n\n.input-group .form-control:focus {\n    border-right: 1px solid black;\n    box-shadow: none; }\n\n.input-group > .form-control:focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.submit-button, .edit-button {\n  height: 35px;\n  width: 100px;\n  background-color: #009688;\n  color: white;\n  border-radius: 3px; }\n\n.submit-button:disabled {\n  background-color: #929396; }\n\n.filter-button {\n  height: 35px;\n  border: 1px solid black;\n  background-color: #E8E8E8;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\ninput[type=\"time\"]:focus {\n  border-color: black;\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.filter-button :hover, .filter-button :focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n"
+module.exports = ".header {\n  font-size: 25px; }\n\ninput[type=\"time\"] {\n  display: inline-block;\n  padding: .375rem .75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group {\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group .btn-outline-secondary {\n    border-right: 0;\n    border-bottom: 0;\n    border-top: 0; }\n\n.input-group .form-control {\n    border: none; }\n\n.input-group .form-control:focus {\n    border-right: 1px solid black;\n    box-shadow: none; }\n\n.input-group > .form-control:focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.submit-button, .edit-button {\n  height: 35px;\n  width: 120px;\n  background-color: #009688;\n  color: white;\n  border-radius: 3px; }\n\n.submit-button:disabled {\n  background-color: #929396; }\n\n.filter-button {\n  height: 35px;\n  border: 1px solid black;\n  background-color: #E8E8E8;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\ninput[type=\"time\"]:focus {\n  border-color: black;\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.filter-button :hover, .filter-button :focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n"
 
 /***/ }),
 
@@ -492,7 +483,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @progress/kendo-date-math */ "./node_modules/@progress/kendo-date-math/dist/es/main.js");
 /* harmony import */ var _shared_services_modal_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../shared/services/modal.service */ "./src/app/shared/services/modal.service.ts");
 /* harmony import */ var _edit_edit_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../edit/edit.component */ "./src/app/modules/home/components/edit/edit.component.ts");
-/* harmony import */ var _core_enum_sensor_status_enum__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../core/enum/sensor-status.enum */ "./src/app/core/enum/sensor-status.enum.ts");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var store_reducers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! store/reducers */ "./src/app/store/reducers/index.ts");
+/* harmony import */ var store_actions_sensors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! store/actions/sensors */ "./src/app/store/actions/sensors.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -509,29 +502,18 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
 var FilterBarComponent = /** @class */ (function () {
-    function FilterBarComponent(modalService) {
+    function FilterBarComponent(modalService, store) {
         this.modalService = modalService;
+        this.store = store;
         this.onChangedValue = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.selectedDevices = [];
     }
     FilterBarComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.isLoading = true;
-        this.testData = [
-            {
-                id: 'test12',
-                name: '345',
-                period: 456,
-                status: _core_enum_sensor_status_enum__WEBPACK_IMPORTED_MODULE_6__["SensorStatus"].CONNECTED
-            },
-            {
-                id: 'thahah',
-                name: 'hoho',
-                period: 456,
-                status: _core_enum_sensor_status_enum__WEBPACK_IMPORTED_MODULE_6__["SensorStatus"].DISCONNECTED
-            }
-        ];
         this.now = Object(_angular_common__WEBPACK_IMPORTED_MODULE_2__["formatDate"])(new Date(), 'yyyy-MM-dd', 'en');
         var todayArr = this.now.split('-');
         var today = {
@@ -545,14 +527,16 @@ var FilterBarComponent = /** @class */ (function () {
             startTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('00:00'),
             endTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('23:59')
         });
-        if (this.sensors && this.sensors.length > 0) {
-            this.form.controls['selectedDevice'].setValue(this.sensors[0].id, { onlySelf: true });
-        }
         var raw = this.form.getRawValue();
         this.startTime = this.combineToDate(raw.startDate, raw.startTime);
         this.endTime = this.combineToDate(raw.endDate, raw.endTime);
         this.isFormValid = this.startTime < this.endTime;
-        this.isLoading = false;
+        setTimeout(function () {
+            _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_6__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_7__["getSensors"])).subscribe(function (sensors) {
+                _this.sensors = sensors;
+                _this.isLoading = false;
+            });
+        }, 500);
         this.form.valueChanges.subscribe(function (data) {
             var rawValue = _this.form.getRawValue();
             _this.startTime = _this.combineToDate(rawValue.startDate, rawValue.startTime);
@@ -568,7 +552,10 @@ var FilterBarComponent = /** @class */ (function () {
     FilterBarComponent.prototype.editDevice = function () {
         var _this = this;
         this.modalService.init(_edit_edit_component__WEBPACK_IMPORTED_MODULE_5__["EditComponent"], { sensors: this.sensors }, {
-            onClosed: function () {
+            onClosed: function (editedSensor) {
+                var index = _this.sensors.findIndex(function (sensor) { return sensor.id === editedSensor.id; });
+                _this.sensors[index] = editedSensor;
+                _this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_8__["UpdateSensorsSAction"](_this.sensors));
                 _this.modalService.destroy();
             }
         });
@@ -634,10 +621,6 @@ var FilterBarComponent = /** @class */ (function () {
         }
     };
     __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
-        __metadata("design:type", Array)
-    ], FilterBarComponent.prototype, "sensors", void 0);
-    __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
         __metadata("design:type", Object)
     ], FilterBarComponent.prototype, "onChangedValue", void 0);
@@ -647,7 +630,8 @@ var FilterBarComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./filter-bar.component.html */ "./src/app/modules/home/components/filter-bar/filter-bar.component.html"),
             styles: [__webpack_require__(/*! ./filter-bar.component.scss */ "./src/app/modules/home/components/filter-bar/filter-bar.component.scss")]
         }),
-        __metadata("design:paramtypes", [_shared_services_modal_service__WEBPACK_IMPORTED_MODULE_4__["ModalService"]])
+        __metadata("design:paramtypes", [_shared_services_modal_service__WEBPACK_IMPORTED_MODULE_4__["ModalService"],
+            _ngrx_store__WEBPACK_IMPORTED_MODULE_6__["Store"]])
     ], FilterBarComponent);
     return FilterBarComponent;
 }());
@@ -740,32 +724,32 @@ var GraphSummaryComponent = /** @class */ (function () {
         console.log('selectedDeviceIds', selectedDeviceIds, from, to);
         var _loop_1 = function (i) {
             var params = {
-                action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["actionGetMeasurement"],
+                action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_MEASUREMENT"],
                 id: selectedDeviceIds[i],
                 from: from,
                 to: to,
                 count: 100
             };
-            this_1.sensorService.getData(params).subscribe(function (res) {
-                var series = res.map(function (s) { return ({
-                    name: s.timestamp,
-                    value: s.value
-                }); });
-                series.sort(function (a, b) { return a.name < b.name ? 1 : (a.name > b.name ? 1 : 0); });
-                var newSensor = {
-                    id: params.id,
-                    name: params.id,
-                    series: series
-                };
-                _this.results.push(newSensor);
-                if (i === selectedDeviceIds.length - 1) {
-                    console.log('in if', _this.results);
-                    // this.indexTicks = JSON.parse(JSON.stringify(this.indexTicks));
-                    _this.isLoading = false;
-                }
-            });
+            setTimeout(function () {
+                _this.sensorService.getData(params).subscribe(function (res) {
+                    var series = res.map(function (s) { return ({
+                        name: s.timestamp,
+                        value: s.value
+                    }); });
+                    series.sort(function (a, b) { return a.name < b.name ? 1 : (a.name > b.name ? 1 : 0); });
+                    var newSensor = {
+                        id: params.id,
+                        name: params.id,
+                        series: series
+                    };
+                    _this.results.push(newSensor);
+                    if (i === selectedDeviceIds.length - 1) {
+                        console.log('in if', _this.results);
+                        _this.isLoading = false;
+                    }
+                });
+            }, 2000);
         };
-        var this_1 = this;
         for (var i = 0; i < selectedDeviceIds.length; i++) {
             _loop_1(i);
         }
@@ -806,17 +790,17 @@ var GraphSummaryComponent = /** @class */ (function () {
 /*!*****************************************************!*\
   !*** ./src/app/modules/home/constants/constants.ts ***!
   \*****************************************************/
-/*! exports provided: actionGetMeasurement, actionGetSensors, actionUpdateSensor */
+/*! exports provided: GET_MEASUREMENT, GET_SENSORS, UPDATE_SENSORS */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actionGetMeasurement", function() { return actionGetMeasurement; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actionGetSensors", function() { return actionGetSensors; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actionUpdateSensor", function() { return actionUpdateSensor; });
-var actionGetMeasurement = 'query-measurement';
-var actionGetSensors = 'query-devices';
-var actionUpdateSensor = 'put-device';
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_MEASUREMENT", function() { return GET_MEASUREMENT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_SENSORS", function() { return GET_SENSORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_SENSORS", function() { return UPDATE_SENSORS; });
+var GET_MEASUREMENT = 'query-measurement';
+var GET_SENSORS = 'query-devices';
+var UPDATE_SENSORS = 'put-device';
 
 
 /***/ }),
@@ -945,7 +929,7 @@ var HomeModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-page mx-3\" *ngIf=\"!isLoading\">\n    <app-filter-bar [sensors]=\"sensors\"\n                    (onChangedValue)=\"onChangedValue($event)\">\n    </app-filter-bar>\n    <app-graph-summary></app-graph-summary>\n</div>\n"
+module.exports = "<div class=\"main-page mx-3\">\n    <app-filter-bar (onChangedValue)=\"onChangedValue($event)\">\n    </app-filter-bar>\n    <app-graph-summary></app-graph-summary>\n</div>\n"
 
 /***/ }),
 
@@ -973,6 +957,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _components_graph_summary_graph_summary_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/graph-summary/graph-summary.component */ "./src/app/modules/home/components/graph-summary/graph-summary.component.ts");
 /* harmony import */ var _services_sensor_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/sensor.service */ "./src/app/modules/home/services/sensor.service.ts");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var store_actions_sensors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! store/actions/sensors */ "./src/app/store/actions/sensors.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -985,14 +971,19 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
 var HomePageComponent = /** @class */ (function () {
-    function HomePageComponent(sensorService) {
+    function HomePageComponent(sensorService, store) {
         this.sensorService = sensorService;
+        this.store = store;
         this.isLoading = true;
     }
     HomePageComponent.prototype.ngOnInit = function () {
-        this.isLoading = true;
-        this.getAllSensors();
+        var _this = this;
+        setTimeout(function () {
+            _this.getAllSensors();
+        }, 500);
     };
     HomePageComponent.prototype.onChangedValue = function (data) {
         console.log(data);
@@ -1011,10 +1002,30 @@ var HomePageComponent = /** @class */ (function () {
     };
     HomePageComponent.prototype.getAllSensors = function () {
         var _this = this;
-        this.sensorService.getAllSenors().subscribe(function (res) {
-            _this.sensors = res;
+        // this.isLoading = true;
+        this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_4__["SensorsLoadingAction"]());
+        // const testData = [
+        //     {
+        //         id: 'test12',
+        //         name: '345',
+        //         period: 456,
+        //         status: SensorStatus.CONNECTED
+        //     },
+        //     {
+        //         id: 'thahah',
+        //         name: 'hoho',
+        //         period: 456,
+        //         status: SensorStatus.DISCONNECTED
+        //     }];
+        // this.store.dispatch(new SensorsLoadedSuccessAction(testData));
+        // this.isLoading = false;
+        this.sensorService.getAllSenors().subscribe(function (sensorList) {
+            _this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_4__["SensorsLoadedSuccessAction"](sensorList));
+            // this.isLoading = false;
+        }, function (error1) {
+            _this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_4__["SensorsLoadedFailAction"]());
+            // this.isLoading = false;
         });
-        this.isLoading = false;
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])(_components_graph_summary_graph_summary_component__WEBPACK_IMPORTED_MODULE_1__["GraphSummaryComponent"]),
@@ -1026,7 +1037,8 @@ var HomePageComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./home-page.component.html */ "./src/app/modules/home/pages/home-page.component.html"),
             styles: [__webpack_require__(/*! ./home-page.component.scss */ "./src/app/modules/home/pages/home-page.component.scss")]
         }),
-        __metadata("design:paramtypes", [_services_sensor_service__WEBPACK_IMPORTED_MODULE_2__["SensorService"]])
+        __metadata("design:paramtypes", [_services_sensor_service__WEBPACK_IMPORTED_MODULE_2__["SensorService"],
+            _ngrx_store__WEBPACK_IMPORTED_MODULE_3__["Store"]])
     ], HomePageComponent);
     return HomePageComponent;
 }());
@@ -1047,7 +1059,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorService", function() { return SensorService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
-/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../constants/constants */ "./src/app/modules/home/constants/constants.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1060,18 +1073,25 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var SensorService = /** @class */ (function () {
     function SensorService(httpClient) {
         this.httpClient = httpClient;
     }
     SensorService.prototype.getData = function (params) {
-        return this.httpClient.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl + "/devices", { params: params });
+        return this.httpClient.get(environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl + "/devices", { params: params });
     };
     SensorService.prototype.getAllSenors = function () {
-        return this.httpClient.get("" + _environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl);
+        var params = {
+            action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_SENSORS"]
+        };
+        return this.httpClient.get("" + environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl, { params: params });
     };
     SensorService.prototype.updateSensors = function (body) {
-        return this.httpClient.put("" + _environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl, body);
+        var params = {
+            action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["UPDATE_SENSORS"]
+        };
+        return this.httpClient.put("" + environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].sensorUrl, body, { params: params });
     };
     SensorService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
@@ -1354,6 +1374,221 @@ var SharedModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/store/actions/sensors.ts":
+/*!******************************************!*\
+  !*** ./src/app/store/actions/sensors.ts ***!
+  \******************************************/
+/*! exports provided: UPDATE_SENSORS, CLEAR_SENSORS, SENSORS_LOADING, SENSORS_LOAD_SUCCESS, SENSORS_LOAD_FAIL, SELECT_SENSORS, UpdateSensorsSAction, SelectSensorsAction, SensorsLoadingAction, SensorsLoadedSuccessAction, SensorsLoadedFailAction, ClearSensorsAction */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_SENSORS", function() { return UPDATE_SENSORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLEAR_SENSORS", function() { return CLEAR_SENSORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SENSORS_LOADING", function() { return SENSORS_LOADING; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SENSORS_LOAD_SUCCESS", function() { return SENSORS_LOAD_SUCCESS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SENSORS_LOAD_FAIL", function() { return SENSORS_LOAD_FAIL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SELECT_SENSORS", function() { return SELECT_SENSORS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateSensorsSAction", function() { return UpdateSensorsSAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SelectSensorsAction", function() { return SelectSensorsAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorsLoadingAction", function() { return SensorsLoadingAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorsLoadedSuccessAction", function() { return SensorsLoadedSuccessAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorsLoadedFailAction", function() { return SensorsLoadedFailAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClearSensorsAction", function() { return ClearSensorsAction; });
+var UPDATE_SENSORS = 'main/UPDATE-SENSORS';
+var CLEAR_SENSORS = 'main/CLEAR-SENSORS';
+var SENSORS_LOADING = 'main/SENSORS_LOADING';
+var SENSORS_LOAD_SUCCESS = 'main/SENSORS_LOAD_SUCCESS';
+var SENSORS_LOAD_FAIL = 'main/SENSORS_LOAD_FAIL';
+var SELECT_SENSORS = 'main/SELECT_SENSORS';
+/**
+ * Update Sensors Action
+ */
+var UpdateSensorsSAction = /** @class */ (function () {
+    function UpdateSensorsSAction(payload) {
+        this.payload = payload;
+        this.type = UPDATE_SENSORS;
+    }
+    return UpdateSensorsSAction;
+}());
+
+/**
+ * Update Selected Sensors Action
+ */
+var SelectSensorsAction = /** @class */ (function () {
+    function SelectSensorsAction(payload) {
+        this.payload = payload;
+        this.type = SELECT_SENSORS;
+    }
+    return SelectSensorsAction;
+}());
+
+/**
+ * Load Sensors Action
+ */
+var SensorsLoadingAction = /** @class */ (function () {
+    function SensorsLoadingAction() {
+        this.type = SENSORS_LOADING;
+    }
+    return SensorsLoadingAction;
+}());
+
+var SensorsLoadedSuccessAction = /** @class */ (function () {
+    function SensorsLoadedSuccessAction(payload) {
+        this.payload = payload;
+        this.type = SENSORS_LOAD_SUCCESS;
+    }
+    return SensorsLoadedSuccessAction;
+}());
+
+var SensorsLoadedFailAction = /** @class */ (function () {
+    function SensorsLoadedFailAction() {
+        this.type = SENSORS_LOAD_FAIL;
+    }
+    return SensorsLoadedFailAction;
+}());
+
+/**
+ * Clear Sensors Actions
+ */
+var ClearSensorsAction = /** @class */ (function () {
+    function ClearSensorsAction() {
+        this.type = CLEAR_SENSORS;
+    }
+    return ClearSensorsAction;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/store/reducers/index.ts":
+/*!*****************************************!*\
+  !*** ./src/app/store/reducers/index.ts ***!
+  \*****************************************/
+/*! exports provided: reducers, logger, productionReducer, reducer, getSensorslState, getSelectedSensors, getSensors, metaReducers */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducers", function() { return reducers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logger", function() { return logger; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "productionReducer", function() { return productionReducer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducer", function() { return reducer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSensorslState", function() { return getSensorslState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSelectedSensors", function() { return getSelectedSensors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSensors", function() { return getSensors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "metaReducers", function() { return metaReducers; });
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _sensors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sensors */ "./src/app/store/reducers/sensors.ts");
+
+
+
+var reducers = {
+    sensors: _sensors__WEBPACK_IMPORTED_MODULE_2__["reducer"],
+};
+function logger(reduce) {
+    return function (state, action) {
+        var result = reduce(state, action);
+        console.groupCollapsed(action.type);
+        console.log('prev state', state);
+        console.log('action', action);
+        console.log('next state', result);
+        console.groupEnd();
+        return result;
+    };
+}
+// const developmentReducer: ActionReducer<State> = compose(storeFreeze, combineReducers)(reducers);
+var productionReducer = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])(reducers);
+function reducer(state, action) {
+    //   if (environment.production) {
+    return productionReducer(state, action);
+    //   } else {
+    //     return developmentReducer(state, action);
+    //   }
+}
+var getSensorslState = function (state) { return state.sensors; };
+var getSelectedSensors = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getSensorslState, _sensors__WEBPACK_IMPORTED_MODULE_2__["getSelectedSensors"]);
+var getSensors = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getSensorslState, _sensors__WEBPACK_IMPORTED_MODULE_2__["getSensors"]);
+// export const metaReducers: MetaReducer<State>[] = !environment.production ? [] : [];
+var metaReducers = !environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].production
+    ? []
+    : [];
+
+
+/***/ }),
+
+/***/ "./src/app/store/reducers/sensors.ts":
+/*!*******************************************!*\
+  !*** ./src/app/store/reducers/sensors.ts ***!
+  \*******************************************/
+/*! exports provided: reducer, getSensors, getSelectedSensors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducer", function() { return reducer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSensors", function() { return getSensors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSelectedSensors", function() { return getSelectedSensors; });
+/* harmony import */ var _actions_sensors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/sensors */ "./src/app/store/actions/sensors.ts");
+
+var initialState = {
+    sensors: [],
+    selectedSensors: [],
+    loading: false,
+    loaded: false,
+};
+function reducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case _actions_sensors__WEBPACK_IMPORTED_MODULE_0__["SENSORS_LOADING"]: {
+            return Object.assign({}, state, {
+                loading: true,
+                loaded: false
+            });
+        }
+        case _actions_sensors__WEBPACK_IMPORTED_MODULE_0__["SENSORS_LOAD_SUCCESS"]: {
+            return Object.assign({}, state, {
+                loading: false,
+                loaded: true,
+                sensors: action.payload,
+                selectedSensors: []
+            });
+        }
+        case _actions_sensors__WEBPACK_IMPORTED_MODULE_0__["SENSORS_LOAD_FAIL"]: {
+            return Object.assign({}, state, {
+                loading: false,
+                loaded: false,
+            });
+        }
+        case _actions_sensors__WEBPACK_IMPORTED_MODULE_0__["UPDATE_SENSORS"]: {
+            return Object.assign({}, state, {
+                sensors: JSON.parse(JSON.stringify(action.payload)),
+            });
+        }
+        case _actions_sensors__WEBPACK_IMPORTED_MODULE_0__["SELECT_SENSORS"]: {
+            return Object.assign({}, state, {
+                selectedSensors: JSON.parse(JSON.stringify(action.payload))
+            });
+        }
+        case _actions_sensors__WEBPACK_IMPORTED_MODULE_0__["CLEAR_SENSORS"]: {
+            return Object.assign({}, state, {
+                sensors: [],
+                selectedSensors: [],
+            });
+        }
+        default: {
+            return state;
+        }
+    }
+}
+var getSensors = function (state) { return state.sensors; };
+var getSelectedSensors = function (state) { return state.selectedSensors; };
+
+
+/***/ }),
+
 /***/ "./src/environments/environment.ts":
 /*!*****************************************!*\
   !*** ./src/environments/environment.ts ***!
@@ -1367,7 +1602,7 @@ __webpack_require__.r(__webpack_exports__);
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-var serverUrl = 'http://localhost:3000';
+var serverUrl = 'http://0.0.0.0:3000';
 var environment = {
     production: false,
     serverUrl: serverUrl,
