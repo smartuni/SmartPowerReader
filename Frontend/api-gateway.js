@@ -12,7 +12,7 @@ console.log(__dirname, path.join(__dirname, 'dist/Frontend'));
 app.use(express.static(path.join(__dirname, 'dist/Frontend')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-
+app.enable('trust proxy');
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -21,6 +21,7 @@ app.use(function (req, res, next) {
 });
 
 app.get('*', function(req, res) {
+    console.log('incoming ip', req.ip);
     res.sendFile(path.join(__dirname, 'dist/Frontend/index.html'));
 });
 app.get('/sensors/:sensorId', (req, res) => {
