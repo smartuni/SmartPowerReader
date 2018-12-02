@@ -82,4 +82,16 @@ input[type="time"]:focus {
   text-overflow: ellipsis;
 }
 
+.mat-select-panel {
+  margin-top: 45px !important;
+}
+
+mat-icon {
+  height: auto;
+}
+
+.cdk-overlay-pane {
+  margin-top: 45px !important;
+
+}
 

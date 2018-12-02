@@ -3,15 +3,16 @@
         <div class="col-3">
 
             <mat-form-field class="col-10">
-                <mat-select multiple placeholder="Select device">
+                <mat-select multiple placeholder="Select device" disableOptionCentering="true">
                     <mat-option (onSelectionChange)="change($event)"
+                                class="vertical-align"
                                 *ngFor="let device of sensors; let i = index"
                                 [value]="device">
-                        <div class="row">
-                            <div class="COL-9 description">
+                        <div class="row vertical-align">
+                            <div class="col-9 description">
                                 {{device.name ? device.name : device.id}}
                             </div>
-                            <div class="col text-right">
+                            <div class="col-3 text-right vertical-align">
                                 <mat-icon class="fas fa-check" *ngIf="device.status === 'CONNECTED'"></mat-icon>
                                 <mat-icon class="fas fa-ban" *ngIf="device.status === 'DISCONNECTED'"></mat-icon>
 

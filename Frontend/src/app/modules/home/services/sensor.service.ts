@@ -10,30 +10,34 @@ import {GET_SENSORS, UPDATE_SENSORS} from '../constants/constants';
 })
 export class SensorService {
     host: string;
-    url: string;
+    serverUrl: string;
+    sensorUrl: string;
+
 
     constructor(private httpClient: HttpClient) {
         const url = window.location.href;
         this.host = url.split(/http:\/\/|:/)[1];
-        this.url = 'http://' + this.host + ':3000';
+        this.serverUrl = 'http://' + this.host + ':3000';
+        this.sensorUrl = this.serverUrl + '/sensors';
+        console.log(this.sensorUrl);
     }
 
     getData(params: any): Observable<any> {
-        return this.httpClient.get<Sensor[]>(`${this.url}/devices`, {params: params});
+        return this.httpClient.get<Sensor[]>(`${this.sensorUrl}/devices`, {params: params});
     }
 
     getAllSenors(): Observable<Sensor[]> {
         const params = {
             action: GET_SENSORS
         };
-        return this.httpClient.get<Sensor[]>(`${this.url}`, {params: params});
+        return this.httpClient.get<Sensor[]>(`${this.sensorUrl}`, {params: params});
     }
 
     updateSensors(body: any): Observable<Object> {
         const params = {
             action: UPDATE_SENSORS
         };
-        return this.httpClient.put<Object>(`${this.url}`, body, {params: params});
+        return this.httpClient.put<Object>(`${this.sensorUrl}`, body, {params: params});
     }
 
 
