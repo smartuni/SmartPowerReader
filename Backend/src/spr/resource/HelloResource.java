@@ -18,6 +18,9 @@ public class HelloResource extends Resource
 	@Override
 	public void handlePOST(CoapExchange e)
 	{
+		System.out.println("RECEIVED A NEW-DEVICE!");
+		System.out.println(e.getSourceAddress().getHostAddress());
+		
 		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.NEW, newSession(), e.getSourceAddress().getHostAddress()));
 		e.respond(ResponseCode.VALID);
 	}
