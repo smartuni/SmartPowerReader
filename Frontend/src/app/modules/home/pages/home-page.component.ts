@@ -29,14 +29,14 @@ export class HomePageComponent implements OnInit {
         setTimeout(() => {
             this.getAllSensors();
         }, 500);
-        // Observable
-        //     .interval(5000)
-        //     .takeWhile(() => true)
-        //     .subscribe(() =>
-        //         setTimeout(() => {
-        //             this.getAllSensors();
-        //         }, 500)
-        //     );
+        Observable
+            .interval(5000)
+            .takeWhile(() => true)
+            .subscribe(() =>
+                setTimeout(() => {
+                    this.getAllSensors();
+                }, 500)
+            );
 
 
         // interval(60 * 60 * 1000)

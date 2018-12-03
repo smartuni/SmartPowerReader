@@ -57,6 +57,9 @@ export class FilterBarComponent implements OnInit {
         setTimeout(() => {
             this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
                 this.sensors = sensors;
+                if (this.selectedDevices.length > 0) {
+                    console.log(this.selectedDevices);
+                }
                 this.isLoading = false;
             });
         }, 500);
