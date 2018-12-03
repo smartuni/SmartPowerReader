@@ -30,7 +30,7 @@ export class HomePageComponent implements OnInit {
             this.getAllSensors();
         }, 500);
         Observable
-            .interval(10000)
+            .interval(5000)
             .takeWhile(() => true)
             .subscribe(() =>
                 setTimeout(() => {

@@ -1004,7 +1004,7 @@ var HomePageComponent = /** @class */ (function () {
             _this.getAllSensors();
         }, 500);
         rxjs__WEBPACK_IMPORTED_MODULE_5__["Observable"]
-            .interval(10000)
+            .interval(5000)
             .takeWhile(function () { return true; })
             .subscribe(function () {
             return setTimeout(function () {
