@@ -342,7 +342,7 @@ void spr_init(void)
     /* Find RPI/Basisstation */
     find_base_station(base_addr);
     // hardcode the base address for test
-    strncpy(base_addr, "fe80::a02d:51f7:cdf4:a686", NANOCOAP_URI_MAX);
+    strncpy(base_addr, "fe80::e47d:265e:b0a0:1a01", NANOCOAP_URI_MAX);
 
     xtimer_sleep(2);
     /* Register Basisstation */
