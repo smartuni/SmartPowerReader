@@ -997,7 +997,6 @@ var HomePageComponent = /** @class */ (function () {
     function HomePageComponent(sensorService, store) {
         this.sensorService = sensorService;
         this.store = store;
-        this.isLoading = true;
     }
     HomePageComponent.prototype.ngOnInit = function () {
         var _this = this;
