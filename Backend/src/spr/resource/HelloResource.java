@@ -18,8 +18,7 @@ public class HelloResource extends Resource
 	@Override
 	public void handlePOST(CoapExchange e)
 	{
-		e.respond(ResponseCode.VALID);
-		
 		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.NEW, newSession(), e.getSourceAddress().getHostAddress()));
+		e.respond(ResponseCode.VALID);
 	}
 }
