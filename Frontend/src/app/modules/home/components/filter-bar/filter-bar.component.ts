@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {formatDate} from '@angular/common';
 import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
@@ -57,9 +57,6 @@ export class FilterBarComponent implements OnInit {
         setTimeout(() => {
             this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
                 this.sensors = sensors;
-                if (this.selectedDevices.length > 0) {
-                    console.log(this.selectedDevices);
-                }
                 this.isLoading = false;
             });
         }, 500);

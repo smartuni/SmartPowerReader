@@ -4,7 +4,6 @@ import {SensorService} from '../services/sensor.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
 import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingAction} from 'store/actions/sensors';
-import { Observable} from 'rxjs';
 
 import 'rxjs-compat/add/observable/interval';
 import 'rxjs-compat/add/operator/takeWhile';
@@ -29,14 +28,14 @@ export class HomePageComponent implements OnInit {
         setTimeout(() => {
             this.getAllSensors();
         }, 500);
-        Observable
-            .interval(5000)
-            .takeWhile(() => true)
-            .subscribe(() =>
-                setTimeout(() => {
-                    this.getAllSensors();
-                }, 500)
-            );
+        // Observable
+        //     .interval(5000)
+        //     .takeWhile(() => true)
+        //     .subscribe(() =>
+        //         setTimeout(() => {
+        //             this.getAllSensors();
+        //         }, 500)
+        //     );
 
 
         // interval(60 * 60 * 1000)
