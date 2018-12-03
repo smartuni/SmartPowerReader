@@ -971,11 +971,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_sensor_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/sensor.service */ "./src/app/modules/home/services/sensor.service.ts");
 /* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
 /* harmony import */ var store_actions_sensors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! store/actions/sensors */ "./src/app/store/actions/sensors.ts");
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
-/* harmony import */ var rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs-compat/add/observable/interval */ "./node_modules/rxjs-compat/add/observable/interval.js");
-/* harmony import */ var rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs-compat/add/operator/takeWhile */ "./node_modules/rxjs-compat/add/operator/takeWhile.js");
-/* harmony import */ var rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs-compat/add/observable/interval */ "./node_modules/rxjs-compat/add/observable/interval.js");
+/* harmony import */ var rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs-compat/add/operator/takeWhile */ "./node_modules/rxjs-compat/add/operator/takeWhile.js");
+/* harmony import */ var rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_6__);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -985,7 +984,6 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 
 
@@ -1003,14 +1001,14 @@ var HomePageComponent = /** @class */ (function () {
         setTimeout(function () {
             _this.getAllSensors();
         }, 500);
-        rxjs__WEBPACK_IMPORTED_MODULE_5__["Observable"]
-            .interval(5000)
-            .takeWhile(function () { return true; })
-            .subscribe(function () {
-            return setTimeout(function () {
-                _this.getAllSensors();
-            }, 500);
-        });
+        // Observable
+        //     .interval(5000)
+        //     .takeWhile(() => true)
+        //     .subscribe(() =>
+        //         setTimeout(() => {
+        //             this.getAllSensors();
+        //         }, 500)
+        //     );
         // interval(60 * 60 * 1000)
         //     .pipe(
         //         tap(() => {
