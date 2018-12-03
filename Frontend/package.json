@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "forever start api-gateway.js && superstatic /dist/Frontend/ -c /dist/superstatic.json --port 4200 --host 0.0.0.0",
-    "superstatic": "superstatic /dist/Frontend/ -c /dist/superstatic.json --port 4200 --host 0.0.0.0",
+    "frontend": "superstatic /dist/Frontend/ -c /dist/superstatic.json --port 4200 --host 0.0.0.0",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
