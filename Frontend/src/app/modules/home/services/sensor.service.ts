@@ -19,7 +19,6 @@ export class SensorService {
         this.host = url.split(/http:\/\/|:/)[1];
         this.serverUrl = 'http://' + this.host + ':3000';
         this.sensorUrl = this.serverUrl + '/sensors';
-        console.log(this.sensorUrl);
     }
 
     getData(params: any): Observable<any> {

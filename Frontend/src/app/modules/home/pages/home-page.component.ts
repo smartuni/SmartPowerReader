@@ -4,11 +4,13 @@ import {SensorService} from '../services/sensor.service';
 import {Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
 import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingAction} from 'store/actions/sensors';
-import {interval} from 'rxjs';
+import {interval, Observable} from 'rxjs';
 import {flatMap} from 'tslint/lib/utils';
 import {tap} from 'rxjs/internal/operators';
 import {Router} from '@angular/router';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
+import 'rxjs-compat/add/observable/interval';
+import 'rxjs-compat/add/operator/takeWhile';
 
 @Component({
     selector: 'app-homepage',
@@ -28,15 +30,28 @@ export class HomePageComponent implements OnInit {
     }
 
     ngOnInit() {
+        setTimeout(() => {
+            this.getAllSensors();
+        }, 500);
+        Observable
+            .interval(10000)
+            .takeWhile(() => true)
+            .subscribe(() =>
+                setTimeout(() => {
+                    this.getAllSensors();
+                }, 500)
+            );
+
+
         // interval(60 * 60 * 1000)
         //     .pipe(
         //         tap(() => {
-                    setTimeout(() => {
-                        this.getAllSensors();
-                    }, 500);
-                // })
-            // )
-            // .subscribe();
+        //             setTimeout(() => {
+        //                 this.getAllSensors();
+        //             }, 500);
+        // })
+        // )
+        // .subscribe();
 
 
     }
