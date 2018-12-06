@@ -28,21 +28,26 @@
 #include "cbor.h"
 #include "net/gnrc/rpl/dodag.h"
 
-#define ENABLE_DEBUG (0)
+/* For LCD use */
+#include "lcd1602a.h"
+lcd1602a_dev_t spr_lcd;
+lcd1602a_iface_t spr_iface = MODE_4BIT;
+lcd1602a_dotsize_t spr_dotsize = DOTSIZE_5x8;
+
+#define ENABLE_DEBUG            (0)
 #include "debug.h"
 
 #define SENDDATA_QUEUE_SIZE     (8)
 
-#define CON_THRESH      (300)
+#define CON_THRESH              (300)
 
-#define BACKEND_REG     "/new-device"           /**< Backend resource to register new devices */
-#define BACKEND_SEND    "/measure"              /**< Backend resource to accept measurements */
-#define BACKEND_PORT    "9900"                  /**< Port the backend listens to */
-#define SPR_INTERVAL (15)                       /* Default 15 seconds*/
+#define BACKEND_REG             "/new-device"  /**< Backend resource to register new devices */
+#define BACKEND_SEND            "/measure"     /**< Backend resource to accept measurements */
+#define BACKEND_PORT            "9900"         /**< Port the backend listens to */
+#define SPR_INTERVAL            (15)           /* Default 15 seconds*/
 
-/* ADC pin parameters. */
-#define LINE (0)
-#define RES ADC_RES_12BIT /*< Use 'ADC_RES_10BIT' for arduino's. */
+#define LINE                    (0)
+#define RES                     ADC_RES_12BIT
 
 extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
 extern void indent(int nestingLevel);
@@ -87,15 +92,13 @@ static void *send_data(void *arg)
     /* The measured data by the current transformer. */
     ct_i_data_t ct_i_data;
 
-    float apparent;
-
     /* Parameters needed for accurate measurement */
-    ct_param.adc_count = 1 << 12;              // e.g.: 1 << 12 = 4096
-    ct_param.adc_offset = ct_param.adc_count >> 1; // e.g.: 4096 >> 1 = 2048
+    ct_param.adc_count = 1 << 12;
+    ct_param.adc_offset = ct_param.adc_count >> 1;
     ct_param.v_ref = 3.3;
     ct_param.r_burden = 110;
     ct_param.turns = 2000;
-    ct_param.samples = 32; // The number of iterations of the for-loop.
+    ct_param.samples = 32;
 
     /* prepare packet to send */
     uint8_t buf[GCOAP_PDU_BUF_SIZE];
@@ -104,6 +107,13 @@ static void *send_data(void *arg)
 
     /* stop send if interval 0 */
     uint32_t sleeptime = cfg.interval;
+
+    float apparent;
+
+    /* Reset the cursor. */
+    // NOTE: This function sleeps for about 2 seconds!
+    //lcd1602a_cursor_reset(&spr_lcd);
+
     while (sleeptime) {
         puts("sending data to pi");
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
@@ -112,6 +122,21 @@ static void *send_data(void *arg)
         ct_measure_current(&ct_param, &ct_i_data);
         ct_dump_current(&ct_i_data);
         apparent = ct_i_data.apparent;
+
+        /* Write the current and the apparent to the LCD. */
+        // Convert the current into a char buffer.
+        char str[8] = {' '};
+        fmt_float(str, ct_i_data.current, 2);
+        lcd1602a_write_buf(&spr_lcd, "Ampere: ");
+        lcd1602a_write_buf(&spr_lcd, str);
+
+        // Reposition the cursor on the second line.
+        lcd1602a_cursor_set(&spr_lcd, 0, 1);
+
+        // Convert the apparent into a char buffer.
+        fmt_float(str, ct_i_data.apparent, 2);
+        lcd1602a_write_buf(&spr_lcd, "Watt: ");
+        lcd1602a_write_buf(&spr_lcd, str);
 
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
@@ -136,6 +161,7 @@ static void *send_data(void *arg)
         xtimer_sleep(sleeptime);
         sleeptime = cfg.interval;
     }
+
     /* reset pid to 0 if thread stopped */
     senddata_pid = 0;
 
@@ -288,6 +314,27 @@ void spr_init(void)
 {
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
+
+    /* Initialize the LCD */
+    // NOTE: PhyWave board config!
+    int PORT_A = 0;
+    int PORT_C = 2;
+    int PORT_E = 4;
+    spr_lcd.register_select_pin = GPIO_PIN(PORT_E, 4);
+    spr_lcd.read_write_pin = GPIO_PIN(PORT_A, 19);
+    spr_lcd.enable_pin = GPIO_PIN(PORT_A, 2);
+    spr_lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    spr_lcd.data_pins[1] = 0; // Not used.
+    spr_lcd.data_pins[2] = 0; // Not used.
+    spr_lcd.data_pins[3] = 0; // Not used.
+    spr_lcd.data_pins[4] = GPIO_PIN(PORT_A, 1);
+    spr_lcd.data_pins[5] = GPIO_PIN(PORT_C, 4);
+    spr_lcd.data_pins[6] = GPIO_PIN(PORT_C, 7);
+    spr_lcd.data_pins[7] = GPIO_PIN(PORT_C, 5);
+    spr_lcd.iface = spr_iface;
+    spr_lcd.dotsize = spr_dotsize;
+    spr_lcd.lines = 2;
+    spr_lcd.collumns = 16;
 
     /* Register CoAP resources */
     gcoap_register_listener(&_listener);

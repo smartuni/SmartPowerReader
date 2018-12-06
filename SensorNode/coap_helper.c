@@ -16,13 +16,12 @@
 #include "timex.h"
 
 #include "ct_sensor.h"
-#include "lcd1602a.h"
 #include "cbor.h"
 
 /* Current transformer parameters needed for current calculations. */
-ct_parameter_t ct_param;
+static ct_parameter_t ct_param;
 /* The measured data by the current transformer. */
-ct_i_data_t ct_i_data;
+static ct_i_data_t ct_i_data;
 
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
@@ -250,156 +249,17 @@ size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
     return bytes_sent;
 }
 
-int lcd_write_cmd(int argc, char **argv)
-{
-    (void)argc;
-    //(void)argv;
-
-    lcd1602a_dev_t lcd;
-    lcd1602a_iface_t iface = MODE_4BIT;
-    lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
-
-    int PORT_A = 0;
-    int PORT_B = 1;
-    int PORT_C = 2;
-
-    /* NOTE: Make sure the pins are working for your board! */
-    lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
-    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
-    lcd.enable_pin = GPIO_PIN(PORT_C, 7);
-    lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    lcd.data_pins[1] = 0; // Not used.
-    lcd.data_pins[2] = 0; // Not used.
-    lcd.data_pins[3] = 0; // Not used.
-    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3);
-    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5);
-    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4);
-    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10);
-    lcd.iface = iface;
-    lcd.dotsize = dotsize;
-    /* functions set in init */
-    /* controls set in init */
-    /* modes set in init */
-    /* row_offset set in init */
-    lcd.lines = 2;
-    lcd.collumns = 16;
-
-    lcd1602a_init(&lcd);
-
-    printf("Try to write \"%s\" to the LCD\n", argv[1]);
-
-    /* Use first argument of shell input to display. */
-    lcd1602a_write_buf(&lcd, argv[1]);
-    lcd1602a_cursor_set(&lcd, 0, 1);
-    lcd1602a_write_buf(&lcd, argv[1]);
-
-    return 0;
-}
-
-int testcurrent_cmd(int argc, char **argv)
-{
-    /* These parameters are not used in this method. */
-    (void)argc;
-    (void)argv;
-
-    /* Stores the data and parameters used for measuring current. */
-    ct_i_data_t data;
-    ct_parameter_t param;
-
-    /* Parameters used for analog-input-pin (adc). */
-    // NOTE: This is already done in the main.
-    //int line = 0;
-    //adc_res_t res = ADC_RES_12BIT;
-    int bit = 12;
-
-    /* Timer parameters. */
-    xtimer_ticks32_t last = xtimer_now();
-    int delay = (1000LU * US_PER_MS); /*< 1 second. */
-
-    /* Parameters based on a nucleo-f446re. */
-    param.adc_count = 1 << bit;              /*< 4096 */
-    param.adc_offset = param.adc_count >> 1; /*< 2048 */
-    param.v_ref = 3.3;                       /*< 3.3V */
-    param.r_burden = 110;                    /*< 110Ohm */
-    param.turns = 2000;                      /*< turns on the magnet */
-    param.samples = 32;                      /*< number of samples */
-
-    /* Init the adc using riot abstraction layer. */
-    // NOTE: This is already done in the main.
-    // init_adc(line, res);
-
-    /* LCD 1602A initializations using a nucleo-f446re board. */
-    lcd1602a_dev_t lcd;
-    lcd1602a_iface_t iface = MODE_4BIT;
-    lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
-
-    int PORT_A = 0;
-    int PORT_B = 1;
-    int PORT_C = 2;
-
-    /* NOTE: Make sure the pins are working for your board! */
-    lcd.register_select_pin = GPIO_PIN(PORT_A, 9); // D8
-    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);      // D7
-    lcd.enable_pin = GPIO_PIN(PORT_C, 7);          // D9
-    lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    lcd.data_pins[1] = 0; // Not used.
-    lcd.data_pins[2] = 0; // Not used.
-    lcd.data_pins[3] = 0; // Not used.
-    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3); // D3
-    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5); //D4
-    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4); // D5
-    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10); // D6
-    lcd.iface = iface;
-    lcd.dotsize = dotsize;
-    /* functions set in init */
-    /* controls set in init */
-    /* modes set in init */
-    /* row_offset set in init */
-    lcd.lines = 2;
-    lcd.collumns = 16;
-
-    lcd1602a_init(&lcd);
-
-    /* Measures the current using the parameters and stores the measurements
-     * inside the data reference. Then sleep for 'DELAY' and loop this forever.
-     */
-    /* TODO: Improvement-idea, use argc/argv to determine how much samples
-     *       the loop should print, and then return so we dont need to
-     *       restart the whole application all time!
-     *       Another idea is to set the interval.
-     */
-    for (int i = 0; i < 10; i++) {
-        ct_measure_current(&param, &data);
-
-        /* LCD */
-        char current[8] = {' '};
-        fmt_float(current, data.current, 2);
-        char apparent[8] = {' '};
-        fmt_float(apparent, data.apparent, 2);
-        lcd1602a_cursor_reset(&lcd);
-        lcd1602a_write_buf(&lcd, "Ampere: ");
-        lcd1602a_write_buf(&lcd, current);
-        lcd1602a_cursor_set(&lcd, 0, 1);
-        lcd1602a_write_buf(&lcd, "Watt: ");
-        lcd1602a_write_buf(&lcd, apparent);
-
-        ct_dump_current(&data);
-        xtimer_periodic_wakeup(&last, delay);
-    }
-
-    return 0;
-}
-
 int testsend_cmd(int argc, char **argv)
 {
     /* Parameters needed for accurate measurement */
-    ct_param.adc_count = 1 << 12;              // e.g.: 1 << 12 = 4096
-    ct_param.adc_offset = ct_param.adc_count >> 1; // e.g.: 4096 >> 1 = 2048
+    ct_param.adc_count = 1 << 12;
+    ct_param.adc_offset = ct_param.adc_count >> 1;
     ct_param.v_ref = 3.3;
     ct_param.r_burden = 110;
     ct_param.turns = 2000;
-    ct_param.samples = 32; // The number of iterations of the for-loop.
+    ct_param.samples = 32;
 
+    // Measure and dump the values from the ct.
     ct_measure_current(&ct_param, &ct_i_data);
     ct_dump_current(&ct_i_data);
 
@@ -417,8 +277,6 @@ int testsend_cmd(int argc, char **argv)
 
     //printf("len = %i\n", len);
     //printf("buf = %s\n", fmt_buf);
-
-
 
     if (argc == 1) {
         /* show help for main commands */

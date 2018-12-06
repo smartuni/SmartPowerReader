@@ -57,7 +57,10 @@ int main(void)
     return 0;
 }
 
-/* NOTE: Comment out for the moment. It causes some problems with networking. */
+/*
+    NOTE: Comment out for the moment. It causes some problems with networking.
+ */
+
 /*
 #include "msg.h"
 #include "net/ipv6/addr.h"
