@@ -176,7 +176,7 @@ void lcd1602a_scroll_right(lcd1602a_dev_t * dev);
  *
  * @param[in] dev    A pointer to a lcd device.
  */
-void lcd_left_to_right(lcd1602a_dev_t * dev);
+void lcd1602a_left_to_right(lcd1602a_dev_t * dev);
 
 /**
  * @brief    Let the text flows from right to left.
