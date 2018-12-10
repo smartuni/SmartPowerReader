@@ -28,11 +28,14 @@
 #include "cbor.h"
 #include "net/gnrc/rpl/dodag.h"
 
+#define USE_DISPLAY (0)
+#if USE_DISPLAY
 /* For LCD use */
 #include "lcd1602a.h"
 lcd1602a_dev_t spr_lcd;
 lcd1602a_iface_t spr_iface = MODE_4BIT;
 lcd1602a_dotsize_t spr_dotsize = DOTSIZE_5x8;
+#endif /* USE_DISPLAY */
 
 #define ENABLE_DEBUG            (0)
 #include "debug.h"
@@ -114,6 +117,13 @@ static void *send_data(void *arg)
     // NOTE: This function sleeps for about 2 seconds!
     //lcd1602a_cursor_reset(&spr_lcd);
 
+#if USE_DISPLAY
+    /* Clear the entire display. */
+    // NOTE: This takes about 2 seconds, but should not hurt here!
+    lcd1602a_display_clear(&spr_lcd);
+    xtimer_sleep(3);
+#endif
+
     while (sleeptime) {
         puts("sending data to pi");
         gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_SEND);       // change server resource '/value' here
@@ -123,21 +133,27 @@ static void *send_data(void *arg)
         ct_dump_current(&ct_i_data);
         apparent = ct_i_data.apparent;
 
+#if USE_DISPLAY
         /* Write the current and the apparent to the LCD. */
         // Convert the current into a char buffer.
-        char str[8] = {' '};
-        fmt_float(str, ct_i_data.current, 2);
+        char current_str[8] = {' '};
+        fmt_float(current_str, ct_i_data.current, 2);
+
+        // Convert the apparent into a char buffer.
+        char apparent_str[8] = {' '};
+        fmt_float(apparent_str, ct_i_data.apparent, 2);
+
+        lcd1602a_cursor_set(&spr_lcd, 0, 0);
+
         lcd1602a_write_buf(&spr_lcd, "Ampere: ");
-        lcd1602a_write_buf(&spr_lcd, str);
+        lcd1602a_write_buf(&spr_lcd, current_str);
 
         // Reposition the cursor on the second line.
         lcd1602a_cursor_set(&spr_lcd, 0, 1);
 
-        // Convert the apparent into a char buffer.
-        fmt_float(str, ct_i_data.apparent, 2);
         lcd1602a_write_buf(&spr_lcd, "Watt: ");
-        lcd1602a_write_buf(&spr_lcd, str);
-
+        lcd1602a_write_buf(&spr_lcd, apparent_str);
+#endif /* USE_DISPLAY */
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
@@ -315,6 +331,7 @@ void spr_init(void)
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
+#if USE_DISPLAY
     /* Initialize the LCD */
     // NOTE: PhyWave board config!
     int PORT_A = 0;
@@ -335,10 +352,7 @@ void spr_init(void)
     spr_lcd.dotsize = spr_dotsize;
     spr_lcd.lines = 2;
     spr_lcd.collumns = 16;
-
-    /* Clear the entire display. */
-    // NOTE: This takes about 2 seconds, but should not hurt here!
-    lcd1602a_display_clear(&spr_lcd);
+#endif /* USE_DISPLAY */
 
     /* Register CoAP resources */
     gcoap_register_listener(&_listener);
