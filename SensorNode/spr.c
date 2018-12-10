@@ -336,6 +336,10 @@ void spr_init(void)
     spr_lcd.lines = 2;
     spr_lcd.collumns = 16;
 
+    /* Clear the entire display. */
+    // NOTE: This takes about 2 seconds, but should not hurt here!
+    lcd1602a_display_clear(&spr_lcd);
+
     /* Register CoAP resources */
     gcoap_register_listener(&_listener);
 
