@@ -117,8 +117,8 @@ int main(void)
 
     puts("SmartPowerReader sensor node");
 
-    _init_lcd(&main_lcd);
 #if SHOW_IP_ON_STARTUP
+    _init_lcd(&main_lcd);
     _ip_to_lcd();
 #endif /* SHOW_IP_ON_STARTUP */
 
