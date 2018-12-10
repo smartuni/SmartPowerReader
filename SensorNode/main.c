@@ -37,6 +37,7 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
+// #if SHOW_IP_ON_STARTUP
 
 #include "msg.h"
 #include "net/ipv6/addr.h"
@@ -106,6 +107,7 @@ static inline void _ip_to_lcd(void)
         }
     }
 }
+//#endif /* SHOW_IP_ON_STARTUP */
 
 int main(void)
 {
@@ -115,8 +117,8 @@ int main(void)
 
     puts("SmartPowerReader sensor node");
 
-#if SHOW_IP_ON_STARTUP
     _init_lcd(&main_lcd);
+#if SHOW_IP_ON_STARTUP
     _ip_to_lcd();
 #endif /* SHOW_IP_ON_STARTUP */
 
