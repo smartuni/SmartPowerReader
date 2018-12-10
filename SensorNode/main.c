@@ -24,7 +24,7 @@
 #include "lcd1602a.h"
 
 #if FEATURE_USE_DISPLAY
-    #if FEATURE_USE_DISPLAYFEATURE_SHOW_IP_ON_START
+    #if FEATURE_SHOW_IP_ON_START
     #include "net/ipv6/addr.h"
     #include "net/gnrc.h"
     #include "net/gnrc/netif.h"
