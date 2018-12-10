@@ -18,6 +18,8 @@
 #include "kernel_types.h"
 #include "shell.h"
 
+#define SHOW_IP_ON_STARTUP (1)
+
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
@@ -35,86 +37,39 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
-int main(void)
-{
-    /* for the thread running the shell */
-    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
-    spr_init();
 
-    puts("SmartPowerReader sensor node");
-
-    /*
-    _init_lcd(&lcd);
-    _ip_to_lcd();
-    */
-
-    /* start shell */
-    puts("All up, running the shell now");
-    char line_buf[SHELL_DEFAULT_BUFSIZE];
-    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
-
-    /* should never be reached */
-    return 0;
-}
-
-/*
-    NOTE: Comment out for the moment. It causes some problems with networking.
- */
-
-/*
 #include "msg.h"
 #include "net/ipv6/addr.h"
 #include "net/gnrc.h"
 #include "net/gnrc/netif.h"
 
 #include "lcd1602a.h"
-lcd1602a_dev_t lcd;
-lcd1602a_iface_t iface = MODE_4BIT;
-lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
+lcd1602a_dev_t main_lcd;
+//lcd1602a_iface_t iface = MODE_4BIT;
+//lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
-static inline void _init_lcd(lcd1602a_dev_t * lcd)
+static inline void _init_lcd(lcd1602a_dev_t * main_lcd)
 {
     int PORT_A = 0;
-    int PORT_B = 1;
     int PORT_C = 2;
-
-    // Nucleo pin setup
-    lcd->register_select_pin = GPIO_PIN(PORT_A, 9);
-    lcd->read_write_pin = GPIO_PIN(PORT_A, 8);
-    lcd->enable_pin = GPIO_PIN(PORT_C, 7);
-    lcd->data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    lcd->data_pins[1] = 0; // Not used.
-    lcd->data_pins[2] = 0; // Not used.
-    lcd->data_pins[3] = 0; // Not used.
-    lcd->data_pins[4] = GPIO_PIN(PORT_B, 3);
-    lcd->data_pins[5] = GPIO_PIN(PORT_B, 5);
-    lcd->data_pins[6] = GPIO_PIN(PORT_B, 4);
-    lcd->data_pins[7] = GPIO_PIN(PORT_B, 10);
-    lcd->iface = iface;
-    lcd->dotsize = dotsize;
-    lcd->lines = 2;
-    lcd->collumns = 16;
-
-    // Phywave pin setup
-    (void)PORT_B;
     int PORT_E = 4;
-    lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
-    lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
-    lcd->enable_pin = GPIO_PIN(PORT_A, 2);
-    lcd->data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    lcd->data_pins[1] = 0; // Not used.
-    lcd->data_pins[2] = 0; // Not used.
-    lcd->data_pins[3] = 0; // Not used.
-    lcd->data_pins[4] = GPIO_PIN(PORT_A, 1);
-    lcd->data_pins[5] = GPIO_PIN(PORT_C, 4);
-    lcd->data_pins[6] = GPIO_PIN(PORT_C, 7);
-    lcd->data_pins[7] = GPIO_PIN(PORT_C, 5);
-    lcd->iface = iface;
-    lcd->dotsize = dotsize;
-    lcd->lines = 2;
-    lcd->collumns = 16;
+    main_lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
+    main_lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
+    main_lcd->enable_pin = GPIO_PIN(PORT_A, 2);
+    main_lcd->data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    main_lcd->data_pins[1] = 0; // Not used.
+    main_lcd->data_pins[2] = 0; // Not used.
+    main_lcd->data_pins[3] = 0; // Not used.
+    main_lcd->data_pins[4] = GPIO_PIN(PORT_A, 1);
+    main_lcd->data_pins[5] = GPIO_PIN(PORT_C, 4);
+    main_lcd->data_pins[6] = GPIO_PIN(PORT_C, 7);
+    main_lcd->data_pins[7] = GPIO_PIN(PORT_C, 5);
+    main_lcd->iface = MODE_4BIT;
+    main_lcd->dotsize = DOTSIZE_5x8;
+    main_lcd->lines = 2;
+    main_lcd->collumns = 16;
 
-    lcd1602a_init(lcd);
+    lcd1602a_init(main_lcd);
 }
 
 static inline void _ip_to_lcd(void)
@@ -136,13 +91,14 @@ static inline void _ip_to_lcd(void)
             char ipv6_addr[IPV6_ADDR_MAX_STR_LEN];
 
             ipv6_addr_to_str(ipv6_addr, &ipv6_addrs[i], IPV6_ADDR_MAX_STR_LEN);
+            int len = (int)strlen(ipv6_addr);
             printf("My address is %s\n", ipv6_addr);
             for (int k = 0; k < 16; k++) {
-              lcd1602a_write(&lcd, ipv6_addr[k]);
+              lcd1602a_write(&main_lcd, ipv6_addr[k]);
             }
-            lcd1602a_cursor_set(&lcd, 0, 1);
-            for (int k = 16; k < 32; k++) {
-              lcd1602a_write(&lcd, ipv6_addr[k]);
+            lcd1602a_cursor_set(&main_lcd, 0, 1);
+            for (int k = 16; k < len && k < 32; k++) {
+              lcd1602a_write(&main_lcd, ipv6_addr[k]);
             }
             //lcd1602a_write_buf(&lcd, ipv6_addr);
             //lcd1602a_cursor_set(&lcd, 0, 1);
@@ -150,4 +106,25 @@ static inline void _ip_to_lcd(void)
         }
     }
 }
-*/
+
+int main(void)
+{
+    /* for the thread running the shell */
+    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
+    spr_init();
+
+    puts("SmartPowerReader sensor node");
+
+#if SHOW_IP_ON_STARTUP
+    _init_lcd(&main_lcd);
+    _ip_to_lcd();
+#endif /* SHOW_IP_ON_STARTUP */
+
+    /* start shell */
+    puts("All up, running the shell now");
+    char line_buf[SHELL_DEFAULT_BUFSIZE];
+    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
+
+    /* should never be reached */
+    return 0;
+}
