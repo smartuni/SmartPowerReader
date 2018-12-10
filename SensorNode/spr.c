@@ -30,8 +30,9 @@
 
 #include "features.h"
 
-#if FEATURE_USE_DISPLAY
 #include "lcd1602a.h"
+
+#if FEATURE_USE_DISPLAY
 lcd1602a_dev_t * spr_lcd;
 lcd1602a_iface_t spr_iface = MODE_4BIT;
 lcd1602a_dotsize_t spr_dotsize = DOTSIZE_5x8;
