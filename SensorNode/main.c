@@ -21,8 +21,9 @@
 
 #include "features.h"
 
+#include "lcd1602a.h"
+
 #if FEATURE_USE_DISPLAY
-    #include "lcd1602a.h"
     #if FEATURE_USE_DISPLAYFEATURE_SHOW_IP_ON_START
     #include "net/ipv6/addr.h"
     #include "net/gnrc.h"
