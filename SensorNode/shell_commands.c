@@ -17,6 +17,7 @@
 #include "ct_sensor.h"
 #include "lcd1602a.h"
 
+
 /**
  * Writes the first argument on the lcd.
  * Make sure to use the right pin configuration for your board!
@@ -29,31 +30,54 @@ int lcd_write_cmd(int argc, char **argv)
     lcd1602a_iface_t iface = MODE_4BIT;
     lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
-    int PORT_A = 0;
-    int PORT_B = 1;
-    int PORT_C = 2;
+    int use_nucleo = 0;
 
-    /* NOTE: Make sure the pins are working for your board! */
-    /* Nucleo config */
-    lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
-    lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
-    lcd.enable_pin = GPIO_PIN(PORT_C, 7);
-    lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    lcd.data_pins[1] = 0; // Not used.
-    lcd.data_pins[2] = 0; // Not used.
-    lcd.data_pins[3] = 0; // Not used.
-    lcd.data_pins[4] = GPIO_PIN(PORT_B, 3);
-    lcd.data_pins[5] = GPIO_PIN(PORT_B, 5);
-    lcd.data_pins[6] = GPIO_PIN(PORT_B, 4);
-    lcd.data_pins[7] = GPIO_PIN(PORT_B, 10);
-    lcd.iface = iface;
-    lcd.dotsize = dotsize;
-    /* functions set in init */
-    /* controls set in init */
-    /* modes set in init */
-    /* row_offset set in init */
-    lcd.lines = 2;
-    lcd.collumns = 16;
+    if (use_nucleo) {
+        int PORT_A = 0;
+        int PORT_B = 1;
+        int PORT_C = 2;
+        /* NOTE: Make sure the pins are working for your board! */
+        // Nucleo config
+        lcd.register_select_pin = GPIO_PIN(PORT_A, 9);
+        lcd.read_write_pin = GPIO_PIN(PORT_A, 8);
+        lcd.enable_pin = GPIO_PIN(PORT_C, 7);
+        lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+        lcd.data_pins[1] = 0; // Not used.
+        lcd.data_pins[2] = 0; // Not used.
+        lcd.data_pins[3] = 0; // Not used.
+        lcd.data_pins[4] = GPIO_PIN(PORT_B, 3);
+        lcd.data_pins[5] = GPIO_PIN(PORT_B, 5);
+        lcd.data_pins[6] = GPIO_PIN(PORT_B, 4);
+        lcd.data_pins[7] = GPIO_PIN(PORT_B, 10);
+        lcd.iface = iface;
+        lcd.dotsize = dotsize;
+        /* functions set in init */
+        /* controls set in init */
+        /* modes set in init */
+        /* row_offset set in init */
+        lcd.lines = 2;
+        lcd.collumns = 16;
+    } else {
+        // NOTE: PhyWave board config!
+        int PORT_A = 0;
+        int PORT_C = 2;
+        int PORT_E = 4;
+        lcd.register_select_pin = GPIO_PIN(PORT_E, 4);
+        lcd.read_write_pin = GPIO_PIN(PORT_A, 19);
+        lcd.enable_pin = GPIO_PIN(PORT_A, 2);
+        lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+        lcd.data_pins[1] = 0; // Not used.
+        lcd.data_pins[2] = 0; // Not used.
+        lcd.data_pins[3] = 0; // Not used.
+        lcd.data_pins[4] = GPIO_PIN(PORT_A, 1);
+        lcd.data_pins[5] = GPIO_PIN(PORT_C, 4);
+        lcd.data_pins[6] = GPIO_PIN(PORT_C, 7);
+        lcd.data_pins[7] =  GPIO_PIN(PORT_C, 5);
+        lcd.iface = iface;
+        lcd.dotsize = dotsize;
+        lcd.lines = 2;
+        lcd.collumns = 16;
+    }
 
     lcd1602a_init(&lcd);
 
