@@ -44,14 +44,21 @@ static const shell_command_t shell_commands[] = {
 
 #include "lcd1602a.h"
 lcd1602a_dev_t main_lcd;
-//lcd1602a_iface_t iface = MODE_4BIT;
-//lcd1602a_dotsize_t dotsize = DOTSIZE_5x8;
 
-static inline void _init_lcd(lcd1602a_dev_t * main_lcd)
+int main(void)
 {
+    /* for the thread running the shell */
+    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
+    spr_init();
+
+    puts("SmartPowerReader sensor node");
+
+#if SHOW_IP_ON_STARTUP
+
     int PORT_A = 0;
     int PORT_C = 2;
     int PORT_E = 4;
+    
     main_lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
     main_lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
     main_lcd->enable_pin = GPIO_PIN(PORT_A, 2);
@@ -69,18 +76,11 @@ static inline void _init_lcd(lcd1602a_dev_t * main_lcd)
     main_lcd->collumns = 16;
 
     lcd1602a_init(main_lcd);
-}
-
-/* This is conditional, because it could cause errors with networking. */
-#if SHOW_IP_ON_STARTUP
-static inline void _ip_to_lcd(void)
-{
-    // NOTE: MAKE SURE TO USE A BOARD WITH NETWORK SUPPORT (or it won't work).
 
     // get interfaces and print their addresses
     gnrc_netif_t *netif = NULL;
     while ((netif = gnrc_netif_iter(netif))) {
-        printf("netif while \n");
+
         ipv6_addr_t ipv6_addrs[GNRC_NETIF_IPV6_ADDRS_NUMOF];
         int res = gnrc_netapi_get(netif->pid, NETOPT_IPV6_ADDR, 0, ipv6_addrs,
                                   sizeof(ipv6_addrs));
@@ -88,38 +88,25 @@ static inline void _ip_to_lcd(void)
         if (res < 0) {
             continue;
         }
+
         for (unsigned i = 0; i < (unsigned)(res / sizeof(ipv6_addr_t)); i++) {
             char ipv6_addr[IPV6_ADDR_MAX_STR_LEN];
 
             ipv6_addr_to_str(ipv6_addr, &ipv6_addrs[i], IPV6_ADDR_MAX_STR_LEN);
             int len = (int)strlen(ipv6_addr);
-            printf("My address is %s\n", ipv6_addr);
+
+            printf("My IPv6 address %s\n", ipv6_addr);
             for (int k = 0; k < 16; k++) {
               lcd1602a_write(&main_lcd, ipv6_addr[k]);
             }
+
             lcd1602a_cursor_set(&main_lcd, 0, 1);
+
             for (int k = 16; k < len && k < 32; k++) {
               lcd1602a_write(&main_lcd, ipv6_addr[k]);
             }
-            //lcd1602a_write_buf(&lcd, ipv6_addr);
-            //lcd1602a_cursor_set(&lcd, 0, 1);
-            //lcd1602a_write_buf(&lcd, "helloworld");
         }
     }
-}
-#endif /* SHOW_IP_ON_STARTUP */
-
-int main(void)
-{
-    /* for the thread running the shell */
-    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
-    spr_init();
-
-    puts("SmartPowerReader sensor node");
-
-#if SHOW_IP_ON_STARTUP
-    _init_lcd(&main_lcd);
-    _ip_to_lcd();
 #endif /* SHOW_IP_ON_STARTUP */
 
     /* start shell */
