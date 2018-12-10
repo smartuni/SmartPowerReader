@@ -17,9 +17,9 @@ extern "C" {
 
 
 /* Globaly enable/disable display functionality. */
-#define FEATURE_USE_DISPLAY (1)
+#define FEATURE_USE_DISPLAY (0)
 /* Can only be used with a display */
-#define FEATURE_SHOW_IP_ON_START (1 && FEATURE_USE_DISPLAY)
+#define FEATURE_SHOW_IP_ON_START (0 && FEATURE_USE_DISPLAY)
 
 /**
  * @brief TODO

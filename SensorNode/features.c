@@ -11,12 +11,12 @@ void features_list(void)
     printf("---------------------\n")
     printf("Use Display: ");
 #if FEATURE_USE_DISPLAY
-    printF("[ On ]\n");
+    printf("[ On ]\n");
 #else
     printf("[ OFF \n]");
 #endif
     printf("Show IPv6 on Start: ");
-#if FEATURE_SHOW_IP_ON_START:
+#if FEATURE_SHOW_IP_ON_START
     printF("[ On ]\n");
 #else
     printf("[ OFF \n]");
