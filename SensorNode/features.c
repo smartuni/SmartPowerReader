@@ -8,7 +8,7 @@
 void features_list(void)
 {
     printf("Features: list:\n");
-    printf("---------------------\n")
+    printf("---------------------\n");
     printf("Use Display: ");
 #if FEATURE_USE_DISPLAY
     printf("[ On ]\n");
