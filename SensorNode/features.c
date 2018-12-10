@@ -17,7 +17,7 @@ void features_list(void)
 #endif
     printf("Show IPv6 on Start: ");
 #if FEATURE_SHOW_IP_ON_START
-    printF("[ On ]\n");
+    printf("[ On ]\n");
 #else
     printf("[ OFF \n]");
 #endif
