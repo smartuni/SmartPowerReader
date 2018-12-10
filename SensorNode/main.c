@@ -19,6 +19,13 @@
 #include "shell.h"
 
 #define SHOW_IP_ON_STARTUP (0)
+#if SHOW_IP_ON_STARTUP
+#include "lcd1602a.h"
+#include "msg.h"
+#include "net/ipv6/addr.h"
+#include "net/gnrc.h"
+#include "net/gnrc/netif.h"
+#endif
 
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -37,14 +44,6 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
-#include "msg.h"
-#include "net/ipv6/addr.h"
-#include "net/gnrc.h"
-#include "net/gnrc/netif.h"
-
-#include "lcd1602a.h"
-lcd1602a_dev_t main_lcd;
-
 int main(void)
 {
     /* for the thread running the shell */
@@ -58,24 +57,26 @@ int main(void)
     int PORT_A = 0;
     int PORT_C = 2;
     int PORT_E = 4;
-    
-    main_lcd->register_select_pin = GPIO_PIN(PORT_E, 4);
-    main_lcd->read_write_pin = GPIO_PIN(PORT_A, 19);
-    main_lcd->enable_pin = GPIO_PIN(PORT_A, 2);
-    main_lcd->data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    main_lcd->data_pins[1] = 0; // Not used.
-    main_lcd->data_pins[2] = 0; // Not used.
-    main_lcd->data_pins[3] = 0; // Not used.
-    main_lcd->data_pins[4] = GPIO_PIN(PORT_A, 1);
-    main_lcd->data_pins[5] = GPIO_PIN(PORT_C, 4);
-    main_lcd->data_pins[6] = GPIO_PIN(PORT_C, 7);
-    main_lcd->data_pins[7] = GPIO_PIN(PORT_C, 5);
-    main_lcd->iface = MODE_4BIT;
-    main_lcd->dotsize = DOTSIZE_5x8;
-    main_lcd->lines = 2;
-    main_lcd->collumns = 16;
 
-    lcd1602a_init(main_lcd);
+    lcd1602a_dev_t main_lcd;
+
+    main_lcd.register_select_pin = GPIO_PIN(PORT_E, 4);
+    main_lcd.read_write_pin = GPIO_PIN(PORT_A, 19);
+    main_lcd.enable_pin = GPIO_PIN(PORT_A, 2);
+    main_lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
+    main_lcd.data_pins[1] = 0; // Not used.
+    main_lcd.data_pins[2] = 0; // Not used.
+    main_lcd.data_pins[3] = 0; // Not used.
+    main_lcd.data_pins[4] = GPIO_PIN(PORT_A, 1);
+    main_lcd.data_pins[5] = GPIO_PIN(PORT_C, 4);
+    main_lcd.data_pins[6] = GPIO_PIN(PORT_C, 7);
+    main_lcd.data_pins[7] = GPIO_PIN(PORT_C, 5);
+    main_lcd.iface = MODE_4BIT;
+    main_lcd.dotsize = DOTSIZE_5x8;
+    main_lcd.lines = 2;
+    main_lcd.collumns = 16;
+
+    lcd1602a_init(&main_lcd);
 
     // get interfaces and print their addresses
     gnrc_netif_t *netif = NULL;
