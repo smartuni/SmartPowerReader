@@ -37,8 +37,6 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
-// #if SHOW_IP_ON_STARTUP
-
 #include "msg.h"
 #include "net/ipv6/addr.h"
 #include "net/gnrc.h"
@@ -73,6 +71,8 @@ static inline void _init_lcd(lcd1602a_dev_t * main_lcd)
     lcd1602a_init(main_lcd);
 }
 
+/* This is conditional, because it could cause errors with networking. */
+#if SHOW_IP_ON_STARTUP
 static inline void _ip_to_lcd(void)
 {
     // NOTE: MAKE SURE TO USE A BOARD WITH NETWORK SUPPORT (or it won't work).
@@ -107,7 +107,7 @@ static inline void _ip_to_lcd(void)
         }
     }
 }
-//#endif /* SHOW_IP_ON_STARTUP */
+#endif /* SHOW_IP_ON_STARTUP */
 
 int main(void)
 {
