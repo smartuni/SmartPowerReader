@@ -84,7 +84,7 @@ int main(void)
     xtimer_sleep(2);
 
 
-    #if FEATURE_USE_DISPLAYFEATURE_SHOW_IP_ON_START
+    #if FEATURE_SHOW_IP_ON_START
 
         // get interfaces and print their addresses
         gnrc_netif_t *netif = NULL;
