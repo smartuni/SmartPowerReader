@@ -81,8 +81,9 @@ int main(void)
     lcd1602a_cursor_set(&lcd, 0, 1);
     lcd1602a_write_buf(&lcd, "Initializing ...");
 
-    xtimer_sleep(2);
+    xtimer_sleep(3);
 
+    lcd1602lcd1602a_display_clear(&lcd);
 
     #if FEATURE_SHOW_IP_ON_START
 
