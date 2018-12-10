@@ -18,7 +18,7 @@
 #include "kernel_types.h"
 #include "shell.h"
 
-#define SHOW_IP_ON_STARTUP (1)
+#define SHOW_IP_ON_STARTUP (0)
 
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];

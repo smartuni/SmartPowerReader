@@ -28,7 +28,8 @@
 #include "cbor.h"
 #include "net/gnrc/rpl/dodag.h"
 
-#define USE_DISPLAY (0)
+#define USE_DISPLAY (1)
+
 #if USE_DISPLAY
 /* For LCD use */
 #include "lcd1602a.h"
@@ -154,6 +155,7 @@ static void *send_data(void *arg)
         lcd1602a_write_buf(&spr_lcd, "Watt: ");
         lcd1602a_write_buf(&spr_lcd, apparent_str);
 #endif /* USE_DISPLAY */
+
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
@@ -332,6 +334,7 @@ void spr_init(void)
     init_adc(LINE, RES);
 
 #if USE_DISPLAY
+    printf("USE_DISPLAY_SPR_INIT ###########################\n");
     /* Initialize the LCD */
     // NOTE: PhyWave board config!
     int PORT_A = 0;
@@ -352,6 +355,7 @@ void spr_init(void)
     spr_lcd.dotsize = spr_dotsize;
     spr_lcd.lines = 2;
     spr_lcd.collumns = 16;
+    lcd1602a_init(&spr_lcd);
 #endif /* USE_DISPLAY */
 
     /* Register CoAP resources */
