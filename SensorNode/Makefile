@@ -26,7 +26,7 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-mega2560 arduino-uno \
 #CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
 
 # Change default channel to avoid interference from other group
-DEFAULT_CHANNEL ?= 11
+DEFAULT_CHANNEL ?= 15
 CFLAGS += -DIEEE802154_DEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
 
 # Used peripheral
