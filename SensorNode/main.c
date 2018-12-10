@@ -83,7 +83,7 @@ int main(void)
 
     xtimer_sleep(3);
 
-    lcd1602lcd1602a_display_clear(&lcd);
+    lcd1602a_display_clear(&lcd);
 
     #if FEATURE_SHOW_IP_ON_START
 
