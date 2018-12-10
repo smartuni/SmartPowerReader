@@ -28,15 +28,14 @@
 #include "cbor.h"
 #include "net/gnrc/rpl/dodag.h"
 
-#define USE_DISPLAY (1)
+#include "features.h"
 
-#if USE_DISPLAY
-/* For LCD use */
+#if FEATURE_USE_DISPLAY
 #include "lcd1602a.h"
-lcd1602a_dev_t spr_lcd;
+lcd1602a_dev_t * spr_lcd;
 lcd1602a_iface_t spr_iface = MODE_4BIT;
 lcd1602a_dotsize_t spr_dotsize = DOTSIZE_5x8;
-#endif /* USE_DISPLAY */
+#endif /* FEATURE_USE_DISPLAY */
 
 #define ENABLE_DEBUG            (0)
 #include "debug.h"
@@ -116,13 +115,13 @@ static void *send_data(void *arg)
 
     /* Reset the cursor. */
     // NOTE: This function sleeps for about 2 seconds!
-    //lcd1602a_cursor_reset(&spr_lcd);
+    //lcd1602a_cursor_reset(spr_lcd);
 
-#if USE_DISPLAY
+#if FEATURE_USE_DISPLAY
     /* Clear the entire display. */
     // NOTE: This takes about 2 seconds, but should not hurt here!
-    lcd1602a_display_clear(&spr_lcd);
-    xtimer_sleep(3);
+    lcd1602a_display_clear(spr_lcd);
+    //xtimer_sleep(3);
 #endif
 
     while (sleeptime) {
@@ -134,7 +133,7 @@ static void *send_data(void *arg)
         ct_dump_current(&ct_i_data);
         apparent = ct_i_data.apparent;
 
-#if USE_DISPLAY
+#if FEATURE_USE_DISPLAY
         /* Write the current and the apparent to the LCD. */
         // Convert the current into a char buffer.
         char current_str[8] = {' '};
@@ -144,16 +143,16 @@ static void *send_data(void *arg)
         char apparent_str[8] = {' '};
         fmt_float(apparent_str, ct_i_data.apparent, 2);
 
-        lcd1602a_cursor_set(&spr_lcd, 0, 0);
+        lcd1602a_cursor_set(spr_lcd, 0, 0);
 
-        lcd1602a_write_buf(&spr_lcd, "Ampere: ");
-        lcd1602a_write_buf(&spr_lcd, current_str);
+        lcd1602a_write_buf(spr_lcd, "Ampere: ");
+        lcd1602a_write_buf(spr_lcd, current_str);
 
         // Reposition the cursor on the second line.
-        lcd1602a_cursor_set(&spr_lcd, 0, 1);
+        lcd1602a_cursor_set(spr_lcd, 0, 1);
 
-        lcd1602a_write_buf(&spr_lcd, "Watt: ");
-        lcd1602a_write_buf(&spr_lcd, apparent_str);
+        lcd1602a_write_buf(spr_lcd, "Watt: ");
+        lcd1602a_write_buf(spr_lcd, apparent_str);
 #endif /* USE_DISPLAY */
 
         /* copy read value to packet payload */
@@ -328,18 +327,20 @@ static void find_base_station(char * base_addr)
     ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
 }
 
-void spr_init(void)
+void spr_init(lcd1602a_dev_t * lcd)
 {
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
-#if USE_DISPLAY
-    printf("USE_DISPLAY_SPR_INIT ###########################\n");
+#if FEATURE_USE_DISPLAY
+    spr_lcd = lcd;
     /* Initialize the LCD */
-    // NOTE: PhyWave board config!
+    // NOTE: PhyWave board config! Because we are only use this one here!
+    /*
     int PORT_A = 0;
     int PORT_C = 2;
     int PORT_E = 4;
+
     spr_lcd.register_select_pin = GPIO_PIN(PORT_E, 4);
     spr_lcd.read_write_pin = GPIO_PIN(PORT_A, 19);
     spr_lcd.enable_pin = GPIO_PIN(PORT_A, 2);
@@ -355,8 +356,13 @@ void spr_init(void)
     spr_lcd.dotsize = spr_dotsize;
     spr_lcd.lines = 2;
     spr_lcd.collumns = 16;
-    lcd1602a_init(&spr_lcd);
-#endif /* USE_DISPLAY */
+
+    lcd1602a_init(spr_lcd);
+    */
+#else
+    printf("SPR: lcd not used\n");
+    (void)lcd;
+#endif /* FEATURE_USE_DISPLAY */
 
     /* Register CoAP resources */
     gcoap_register_listener(&_listener);

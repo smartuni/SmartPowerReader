@@ -17,11 +17,17 @@
 #include "ct_sensor.h"
 #include "lcd1602a.h"
 
-#define USE_PHYWAVE (1) /*< NOTE: 0 Means to use Nucleo board! */
+#include "features.h"
+
+/* Enable/Disable in main */
+#if FEATURE_USE_DISPLAY
+    #define USE_PHYWAVE (1) /*< NOTE: 0 Means to use Nucleo board! */
+#endif /* FEATURE_USE_DISPLAY */
 
 /**
  * @brief Initialze the lcd display for nucleo or phywave board ONLY.
  */
+#if FEATURE_USE_DISPLAY
 static inline void _init_lcd(lcd1602a_dev_t * lcd)
 {
     lcd1602a_iface_t iface = MODE_4BIT;
@@ -69,12 +75,14 @@ static inline void _init_lcd(lcd1602a_dev_t * lcd)
 #endif /* USE_PHYWAVE */
     lcd1602a_init(lcd);
 }
+#endif
 
 /**
  * Writes the second and third argument on the lcd.
  */
 int lcd_write_cmd(int argc, char **argv)
 {
+#if FEATURE_USE_DISPLAY
     /* Check if we have the right amount of arguments. */
     if (argc < 2) {
         printf("lcdwrite: to few arguments!\n");
@@ -101,7 +109,11 @@ int lcd_write_cmd(int argc, char **argv)
         /* Write the same on again to the display. */
         lcd1602a_write_buf(&lcd, argv[2]);
     }
-
+#else
+  (void)argc;
+  (void)argv;
+  printf("Attention: Display feature is disabled!\n");
+#endif /* FEATURE_USE_DISPLAY */
     return 0;
 }
 
@@ -113,7 +125,7 @@ int testcurrent_cmd(int argc, char **argv)
     }
 
     /* These parameters are not used in this method. */
-    (void)argc;
+    //(void)argc;
     (void)argv;
 
     /* Stores the data and parameters used for measuring current. */
@@ -142,18 +154,22 @@ int testcurrent_cmd(int argc, char **argv)
     // NOTE: This is already done in the main.
     // init_adc(line, res);
 
+#if FEATURE_USE_DISPLAY
     /* LCD 1602A initializations using a nucleo-f446re board. */
     /* NOTE: Make sure the pins are working for your board! */
     lcd1602a_dev_t lcd;
 
     _init_lcd(&lcd);
-
+#else
+    printf("Attention: Display feature is disabled!\n");
+#endif
     /* Measures the current using the parameters and stores the measurements
      * inside the data reference. Then sleep for 'DELAY' and loop this forever.
      */
     for (int i = 0; i < 5; i++) {
         ct_measure_current(&param, &data);
 
+#if FEATURE_USE_DISPLAY
         // Convert the current into a char buffer.
         char current[8] = {' '};
         fmt_float(current, data.current, 2);
@@ -163,12 +179,14 @@ int testcurrent_cmd(int argc, char **argv)
         fmt_float(apparent, data.apparent, 2);
 
         // Use the LCD-API to write onto the display.
-        lcd1602a_cursor_reset(&lcd);
+        //lcd1602a_cursor_reset(&lcd);
+        lcd1602a_cursor_set(&lcd, 0, 0);
         lcd1602a_write_buf(&lcd, "Ampere: ");
         lcd1602a_write_buf(&lcd, current);
         lcd1602a_cursor_set(&lcd, 0, 1);
         lcd1602a_write_buf(&lcd, "Watt: ");
         lcd1602a_write_buf(&lcd, apparent);
+#endif /* FEATURE_USE_DISPLAY */
 
         // Dump the current from the ct to the console.
         ct_dump_current(&data);

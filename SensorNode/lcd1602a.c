@@ -23,7 +23,7 @@
 #include "lcd1602a.h"
 #include "include/lcd1602a-internal.h"
 
-#define ENABLE_DEBUG    (0)
+#define ENABLE_DEBUG    (1)
 #include "debug.h"
 
 #define LOW             (0)
@@ -275,7 +275,7 @@ void lcd1602a_cursor_reset(lcd1602a_dev_t * dev)
 void lcd1602a_cursor_set(lcd1602a_dev_t * dev, uint8_t col, uint8_t row)
 {
     DEBUG("LCD1602A: Cursor -> Set col/row %i/%i\n", col, row);
-    row = (row > 0) ? 1 : 0; // Lazy check if between 0 and 1.
+    row = (row >= 1) ? 1 : 0; // Lazy check if between 0 and 1.
     _command(dev, LCD1602A_SET_DDRAM_ADDRESS | (col + dev->row_offset[row]));
 }
 
