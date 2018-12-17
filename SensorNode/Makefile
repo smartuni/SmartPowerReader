@@ -32,6 +32,9 @@ CFLAGS += -DIEEE802154_DEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
 # Used peripheral
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_gpio
+# For random hwgenerator
+FEATURES_REQUIRED += periph_hwrng
+USEMODULE += random
 
 # Used pkg
 USEPKG += tinycbor

@@ -1,5 +1,6 @@
 package spr;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -49,9 +50,9 @@ public class Start
 
 			int coap_port = (int) options.get(Params.COAP_PORT);
 			List<InetSocketAddress> coap_endpoints = EndpointManager.getEndpointManager().getNetworkInterfaces().stream()
-//				.filter(a -> !a.isLoopbackAddress())
-//				.filter(a -> a instanceof Inet6Address)
-//				.filter(a -> a.getHostAddress().contains("%lowpan"))
+				.filter(a -> !a.isLoopbackAddress())
+				.filter(a -> a instanceof Inet6Address)
+				.filter(a -> a.getHostAddress().contains("%lowpan"))
 				.map(a -> new InetSocketAddress(a, coap_port))
 				.collect(Collectors.toList());
 

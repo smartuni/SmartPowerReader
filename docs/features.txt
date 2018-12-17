@@ -1,0 +1,45 @@
+"features" : {
+
+	/** power measurement period
+	 *  - Backend:    READ-WRITE
+	 *  - Messknoten: READ-ONLY
+	 *  DEFAULT: 0
+	 * Periode fuer das Messen des Stromverbrauchs.
+	 **/
+	"pwr_period" : 1337,
+
+	/** switch state
+	 *  - Backend:    READ-WRITE
+	 *  - Messknoten: READ-ONLY
+	 *  DEFAULT: false
+	 * Zustand der Stromzufuhr des angeschlossenen
+	 * Geraetes. 'true' fuer 'Strom AN'; 'false'
+	 * fuer 'Strom AUS'.
+	 * Soll in der Zukunft von einem "intelligenten"
+	 * Algorithmus nach vom Nutzer spezifierten Regeln
+	 * kontrolliert werden.
+	 **/
+	"switch_state" : false,
+	
+	/** Not-Aus
+	 *  - Backend:    READ-ONLY
+	 *  - Messknoten: READ-WRITE
+	 *  DEFAULT: false
+	 * Ein 'true' signalisiert, dass der Nutzen den "E-Stop"
+	 * Button auf dem Messknoten gedrueckt hat und der
+	 * Messknoten die Stromzufuhr gekappt hat.
+	 **/
+	"estop" : false,
+	
+	/** Manual mode
+	 *  - Backend:    READ-ONLY
+	 *  - Messknoten: READ-WRITE
+	 *  DEFAULT: false
+	 * Signalisiert, dass der Nutzer den 'Manual-Modus am
+	 * Messknoten aktiviert hat: d.h., dass der 'switch_state'
+	 * keinen Einfluss mehr hat; Strom ist dauerhaft an.
+	 * Dieser Manual-Mode kann vom Endnutzer genutzt werden um
+	 * den switch_state zu ueberschreiben.
+	 **/
+	"manual" : false
+}

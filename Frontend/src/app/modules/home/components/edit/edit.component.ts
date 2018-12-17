@@ -1,6 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ModalService} from '../../../../shared/services/modal.service';
 import {SensorService} from '../../services/sensor.service';
 import {Sensor} from '../../../../core/interfaces/sensor.interface';
 
@@ -24,7 +23,8 @@ export class EditComponent implements OnInit {
         this.form = new FormGroup({
             deviceId: new FormControl(''),
             deviceName: new FormControl(),
-            period: new FormControl(0, [Validators.min(0)])
+            period: new FormControl(0, [Validators.min(0)]),
+            activated: new FormControl(true),
         });
     }
 
@@ -32,13 +32,17 @@ export class EditComponent implements OnInit {
         const formValue = this.form.getRawValue();
         const editedSensor = {
             id: formValue.deviceId,
-            period: formValue.period,
-            status: this.selectedSensor.status,
+            // status: this.selectedSensor.status,
             name: !formValue.deviceName || (formValue.deviceName && formValue.deviceName.length === 0)
                 ? null
-                : formValue.deviceName
+                : formValue.deviceName,
         };
-
+        if (this.selectedSensor.features.pwr_period) {
+            editedSensor['features']['pwr_period'] = formValue.period;
+        }
+        if (this.selectedSensor.features.esstop) {
+            editedSensor['features']['esstop'] = formValue.activated;
+        }
         this.sensorService.updateSensors(editedSensor).subscribe(res => {
             this.onUpdated.emit(editedSensor);
         });
@@ -52,7 +56,8 @@ export class EditComponent implements OnInit {
         const id = event.target.value;
         this.selectedSensor = this.sensors.find(sensor => sensor.id === id);
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(this.selectedSensor.period ? this.selectedSensor.period : 1);
+        this.form.controls['period'].setValue(this.selectedSensor.features.pwr_period ? this.selectedSensor.features.pwr_period : 1);
+        this.form.controls['activated'].setValue(this.selectedSensor.features.esstop ? this.selectedSensor.features.esstop : true);
     }
 
     close() {

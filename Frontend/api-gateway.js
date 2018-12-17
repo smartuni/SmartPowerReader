@@ -1,4 +1,3 @@
-
 const express = require('express');
 var path = require('path');
 
@@ -6,16 +5,25 @@ const app = express();
 const bodyParser = require('body-parser');
 const http = require('http');
 
+
 const serverUrl = '0.0.0.0';
 const port = 9901;
-app.use(express.static(path.join(__dirname, 'dist/Frontend')));
+
+
+app.use(express.static(path.join(__dirname, 'dist/Frontend'), {
+    etag: false,
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
-    next();
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
 });
 
 app.get('/sensors/:sensorId', (req, res) => {
@@ -51,8 +59,21 @@ app.put('/sensors', (req, res) => {
         action: req.query.action,
         id: req.body.id,
         name: req.body.name,
-        period: parseInt(req.body.period)
+        // period: parseInt(req.body.period)
     };
+    console.log('req', req.body);
+    if (req.body.hasOwnProperty('features')) {
+        payload['features'] = {};
+        Object.keys(req.body.features).forEach(key => {
+            console.log(key, req.body.features[key]);
+            if (key === 'pwr_period') {
+                payload['features'][key] = parseInt(req.body.features[key]);
+            } else {
+                payload['features'][key] = req.body.features[key];
+            }
+        })
+    }
+
     dispatch(payload, (data) => {
         res.end(data);
     })
@@ -66,22 +87,28 @@ function dispatch(payload, cb) {
         socket.write(JSON.stringify(payload) + '\n');
         let result = "";
         socket.on('data', (data) => {
-            // console.log('data', data.toString());
             result += data.toString();
         });
-        socket.on('error', function (error) {
+        socket.on('error', (error) => {
             result += error.toString();
         });
-        socket.on('end', function () {
-            // console.log(result);
+        socket.on('end', () => {
+            if (cb) {
+                cb(result);
+            }
+        }, error => console.log('error dispatch', error))
 
-            if (cb) cb(result);
-        })
     });
 }
 
-http.createServer(app).listen(3000, '0.0.0.0', null, () => {
+const server = http.createServer(app);
+server.on('error', function (e) {
+    console.log('error found', e);
+
+});
+server.listen(3000, serverUrl, null, () => {
     console.log('Gateway is listening on port 3000');
 
 });
+
 

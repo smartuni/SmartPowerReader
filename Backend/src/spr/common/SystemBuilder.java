@@ -228,7 +228,7 @@ public class SystemBuilder
 		{
 			Node<Task> net = new Node<>(Units.IDs.COAP);
 			
-			mServer.add(new MeasurementResource(net));
+			mServer.add(new MeasurementResource(Configuration.Feature.PWR_PERIOD, net));
 			mServer.add(new HelloResource(net));
 			
 			builder.install(new CoapServerUnit(mServer, net));
