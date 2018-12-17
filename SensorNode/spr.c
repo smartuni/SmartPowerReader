@@ -346,17 +346,19 @@ static void find_base_station(char * base_addr)
 /* Callback function for the estop pin */
 static void cb_estop(void *arg)
 {
+    (void)arg;
     // TODO: implement code for sending via coap
-    printf("SPR: INT -> cb estop\n");
-    printf("INT: external interrupt from pin %i\n", (int)arg);
+    // printf("SPR: INT -> cb estop\n");
+    // printf("INT: external interrupt from pin %i\n", (int)arg);
 }
 
 /* Callback function for the manual pin */
 static void cb_manual(void *arg)
 {
+    (void)arg;
     // TODO: implement code for sending via coap
-    printf("SPR: INT ->cb manual\n");
-    printf("INT: external interrupt from pin %i\n", (int)arg);
+    // printf("SPR: INT ->cb manual\n");
+    // printf("INT: external interrupt from pin %i\n", (int)arg);
 }
 #endif /* FEATURE_USE_BUTTONS */
 
