@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const http = require('http');
 
 
-const serverUrl = '0.0.0.0';
+const serverUrl = '192.168.1.236';
 const port = 9901;
 
 
@@ -59,17 +59,14 @@ app.put('/sensors', (req, res) => {
         action: req.query.action,
         id: req.body.id,
         name: req.body.name,
-        // period: parseInt(req.body.period)
     };
-    console.log('req', req.body);
-    if (req.body.hasOwnProperty('features')) {
-        payload['features'] = {};
-        Object.keys(req.body.features).forEach(key => {
-            console.log(key, req.body.features[key]);
-            if (key === 'pwr_period') {
-                payload['features'][key] = parseInt(req.body.features[key]);
+    if (req.body.hasOwnProperty('data')) {
+        payload['data'] = {};
+        Object.keys(req.body.data).forEach(key => {
+            if (key === 'PWR_PERIOD') {
+                payload['data'][key] = parseInt(req.body.data[key]);
             } else {
-                payload['features'][key] = req.body.features[key];
+                payload['data'][key] = req.body.data[key];
             }
         })
     }
@@ -106,7 +103,7 @@ server.on('error', function (e) {
     console.log('error found', e);
 
 });
-server.listen(3000, serverUrl, null, () => {
+server.listen(3000, '0.0.0.0', null, () => {
     console.log('Gateway is listening on port 3000');
 
 });

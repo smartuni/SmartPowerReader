@@ -141,7 +141,6 @@ export class FilterBarComponent implements OnInit {
     }
 
     activeHover(className) {
-        console.log(document.getElementsByClassName('input-group ' + className).item(0));
     }
 
 

@@ -5,13 +5,13 @@ export interface Sensor {
     name: string;
     series?: any;
     status?: SensorStatus;
-    features: SensorConfiguration;
+    data: SensorConfiguration;
 }
 
 interface SensorConfiguration {
-    pwr_period?: number;
-    switch_state?: boolean;
-    esstop?: boolean;
-    manual?: boolean;
+    PWR_PERIOD?: number;
+    SWITCH_STATE?: boolean;
+    ESTOP?: boolean;
+    MANUAL?: boolean;
 }
 

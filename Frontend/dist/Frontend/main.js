@@ -353,7 +353,7 @@ var HeaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align\">\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  DeviceID\n                </span>\n                    </div>\n                    <div class=\"input-form\">\n                        <select class=\"form-control\" formControlName=\"deviceId\"\n                                (change)=\"onChangeSensor($event)\">\n                            <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                                {{sensor.name ? sensor.name : sensor.id}}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"second-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Name\n                </span>\n                    </div>\n                    <input type=\"text\"\n                           class=\"form-control\"\n                           id=\"deviceName\"\n                           formControlName=\"deviceName\"\n                           [value]=\"selectedSensor && selectedSensor.name  ? selectedSensor.name : null\">\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-2\" >\n\n            <div class=\"first-column\" *ngIf=\"selectedSensor.features.pwr_period\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Period\n                </span>\n                    </div>\n                    <input type=\"number\"\n                           class=\"form-control col-3\"\n                           id=\"period\"\n                           formControlName=\"period\"\n                           [value]=\"selectedSensor && selectedSensor.features.pwr_period ? selectedSensor.features.pwr_period : null\">\n                </div>\n            </div>\n\n            <div *ngIf=\"selectedSensor.features.esstop\"\n                 [ngClass]=\"{\n                        'first-column':selectedSensor.features && !selectedSensor.features.pwr_period && selectedSensor.features.esstop,\n                        'second-column':selectedSensor.features && selectedSensor.features.pwr_period &&  selectedSensor.features.esstop}\">\n                <mat-slide-toggle\n                        class=\"switch- ml-2 vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"activated\"\n                        [disabled]=\"selectedSensor && selectedSensor.features.switch_state ? selectedSensor.features.switch_state : false\">\n                    Turn On\n                </mat-slide-toggle>\n            </div>\n\n        </div>\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
+module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align\">\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  DeviceID\n                </span>\n                    </div>\n                    <div class=\"input-form\">\n                        <select class=\"form-control\" formControlName=\"deviceId\"\n                                (change)=\"onChangeSensor($event)\">\n                            <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                                {{sensor.name ? sensor.name : sensor.id}}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"second-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Name\n                </span>\n                    </div>\n                    <input type=\"text\"\n                           class=\"form-control\"\n                           id=\"deviceName\"\n                           formControlName=\"deviceName\">\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <div class=\"first-column\" *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">\n                <div class=\"input-group align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Period\n                </span>\n                    </div>\n                    <input type=\"number\"\n                           class=\"form-control col-3\"\n                           id=\"period\"\n                           formControlName=\"period\">\n                </div>\n            </div>\n\n            <div *ngIf=\"isSwitchStateAvailable\"\n                 class=\"vertical-align\"\n                 [ngClass]=\"{\n                        'first-column': !selectedSensor.data.PWR_PERIOD && isSwitchStateAvailable,\n                        'second-column': !!selectedSensor.data.PWR_PERIOD &&  isSwitchStateAvailable}\">\n                <div class=\"input-group align-items-center\">\n                    <div class=\"input-group-prepend\">\n                        <span class=\"input-group-text\">\n                            Turn on\n                        </span>\n                    </div>\n                    <mat-slide-toggle\n                            class=\"switch-state vertical-align\"\n                            [color]=\"'#009688'\"\n                            formControlName=\"activated\">\n                    </mat-slide-toggle>\n                </div>\n            </div>\n\n        </div>\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
 
 /***/ }),
 
@@ -412,16 +412,18 @@ var EditComponent = /** @class */ (function () {
         var formValue = this.form.getRawValue();
         var editedSensor = {
             id: formValue.deviceId,
-            // status: this.selectedSensor.status,
             name: !formValue.deviceName || (formValue.deviceName && formValue.deviceName.length === 0)
                 ? null
                 : formValue.deviceName,
         };
-        if (this.selectedSensor.features.pwr_period) {
-            editedSensor['features']['pwr_period'] = formValue.period;
+        if (!!this.selectedSensor.data) {
+            editedSensor['data'] = {};
         }
-        if (this.selectedSensor.features.esstop) {
-            editedSensor['features']['esstop'] = formValue.activated;
+        if (!!this.selectedSensor.data.PWR_PERIOD) {
+            editedSensor['data']['PWR_PERIOD'] = formValue.period;
+        }
+        if (this.isSwitchStateAvailable) {
+            editedSensor['data']['SWITCH_STATE'] = formValue.activated;
         }
         this.sensorService.updateSensors(editedSensor).subscribe(function (res) {
             _this.onUpdated.emit(editedSensor);
@@ -433,9 +435,10 @@ var EditComponent = /** @class */ (function () {
     EditComponent.prototype.onChangeSensor = function (event) {
         var id = event.target.value;
         this.selectedSensor = this.sensors.find(function (sensor) { return sensor.id === id; });
+        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.SWITCH_STATE !== null && this.selectedSensor.data.SWITCH_STATE !== undefined;
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(this.selectedSensor.features.pwr_period ? this.selectedSensor.features.pwr_period : 1);
-        this.form.controls['activated'].setValue(this.selectedSensor.features.esstop ? this.selectedSensor.features.esstop : true);
+        this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.PWR_PERIOD ? this.selectedSensor.data.PWR_PERIOD : null);
+        this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
     };
     EditComponent.prototype.close = function () {
         this.onClosed.emit();
@@ -630,7 +633,6 @@ var FilterBarComponent = /** @class */ (function () {
         return date;
     };
     FilterBarComponent.prototype.activeHover = function (className) {
-        console.log(document.getElementsByClassName('input-group ' + className).item(0));
     };
     FilterBarComponent.prototype.change = function (event) {
         var device = event.source.value;
