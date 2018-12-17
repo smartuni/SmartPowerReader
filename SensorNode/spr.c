@@ -314,8 +314,15 @@ static void _register(char *base_addr)
     gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_POST, BACKEND_REG);
     /* set confirmable */
     coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
-    /* we have no payload */
-    len = gcoap_finish(&pdu, 0, COAP_FORMAT_NONE);
+
+    uint8_t features_buf[64];
+    features_init(features_buf, sizeof(features_buf));
+    /* print all out for debugging */
+    dumpbytes((const uint8_t *)&features_buf, sizeof(features_buf));
+
+    /* copy features to payload */
+    memcpy(pdu.payload, features_buf, sizeof(features_buf));
+    len = gcoap_finish(&pdu, sizeof(features_buf), COAP_FORMAT_CBOR);
     if (!send(&buf[0], len, base_addr, BACKEND_PORT)) {
         puts("gcoap_cli: msg send failed");
     }

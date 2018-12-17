@@ -15,6 +15,7 @@
 extern "C" {
 #endif
 
+#include "cbor.h"
 
 /* Globaly enable/disable display functionality. */
 #define FEATURE_USE_DISPLAY (0)
@@ -25,6 +26,8 @@ extern "C" {
  * @brief TODO
  */
 void features_list(void);
+
+void features_init(uint8_t *buf, size_t maxlen);
 
 #ifdef __cplusplus
 }
