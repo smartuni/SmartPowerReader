@@ -30,12 +30,17 @@
 
 #include "features.h"
 
-#include "lcd1602a.h"
+#include "button.h"
+#if FEATURE_USE_BUTTONS
+    button_t * estop_btn;
+    button_t * manual_btn;
+#endif /* FEATURE_USE_BUTTONS */
 
+#include "lcd1602a.h"
 #if FEATURE_USE_DISPLAY
-lcd1602a_dev_t * spr_lcd;
-lcd1602a_iface_t spr_iface = MODE_4BIT;
-lcd1602a_dotsize_t spr_dotsize = DOTSIZE_5x8;
+    lcd1602a_dev_t * spr_lcd;
+    lcd1602a_iface_t spr_iface = MODE_4BIT;
+    lcd1602a_dotsize_t spr_dotsize = DOTSIZE_5x8;
 #endif /* FEATURE_USE_DISPLAY */
 
 #define ENABLE_DEBUG            (0)
@@ -83,6 +88,8 @@ static gcoap_listener_t _listener = {
 /* configs send to /config */
 struct spr_config {
     uint64_t interval;  /* Interval for measuring */
+    bool estop;      /* Is the estop enabled or not*/
+    bool manual;     /* */
 };
 
 static struct spr_config cfg = { 0 };
@@ -335,8 +342,43 @@ static void find_base_station(char * base_addr)
     ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
 }
 
+#if FEATURE_USE_BUTTONS
+/* Callback function for the estop pin */
+static void cb_estop(void *arg)
+{
+    // TODO: implement code for sending via coap
+    printf("SPR: INT -> cb estop\n");
+    printf("INT: external interrupt from pin %i\n", (int)arg);
+}
+
+/* Callback function for the manual pin */
+static void cb_manual(void *arg)
+{
+    // TODO: implement code for sending via coap
+    printf("SPR: INT ->cb manual\n");
+    printf("INT: external interrupt from pin %i\n", (int)arg);
+}
+#endif /* FEATURE_USE_BUTTONS */
+
 void spr_init(lcd1602a_dev_t * lcd)
 {
+#if FEATURE_USE_BUTTONS
+    int port_e = 4;
+    int ret_code = 0;
+
+    ret_code = button_init(estop_btn, port_e, 2, cb_estop, "test-estop");
+
+    if (ret_code < 0) {
+        printf("SPR: INIT -> failed to initialze estop button\n");
+    }
+
+    ret_code = button_init(manual_btn, port_e, 3, cb_manual, "test-manual");
+
+    if (ret_code < 0) {
+        printf("SPR: INIT -> failed to initialize manual button\n");
+    }
+#endif
+
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
