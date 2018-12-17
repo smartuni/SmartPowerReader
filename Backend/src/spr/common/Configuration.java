@@ -133,7 +133,7 @@ public class Configuration implements Saveable, Loadable
 		
 		public Data(JsonObject json)
 		{
-			this(json.keySet().stream().collect(Collectors.toMap(key -> Feature.valueOf(key), key -> json.get(key))));
+			this(json.keySet().stream().collect(Collectors.toMap(key -> Feature.valueOf(key.toUpperCase()), key -> json.get(key))));
 		}
 		
 		private Data(Data d)
@@ -219,7 +219,7 @@ public class Configuration implements Saveable, Loadable
 			Map<Feature, JsonValue> m = new LinkedHashMap<>();
 			
 			o.keySet().forEach(key -> {
-				m.put(Feature.valueOf(key), o.get(key));
+				m.put(Feature.valueOf(key.toUpperCase()), o.get(key));
 			});
 			
 			return new Data(m);

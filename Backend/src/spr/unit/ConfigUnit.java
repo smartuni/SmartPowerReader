@@ -330,7 +330,7 @@ public class ConfigUnit extends BaseUnit
 			JsonObject o = (JsonObject) json;
 			
 			String id = o.getString("id");
-			Configuration.Feature feature = Configuration.Feature.valueOf(o.getString("feature"));
+			Configuration.Feature feature = Configuration.Feature.valueOf(o.getString("feature").toUpperCase());
 			
 			return new StatusReport(id, feature);
 		}
