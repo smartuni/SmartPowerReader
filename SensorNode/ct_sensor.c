@@ -110,9 +110,11 @@ static inline float _voltage(ct_parameter_t * param)
     sample = sample - param->adc_offset;
 
     /* Ignoring the least bits, because of ADC noise. */
+    /*
     if (sample < 16 && sample > -16) {
         sample = 0;
     }
+    */
 
     /* Convert the sample (adc-counts) into a value of voltage. */
     voltage = (param->v_ref / param->adc_count) * sample;

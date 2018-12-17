@@ -9,7 +9,7 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
 
 import dave.util.log.Logger;
 import dave.util.log.Severity;
-import spr.common.Configuration.Status;
+import spr.common.Configuration.Feature;
 import spr.net.common.Gateway;
 import spr.task.Task;
 import spr.task.Tasks;
@@ -19,9 +19,13 @@ import spr.unit.LocalDatabaseUnit.Data;
 
 public class MeasurementResource extends Resource
 {
-	public MeasurementResource(Gateway<Task> g)
+	private final Feature mFeature;
+	
+	public MeasurementResource(Feature f, Gateway<Task> g)
 	{
 		super(Resource.MEASUREMENT, g);
+		
+		mFeature = f;
 	}
 	
 	@Override
@@ -44,7 +48,7 @@ public class MeasurementResource extends Resource
 			
 			com.respond(ResponseCode.VALID);
 			
-			getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.SET_STATUS, newSession(), new StatusReport(id, Status.CONNECTED)));
+			getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.SET_STATUS, newSession(), new StatusReport(id, mFeature)));
 			getNode().send(Units.IDs.DATABASE, new Task(Tasks.Database.STORE, newSession(), new Data(id, t, v)));
 		}
 	}

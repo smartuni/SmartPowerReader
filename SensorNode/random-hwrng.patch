@@ -1,0 +1,24 @@
+diff --git a/sys/random/random.c b/sys/random/random.c
+index 8449507b3..40cf324cd 100644
+--- a/sys/random/random.c
++++ b/sys/random/random.c
+@@ -23,6 +23,7 @@
+ #include "luid.h"
+ #include "periph/cpuid.h"
+ #include "random.h"
++#include "periph/hwrng.h"
+ #ifdef MODULE_PUF_SRAM
+ #include "puf_sram.h"
+ #endif
+@@ -46,6 +47,11 @@ void auto_init_random(void)
+     seed = RANDOM_SEED_DEFAULT;
+ #endif
+     DEBUG("random: using seed value %u\n", (unsigned)seed);
++
++    /* initialise the hardware random number generator */
++    hwrng_init();
++    hwrng_read(&seed, 4);
++
+     random_init(seed);
+ }
+ 

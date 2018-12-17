@@ -275,7 +275,18 @@ void lcd1602a_cursor_reset(lcd1602a_dev_t * dev)
 void lcd1602a_cursor_set(lcd1602a_dev_t * dev, uint8_t col, uint8_t row)
 {
     DEBUG("LCD1602A: Cursor -> Set col/row %i/%i\n", col, row);
-    row = (row > 0) ? 1 : 0; // Lazy check if between 0 and 1.
+    /* The 1602a usually only use 2 lines (rows) to display characters. */
+    if (row > 1) {
+        DEBUG("LCD1602A: Cursor -> Set row(%d) is out of range!\n", row);
+        return;
+    }
+
+    /* The 1602a usually only use 16 collumns to display characters. */
+    if (col > 15) {
+        DEBUG("LCD1602A: Cursor -> Set column(%d) is out of range!\n", col);
+        return;
+    }
+
     _command(dev, LCD1602A_SET_DDRAM_ADDRESS | (col + dev->row_offset[row]));
 }
 

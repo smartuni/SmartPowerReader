@@ -1,6 +1,7 @@
 <project name="Backend" default="compile">
 	<property name="src.dir" value="src" />
 	<property name="bin.dir" value="bin" />
+	<property name="config.dir" value="config" />
 	<property name="jar.dir" value="release" />
 	<property name="lib.dir" value="libs" />
 	<property name="main.class" value="spr.Start" />
@@ -21,6 +22,7 @@
 	</target>
 
 	<target name="run" depends="jar">
+		<mkdir dir="${config.dir}/" />
 		<java classname="${main.class}">
 			<classpath>
 				<path refid="classpath" />
