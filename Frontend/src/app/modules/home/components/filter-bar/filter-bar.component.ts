@@ -148,9 +148,9 @@ export class FilterBarComponent implements OnInit {
     change(event) {
         const device = event.source.value as Sensor;
         if (event.isUserInput) {
-            if (event.source.selected)
+            if (event.source.selected) {
                 this.selectedDevices.push([device.id, device.name]);
-            else {
+            } else {
                 const index = this.selectedDevices.findIndex(item => device.id === item[0]);
                 this.selectedDevices.splice(index, 1);
             }

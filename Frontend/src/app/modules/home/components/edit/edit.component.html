@@ -11,7 +11,7 @@
                 </span>
                     </div>
                     <div class="input-form">
-                        <select  class="form-control" formControlName="deviceId"
+                        <select class="form-control" formControlName="deviceId"
                                 (change)="onChangeSensor($event)">
                             <option *ngFor="let sensor of sensors; let i = index" [value]="sensor.id">
                                 {{sensor.name ? sensor.name : sensor.id}}
@@ -37,9 +37,9 @@
             </div>
         </div>
 
-        <div class="row justify-content-between vertical-align mt-2">
+        <div class="row justify-content-between vertical-align mt-2" >
 
-            <div class="first-column">
+            <div class="first-column" *ngIf="selectedSensor.features.pwr_period">
                 <div class="input-group mt-2 align-items-center">
                     <div class="input-group-prepend">
                 <span class="input-group-text">
@@ -50,8 +50,21 @@
                            class="form-control col-3"
                            id="period"
                            formControlName="period"
-                           [value]="selectedSensor && selectedSensor.period ? selectedSensor.period : null">
+                           [value]="selectedSensor && selectedSensor.features.pwr_period ? selectedSensor.features.pwr_period : null">
                 </div>
+            </div>
+
+            <div *ngIf="selectedSensor.features.esstop"
+                 [ngClass]="{
+                        'first-column':selectedSensor.features && !selectedSensor.features.pwr_period && selectedSensor.features.esstop,
+                        'second-column':selectedSensor.features && selectedSensor.features.pwr_period &&  selectedSensor.features.esstop}">
+                <mat-slide-toggle
+                        class="switch- ml-2 vertical-align"
+                        [color]="'#009688'"
+                        formControlName="activated"
+                        [disabled]="selectedSensor && selectedSensor.features.switch_state ? selectedSensor.features.switch_state : false">
+                    Turn On
+                </mat-slide-toggle>
             </div>
 
         </div>
