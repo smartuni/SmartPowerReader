@@ -205,14 +205,16 @@ int testcurrent_cmd(int argc, char **argv)
  */
 int estop_cmd(int argc, char **argv)
 {
+    /* Check if we use the right amount of argmunets. */
     if (argc < 2 || argc > 2) {
         printf("estop usage: estop [ on | off ]\n");
     }
 
+    /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
-
+        // TODO ...
     } else if (strcmp(argv[1], "off") == 0) {
-
+        // TODO ...
     } else {
         printf("Usage: estop [ on | off ]\n");
         return 1;
@@ -230,15 +232,17 @@ int estop_cmd(int argc, char **argv)
  */
 int manual_cmd(int argc, char **argv)
 {
+    /* Check if we use the right amount of argmunets. */
     if (argc < 2 || argc > 2) {
         printf("Usage: manual [ on | off ]\n");
         return 1;
     }
 
+    /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
-
+        // TODO ...
     } else if (strcmp(argv[1], "off") == 0) {
-
+        // TODO ...
     } else {
         printf("Usage: manual [ on | off ]\n");
         return 1;
