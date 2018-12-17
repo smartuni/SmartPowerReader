@@ -58,6 +58,8 @@ USEMODULE += ps
 # Use SAUL to access LED
 USEMODULE += saul_default
 USEMODULE += xtimer
+# Used for buttons with isr's
+USEMODULE += periph_gpio_irq
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the

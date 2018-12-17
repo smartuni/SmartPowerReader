@@ -20,6 +20,8 @@ extern "C" {
 #define FEATURE_USE_DISPLAY (0)
 /* Can only be used with a display */
 #define FEATURE_SHOW_IP_ON_START (0 && FEATURE_USE_DISPLAY)
+/* Turn on and off using buttons. */
+#define FEATURE_USE_BUTTONS (1)
 
 /**
  * @brief TODO
