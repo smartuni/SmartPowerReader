@@ -225,6 +225,12 @@ public class Configuration implements Saveable, Loadable
 			return new Data(m);
 		}
 		
+		@Override
+		public String toString( )
+		{
+			return save().toString();
+		}
+		
 		public Stream<Feature> stream( ) { return Stream.of(mFeatures); }
 	}
 	
