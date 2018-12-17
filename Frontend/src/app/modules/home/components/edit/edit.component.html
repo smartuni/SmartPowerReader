@@ -31,16 +31,14 @@
                     <input type="text"
                            class="form-control"
                            id="deviceName"
-                           formControlName="deviceName"
-                           [value]="selectedSensor && selectedSensor.name  ? selectedSensor.name : null">
+                           formControlName="deviceName">
                 </div>
             </div>
         </div>
 
-        <div class="row justify-content-between vertical-align mt-2" >
-
-            <div class="first-column" *ngIf="selectedSensor.features.pwr_period">
-                <div class="input-group mt-2 align-items-center">
+        <div class="row justify-content-between vertical-align mt-3" *ngIf="!!selectedSensor && !!selectedSensor.data">
+            <div class="first-column" *ngIf="!!selectedSensor.data.PWR_PERIOD">
+                <div class="input-group align-items-center">
                     <div class="input-group-prepend">
                 <span class="input-group-text">
                   Period
@@ -49,22 +47,27 @@
                     <input type="number"
                            class="form-control col-3"
                            id="period"
-                           formControlName="period"
-                           [value]="selectedSensor && selectedSensor.features.pwr_period ? selectedSensor.features.pwr_period : null">
+                           formControlName="period">
                 </div>
             </div>
 
-            <div *ngIf="selectedSensor.features.esstop"
+            <div *ngIf="isSwitchStateAvailable"
+                 class="vertical-align"
                  [ngClass]="{
-                        'first-column':selectedSensor.features && !selectedSensor.features.pwr_period && selectedSensor.features.esstop,
-                        'second-column':selectedSensor.features && selectedSensor.features.pwr_period &&  selectedSensor.features.esstop}">
-                <mat-slide-toggle
-                        class="switch- ml-2 vertical-align"
-                        [color]="'#009688'"
-                        formControlName="activated"
-                        [disabled]="selectedSensor && selectedSensor.features.switch_state ? selectedSensor.features.switch_state : false">
-                    Turn On
-                </mat-slide-toggle>
+                        'first-column': !selectedSensor.data.PWR_PERIOD && isSwitchStateAvailable,
+                        'second-column': !!selectedSensor.data.PWR_PERIOD &&  isSwitchStateAvailable}">
+                <div class="input-group align-items-center">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            Turn on
+                        </span>
+                    </div>
+                    <mat-slide-toggle
+                            class="switch-state vertical-align"
+                            [color]="'#009688'"
+                            formControlName="activated">
+                    </mat-slide-toggle>
+                </div>
             </div>
 
         </div>
