@@ -353,7 +353,7 @@ var HeaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align\">\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  DeviceID\n                </span>\n                    </div>\n                    <div class=\"input-form\">\n                        <select  class=\"form-control\" formControlName=\"deviceId\"\n                                (change)=\"onChangeSensor($event)\">\n                            <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                                {{sensor.name ? sensor.name : sensor.id}}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"second-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Name\n                </span>\n                    </div>\n                    <input type=\"text\"\n                           class=\"form-control\"\n                           id=\"deviceName\"\n                           formControlName=\"deviceName\"\n                           [value]=\"selectedSensor && selectedSensor.name  ? selectedSensor.name : null\">\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-2\">\n\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Period\n                </span>\n                    </div>\n                    <input type=\"number\"\n                           class=\"form-control col-3\"\n                           id=\"period\"\n                           formControlName=\"period\"\n                           [value]=\"selectedSensor && selectedSensor.period ? selectedSensor.period : null\">\n                </div>\n            </div>\n\n        </div>\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
+module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align\">\n            <div class=\"first-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  DeviceID\n                </span>\n                    </div>\n                    <div class=\"input-form\">\n                        <select class=\"form-control\" formControlName=\"deviceId\"\n                                (change)=\"onChangeSensor($event)\">\n                            <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                                {{sensor.name ? sensor.name : sensor.id}}\n                            </option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"second-column\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Name\n                </span>\n                    </div>\n                    <input type=\"text\"\n                           class=\"form-control\"\n                           id=\"deviceName\"\n                           formControlName=\"deviceName\"\n                           [value]=\"selectedSensor && selectedSensor.name  ? selectedSensor.name : null\">\n                </div>\n            </div>\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-2\" >\n\n            <div class=\"first-column\" *ngIf=\"selectedSensor.features.pwr_period\">\n                <div class=\"input-group mt-2 align-items-center\">\n                    <div class=\"input-group-prepend\">\n                <span class=\"input-group-text\">\n                  Period\n                </span>\n                    </div>\n                    <input type=\"number\"\n                           class=\"form-control col-3\"\n                           id=\"period\"\n                           formControlName=\"period\"\n                           [value]=\"selectedSensor && selectedSensor.features.pwr_period ? selectedSensor.features.pwr_period : null\">\n                </div>\n            </div>\n\n            <div *ngIf=\"selectedSensor.features.esstop\"\n                 [ngClass]=\"{\n                        'first-column':selectedSensor.features && !selectedSensor.features.pwr_period && selectedSensor.features.esstop,\n                        'second-column':selectedSensor.features && selectedSensor.features.pwr_period &&  selectedSensor.features.esstop}\">\n                <mat-slide-toggle\n                        class=\"switch- ml-2 vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"activated\"\n                        [disabled]=\"selectedSensor && selectedSensor.features.switch_state ? selectedSensor.features.switch_state : false\">\n                    Turn On\n                </mat-slide-toggle>\n            </div>\n\n        </div>\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
 
 /***/ }),
 
@@ -364,7 +364,7 @@ module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-cente
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.row {\n  margin-left: 0;\n  margin-right: 0;\n  width: 650px; }\n\n.row .first-column {\n    width: 400px; }\n\n.row .first-column .input-group-prepend {\n      width: 90px !important; }\n\n.row .first-column .input-form {\n      width: 275px; }\n\n.row .second-column .form-control {\n    width: 150px; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n"
+module.exports = ".header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.row {\n  margin-left: 0;\n  margin-right: 0;\n  width: 650px; }\n\n.row .first-column {\n    width: 400px; }\n\n.row .first-column .input-group-prepend {\n      width: 90px !important; }\n\n.row .first-column .input-form {\n      width: 300px; }\n\n.row .second-column {\n    width: 250px; }\n\n.row .second-column .form-control {\n      width: 100px; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n"
 
 /***/ }),
 
@@ -403,7 +403,8 @@ var EditComponent = /** @class */ (function () {
         this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
             deviceId: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
             deviceName: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](),
-            period: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](0, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(0)])
+            period: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](0, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(0)]),
+            activated: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](true),
         });
     };
     EditComponent.prototype.save = function () {
@@ -411,12 +412,17 @@ var EditComponent = /** @class */ (function () {
         var formValue = this.form.getRawValue();
         var editedSensor = {
             id: formValue.deviceId,
-            period: formValue.period,
-            status: this.selectedSensor.status,
+            // status: this.selectedSensor.status,
             name: !formValue.deviceName || (formValue.deviceName && formValue.deviceName.length === 0)
                 ? null
-                : formValue.deviceName
+                : formValue.deviceName,
         };
+        if (this.selectedSensor.features.pwr_period) {
+            editedSensor['features']['pwr_period'] = formValue.period;
+        }
+        if (this.selectedSensor.features.esstop) {
+            editedSensor['features']['esstop'] = formValue.activated;
+        }
         this.sensorService.updateSensors(editedSensor).subscribe(function (res) {
             _this.onUpdated.emit(editedSensor);
         });
@@ -428,7 +434,8 @@ var EditComponent = /** @class */ (function () {
         var id = event.target.value;
         this.selectedSensor = this.sensors.find(function (sensor) { return sensor.id === id; });
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(this.selectedSensor.period ? this.selectedSensor.period : 1);
+        this.form.controls['period'].setValue(this.selectedSensor.features.pwr_period ? this.selectedSensor.features.pwr_period : 1);
+        this.form.controls['activated'].setValue(this.selectedSensor.features.esstop ? this.selectedSensor.features.esstop : true);
     };
     EditComponent.prototype.close = function () {
         this.onClosed.emit();
@@ -628,8 +635,9 @@ var FilterBarComponent = /** @class */ (function () {
     FilterBarComponent.prototype.change = function (event) {
         var device = event.source.value;
         if (event.isUserInput) {
-            if (event.source.selected)
+            if (event.source.selected) {
                 this.selectedDevices.push([device.id, device.name]);
+            }
             else {
                 var index = this.selectedDevices.findIndex(function (item) { return device.id === item[0]; });
                 this.selectedDevices.splice(index, 1);
@@ -914,7 +922,8 @@ var HomeModule = /** @class */ (function () {
                 _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatSelectModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatDatepickerModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatNativeDateModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatIconModule"]
+                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatIconModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatSlideToggleModule"]
             ],
             declarations: [
                 _pages_home_page_component__WEBPACK_IMPORTED_MODULE_3__["HomePageComponent"],
