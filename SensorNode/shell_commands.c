@@ -197,3 +197,52 @@ int testcurrent_cmd(int argc, char **argv)
 
     return 0;
 }
+
+/**
+* Ein 'true' signalisiert, dass der Nutzen den "E-Stop"
+* Button auf dem Messknoten gedrueckt hat und der
+* Messknoten die Stromzufuhr gekappt hat.
+ */
+int estop_cmd(int argc, char **argv)
+{
+    if (argc < 2 || argc > 2) {
+        printf("estop usage: estop [ on | off ]\n");
+    }
+
+    if (strcmp(argv[1], "on") == 0) {
+
+    } else if (strcmp(argv[1], "off") == 0) {
+
+    } else {
+        printf("Usage: estop [ on | off ]\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+/**
+* Signalisiert, dass der Nutzer den 'Manual-Modus am
+* Messknoten aktiviert hat: d.h., dass der 'switch_state'
+* keinen Einfluss mehr hat; Strom ist dauerhaft an.
+* Dieser Manual-Mode kann vom Endnutzer genutzt werden um
+* den switch_state zu ueberschreiben.
+ */
+int manual_cmd(int argc, char **argv)
+{
+    if (argc < 2 || argc > 2) {
+        printf("Usage: manual [ on | off ]\n");
+        return 1;
+    }
+
+    if (strcmp(argv[1], "on") == 0) {
+
+    } else if (strcmp(argv[1], "off") == 0) {
+
+    } else {
+        printf("Usage: manual [ on | off ]\n");
+        return 1;
+    }
+
+    return 0;
+}

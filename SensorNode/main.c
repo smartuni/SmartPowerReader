@@ -39,12 +39,16 @@ extern int testcurrent_cmd(int argc, char **argv);
 extern int testsend_cmd(int argc, char **argv);
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void spr_init(lcd1602a_dev_t * lcd);
+extern int estop_cmd(int argc, char **argv);
+extern int manual_cmd(int argc, char **argv);
 
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { "testsend", "test send data", testsend_cmd },
     { "testcurrent", "Dump's the current and apparent-power", testcurrent_cmd },
     { "lcdwrite", "Writes something to the LCD!", lcd_write_cmd },
+    { "estop", "Turn the estop ON or OFF", estop_cmd },
+    { "manual", "Turn the manual ON or OFF", manual_cmd },
     { NULL, NULL, NULL }
 };
 
