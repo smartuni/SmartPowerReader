@@ -24,6 +24,9 @@
     #define USE_PHYWAVE (1) /*< NOTE: 0 Means to use Nucleo board! */
 #endif /* FEATURE_USE_DISPLAY */
 
+extern size_t send(uint8_t *buf, size_t len, char *addr_str, char *port_str);
+extern void dumpbytes(const uint8_t *buf, size_t len);
+
 /**
  * @brief Initialze the lcd display for nucleo or phywave board ONLY.
  */
@@ -198,6 +201,36 @@ int testcurrent_cmd(int argc, char **argv)
     return 0;
 }
 
+static inline void send_cbor(const char *key, bool val, char *addr, char *port)
+{
+    uint8_t key_buf[32];
+    CborEncoder encoder;
+    CborEncoder map;
+    cbor_encoder_init(&encoder, key_buf, sizeof(key_buf), 0);
+    CborError err = cbor_encoder_create_map(&encoder, &map, 1);
+    if (err != 0)
+        printf("error: create map %d\n", err);
+
+    cbor_encode_text_stringz(&map, key);
+    cbor_encode_boolean(&map, val);
+    cbor_encoder_close_container(&encoder, &map);
+
+    dumpbytes((const uint8_t *)&key_buf, sizeof(key_buf));
+
+    coap_pkt_t pdu;
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_CONFIG);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+
+    memcpy(pdu.payload, &key_buf[0], sizeof(key_buf));
+    size_t len = gcoap_finish(&pdu, sizeof(key_buf), COAP_FORMAT_CBOR);
+    // printf("len: %u. ip: %s. port: %s\n", len, argv[2], argv[3]);
+    if (send(&buf[0], len, addr, port) == 0)
+    {
+        puts("gcoap_cli: msg send failed");
+    }
+}
+
 /**
 * Ein 'true' signalisiert, dass der Nutzen den "E-Stop"
 * Button auf dem Messknoten gedrueckt hat und der
@@ -206,17 +239,23 @@ int testcurrent_cmd(int argc, char **argv)
 int estop_cmd(int argc, char **argv)
 {
     /* Check if we use the right amount of argmunets. */
-    if (argc < 2 || argc > 2) {
+    if (argc < 2 || argc > 4)
+    {
         printf("estop usage: estop [ on | off ]\n");
         return 1;
     }
 
     /* Compare the first argument and turn it on or off. */
-    if (strcmp(argv[1], "on") == 0) {
-        // TODO ...
-    } else if (strcmp(argv[1], "off") == 0) {
-        // TODO ...
-    } else {
+    if (strcmp(argv[1], "on") == 0)
+    {
+        send_cbor("ESTOP", true, argv[2], argv[3]);
+    }
+    else if (strcmp(argv[1], "off") == 0)
+    {
+        send_cbor("ESTOP", false, argv[2], argv[3]);
+    }
+    else
+    {
         printf("Usage: estop [ on | off ]\n");
         return 1;
     }
@@ -234,17 +273,23 @@ int estop_cmd(int argc, char **argv)
 int manual_cmd(int argc, char **argv)
 {
     /* Check if we use the right amount of argmunets. */
-    if (argc < 2 || argc > 2) {
+    if (argc < 2 || argc > 4)
+    {
         printf("Usage: manual [ on | off ]\n");
         return 1;
     }
 
     /* Compare the first argument and turn it on or off. */
-    if (strcmp(argv[1], "on") == 0) {
-        // TODO ...
-    } else if (strcmp(argv[1], "off") == 0) {
-        // TODO ...
-    } else {
+    if (strcmp(argv[1], "on") == 0)
+    {
+        send_cbor("MANUAL", true, argv[2], argv[3]);
+    }
+    else if (strcmp(argv[1], "off") == 0)
+    {
+        send_cbor("MANUAL", false, argv[2], argv[3]);
+    }
+    else
+    {
         printf("Usage: manual [ on | off ]\n");
         return 1;
     }

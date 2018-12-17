@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 #include "features.h"
+#include "net/gcoap.h"
+#include "cbor.h"
 
 extern void dumpbytes(const uint8_t *buf, size_t len);
 
