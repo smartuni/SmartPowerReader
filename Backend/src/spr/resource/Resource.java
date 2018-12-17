@@ -20,6 +20,7 @@ public abstract class Resource extends CoapResource
 
 	public static final String MEASUREMENT = "measure";
 	public static final String HELLO = "new-device";
+	public static final String CONFIG = "config";
 	
 	public static final class Format
 	{

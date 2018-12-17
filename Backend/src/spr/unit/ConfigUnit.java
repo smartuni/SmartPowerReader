@@ -1,17 +1,17 @@
 package spr.unit;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import dave.json.JsonConstant;
+import dave.json.JsonNumber;
 import dave.json.JsonObject;
 import dave.json.JsonString;
 import dave.json.JsonValue;
@@ -26,8 +26,9 @@ import dave.json.StreamBuffer;
 import dave.util.Producer;
 import dave.util.log.Logger;
 import dave.util.log.Severity;
-import jacob.CborEncoder;
 import spr.common.Configuration;
+import spr.common.Configuration.Data;
+import spr.common.Configuration.Feature;
 import spr.common.Configuration.Status;
 import spr.net.LocalAddress;
 import spr.net.UniqueAddress;
@@ -38,27 +39,32 @@ import spr.resource.Resource;
 import spr.task.Task;
 import spr.task.Tasks;
 import spr.unit.CoapServerUnit.Directive;
+import spr.util.AbstractWatchdog;
+import spr.util.Converter;
+import spr.util.Watchdog;
 
 public class ConfigUnit extends BaseUnit
 {
 	private final Configuration mConfig;
 	private final Producer<File> mGen;
-	private final Set<String> mOpen;
+	private final Watchdog mWatchdog;
 	private File mLast;
 	
 	public ConfigUnit(File orig, Producer<File> gen, Node<Task> g)
 	{
 		super(g);
 		
+		NetWatchdog wd = new NetWatchdog();
+		
 		mConfig = new Configuration();
 		mGen = gen;
-		mOpen = new HashSet<>();
+		mWatchdog = wd;
 		
 		registerMessageHandler(Tasks.Configuration.NEW, this::handleNew);
 		registerMessageHandler(Tasks.Configuration.CONFIGURE, this::handleConfigure);
 		registerMessageHandler(Tasks.Configuration.QUERY, this::handleQuery);
 		registerMessageHandler(Tasks.Configuration.SET_STATUS, this::handleStatus);
-		registerMessageHandler(CALLBACK_ID, this::handleDisconnect);
+		registerMessageHandler(CALLBACK_ID, p -> wd.callback(p.getContent().getPayload()));
 		
 		if(orig != null)
 		{
@@ -95,7 +101,7 @@ public class ConfigUnit extends BaseUnit
 	
 	private void handleNew(Message<Task> p)
 	{
-		String ip = p.getContent().getPayload();
+		ConfigData c = p.getContent().getPayload();
 		Address r = p.getSender();
 		InetSocketAddress location = null;
 		
@@ -104,23 +110,33 @@ public class ConfigUnit extends BaseUnit
 			location = ((UniqueAddress) r).getRemote();
 		}
 		
-		Configuration.Entry e = mConfig.get(ip);
+		Configuration.Entry e = mConfig.get(c.id);
 		
 		if(e == null)
 		{
-			e = new Configuration.Entry(ip, null, 0, location, Status.DISCONNECTED);
+			e = new Configuration.Entry(c.id, null, location, Status.DISCONNECTED, c.config);
 		}
 		else
 		{
-			e = e.setIP(ip).setLocation(location);
+			Map<Feature, JsonValue> data = new HashMap<>();
+			final Configuration.Data old = e.data;
+			
+			c.config.stream().forEach(f -> {
+				if(f.isWriteable() || !old.hasFeature(f))
+				{
+					data.put(f, c.config.get(f));
+				}
+				else
+				{
+					data.put(f, old.get(f));
+				}
+			});
+			
+			e = new Configuration.Entry(c.id, e.name, location, Status.CONNECTED, new Configuration.Data(data));
 		}
 		
 		updateConfig(e);
-		
-		if(e.period > 0)
-		{
-			pushConfiguration(e);
-		}
+		pushConfiguration(e);
 	}
 	
 	private void handleConfigure(Message<Task> p)
@@ -149,11 +165,9 @@ public class ConfigUnit extends BaseUnit
 					e = e.setName(name == JsonConstant.NULL ? null : ((JsonString) name).get());
 				}
 				
-				if(json.contains("period"))
+				if(json.contains("data"))
 				{
-					long period = json.getLong("period");
-					
-					e = e.setPeriod(period);
+					e = e.addData(new Data(json.getObject("data")));
 					
 					pushConfiguration(e);
 				}
@@ -173,54 +187,29 @@ public class ConfigUnit extends BaseUnit
 	private void handleStatus(Message<Task> p)
 	{
 		StatusReport rep = p.getContent().getPayload();
-		
 		Configuration.Entry e = mConfig.get(rep.id);
 		
 		if(e == null)
 		{
-			LOG.log(Severity.WARNING, "Trying to set status of unknown device %s!", rep.id);
-			
-			InetSocketAddress location = null;
-			
-			if(p.getSender() instanceof UniqueAddress)
-			{
-				location = ((UniqueAddress) p.getSender()).getRemote();
-			}
-			
-			e = new Configuration.Entry(rep.id, null, 0, location, rep.status);
-		}
-		else if(e.status != rep.status)
-		{
-			e = e.setStatus(rep.status);
-			
-			updateConfig(e);
-		}
-		
-		resetTimer(e);
-		
-		if(rep.status == Status.CONNECTED)
-		{
-			setTimer(e);
-		}
-	}
-	
-	private void handleDisconnect(Message<Task> p)
-	{
-		String id = p.getContent().getPayload();
-		
-		Configuration.Entry e = mConfig.get(id);
-		
-		if(e == null)
-		{
-			LOG.log(Severity.WARNING, "Received disconnect timer notification for non-existent node %s", id);
+			LOG.log(Severity.ERROR, "Trying to set status of unknown device %s!", rep.id);
 		}
 		else
 		{
-			e = e.setStatus(Status.DISCONNECTED);
+			if(e.status != Status.CONNECTED)
+			{
+				e = e.setStatus(Status.CONNECTED);
+				
+				updateConfig(e);
+			}
 			
-			updateConfig(e);
+			if(e.status == Status.CONNECTED)
+			{
+				setTimer(e, rep.feature);
+			}
 		}
 	}
+
+// ----------------------------------------------------------------------------------------------------	
 	
 	private void pushConfiguration(Configuration.Entry e)
 	{
@@ -231,25 +220,12 @@ public class ConfigUnit extends BaseUnit
 			coap = new UniqueAddress(Units.IDs.COAP, e.location);
 		}
 		
-		ByteArrayOutputStream payload = new ByteArrayOutputStream();
-		try
-		{
-			CborEncoder cbor = new CborEncoder(payload);
-			
-			cbor.writeMapStart(1);
-			cbor.writeTextString("period");
-			cbor.writeInt32(e.period);
-		}
-		catch(IOException ex)
-		{
-			throw new SevereIOException(ex);
-		}
-		
-		CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload.toByteArray(), Directive.PUT, Resource.Format.CBOR);
+		byte[] payload = Converter.toCBOR(e.data.save());
+		CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload, Directive.PUT, Resource.Format.CBOR);
 		
 		getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 		
-		setTimer(e);
+		e.data.stream().forEach(f -> setTimer(e, f));
 	}
 	
 	private void updateConfig(Configuration.Entry e)
@@ -275,43 +251,23 @@ public class ConfigUnit extends BaseUnit
 		mLast = f;
 	}
 
-	private void resetTimer(Configuration.Entry e)
+	private void setTimer(Configuration.Entry e, Configuration.Feature f)
 	{
-		String id = callbackID(e.ip);
-		
-		if(mOpen.contains(id))
-		{
-			mOpen.remove(id);
-			getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.REMOVE, newSession(), id));
-		}
+		int p = ((JsonNumber) e.data.get(f)).getInt();
+
+		mWatchdog.reset(e.ip + SEP + f, System.currentTimeMillis() + 1500 * p);
 	}
-	
-	private void setTimer(Configuration.Entry e)
-	{
-		resetTimer(e);
-		
-		if(e.period > 0)
-		{
-			String id = callbackID(e.ip);
-			
-			getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.ONE_SHOT, newSession(), 
-					new TimerUnit.FutureTask(id, new Task(CALLBACK_ID, 0, e.ip), (int) (e.period * 3 / 2))));
-			mOpen.add(id);
-		}
-	}
-	
-	private String callbackID(String id) { return CALLBACK_ID + "_" + id; }
 	
 	@Container
-	public static final class StatusReport implements Saveable
+	public static final class ConfigData implements Saveable
 	{
 		public final String id;
-		public final Status status;
+		public final Data config;
 		
-		public StatusReport(String id, Status status)
+		public ConfigData(String id, Data config)
 		{
 			this.id = id;
-			this.status = status;
+			this.config = config;
 		}
 		
 		@Override
@@ -321,7 +277,49 @@ public class ConfigUnit extends BaseUnit
 			JsonObject json = new JsonObject();
 			
 			json.putString("id", id);
-			json.putString("status", status.toString());
+			json.put("config", config.save());
+			
+			return json;
+		}
+		
+		@Loader
+		public static ConfigData load(JsonValue json)
+		{
+			JsonObject o = (JsonObject) json;
+			
+			String id = o.getString("id");
+			Data config = Data.load(o.get("config"));
+			
+			return new ConfigData(id, config);
+		}
+		
+		@Override
+		public String toString( )
+		{
+			return "ConfigData[" + id + " " + config + "]";
+		}
+	}
+	
+	@Container
+	public static final class StatusReport implements Saveable
+	{
+		public final String id;
+		public final Configuration.Feature feature;
+		
+		public StatusReport(String id, Configuration.Feature feature)
+		{
+			this.id = id;
+			this.feature = feature;
+		}
+		
+		@Override
+		@Saver
+		public JsonValue save( )
+		{
+			JsonObject json = new JsonObject();
+			
+			json.putString("id", id);
+			json.putString("feature", feature.toString());
 			
 			return json;
 		}
@@ -332,20 +330,64 @@ public class ConfigUnit extends BaseUnit
 			JsonObject o = (JsonObject) json;
 			
 			String id = o.getString("id");
-			Status status = Status.valueOf(o.getString("status"));
+			Configuration.Feature feature = Configuration.Feature.valueOf(o.getString("feature"));
 			
-			return new StatusReport(id, status);
+			return new StatusReport(id, feature);
 		}
 		
 		@Override
 		public String toString( )
 		{
-			return id + ": " + status.toString();
+			return id + ": " + feature.toString();
+		}
+	}
+	
+	private class NetWatchdog extends AbstractWatchdog
+	{
+		@Override
+		protected void trigger(String id)
+		{
+			String ip = id.substring(0, id.indexOf(SEP));
+			Configuration.Entry e = mConfig.get(ip);
+			
+			if(e == null)
+			{
+				LOG.log(Severity.WARNING, "Timeout for unknown device %s!", ip);
+			}
+			else
+			{
+				if(e.status != Status.DISCONNECTED)
+				{
+					e = e.setStatus(Status.DISCONNECTED);
+					
+					updateConfig(e);
+				}
+			}
+		}
+
+		@Override
+		protected void schedule(String id, long ms)
+		{
+			long now = System.currentTimeMillis();
+			String tid = CALLBACK_ID + "_" + id;
+			
+			if(ms > now)
+			{
+				int t = (int) (((ms - now) + 999) / 1000);
+				
+				getNode().send(Units.IDs.TIMER, new Task(Tasks.Timer.Schedule.ONE_SHOT, newSession(),
+					new TimerUnit.FutureTask(tid, new Task(CALLBACK_ID, 0, id), t)));
+			}
+			else
+			{
+				getNode().send(Units.IDs.TIMER,  new Task(Tasks.Timer.Schedule.REMOVE, newSession(), tid));
+			}
 		}
 	}
 	
 	private static final int PORT = 5683;
 	private static final String CALLBACK_ID = "disconnect";
+	private static final String SEP = "~";
 	
 	private static final Logger LOG = Logger.get("db-u");
 }
