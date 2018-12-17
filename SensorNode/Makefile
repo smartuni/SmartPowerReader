@@ -63,6 +63,8 @@ USEMODULE += saul_default
 USEMODULE += xtimer
 # Used for buttons with isr's
 USEMODULE += periph_gpio_irq
+# Workaround for link-local not found
+USEMODULE += netstats_l2
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
