@@ -5,6 +5,8 @@ import java.util.Date;
 
 import dave.json.JsonArray;
 import dave.json.JsonObject;
+import dave.json.JsonValue;
+import dave.json.StringBuffer;
 import dave.util.command.Argument.Type;
 import dave.util.command.CommandBuilder;
 import dave.util.command.Engine;
@@ -22,6 +24,7 @@ import spr.unit.LocalDatabaseUnit.Data;
 public class UserUnit extends BaseUnit
 {
 	private static interface RemoteCommand { void execute(String ip, int port); }
+	private static interface ActionCommand { void execute(String to, String json); }
 	
 	private final Engine mCommands;
 	private boolean mRunning;
@@ -38,6 +41,10 @@ public class UserUnit extends BaseUnit
 		mCommands.add(new SimpleCommand("status", "collects system status", this::runStatus));
 		mCommands.add(new SimpleCommand("help", "lists all commands with info", this::runHelp));
 		mCommands.add(new SimpleCommand("generate", "generates example data", this::runGenerate));
+		mCommands.add((new CommandBuilder<ActionCommand>("send", "sends a packet", this::runAction)
+				.add("to", Type.STRING)
+				.add("data", Type.STRING)
+				.build()));
 		mCommands.add((new CommandBuilder<RemoteCommand>("remote", "connects to remote and sends status request", this::runRemote)
 				.add("ip", Type.STRING)
 				.add("port", Type.INT)
@@ -99,6 +106,20 @@ public class UserUnit extends BaseUnit
 		mCommands.forEach(cmd -> {
 			mCommands.printf("%10s | %s\n", cmd.getID(), cmd.help());
 		});
+	}
+	
+	private void runAction(String to, String json)
+	{
+		try
+		{
+			getNode().send(to, Task.load(JsonValue.read(new StringBuffer(json))));
+		}
+		catch(Throwable e)
+		{
+			e.printStackTrace();
+			
+			Logger.DEFAULT.log(Severity.ERROR, "Failed to send: %s!", e.getMessage());
+		}
 	}
 	
 	public void execute(String cmd)
