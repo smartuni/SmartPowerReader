@@ -225,7 +225,7 @@ public class ConfigUnit extends BaseUnit
 		
 		getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 		
-		e.data.stream().forEach(f -> setTimer(e, f));
+		e.data.stream().filter(Feature::isCounter).forEach(f -> setTimer(e, f));
 	}
 	
 	private void updateConfig(Configuration.Entry e)
