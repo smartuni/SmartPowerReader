@@ -13,11 +13,14 @@
 #include "fmt.h"
 #include "xtimer.h"
 #include "timex.h"
+#include "net/gcoap.h"
+#include "cbor.h"
 
 #include "ct_sensor.h"
 #include "lcd1602a.h"
 
 #include "features.h"
+#include "backend.h"
 
 /* Enable/Disable in main */
 #if FEATURE_USE_DISPLAY
