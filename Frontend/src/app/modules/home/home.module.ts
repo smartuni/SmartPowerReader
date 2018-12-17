@@ -11,7 +11,14 @@ import {AmazingTimePickerModule} from 'amazing-time-picker';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SensorService} from './services/sensor.service';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {MatDatepickerModule, MatFormFieldModule, MatIconModule, MatNativeDateModule, MatSelectModule} from '@angular/material';
+import {
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatSlideToggleModule
+} from '@angular/material';
 
 
 @NgModule({
@@ -27,7 +34,8 @@ import {MatDatepickerModule, MatFormFieldModule, MatIconModule, MatNativeDateMod
         MatSelectModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        MatIconModule
+        MatIconModule,
+        MatSlideToggleModule
     ],
     declarations: [
         HomePageComponent,
