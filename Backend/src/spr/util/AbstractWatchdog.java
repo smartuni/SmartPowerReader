@@ -13,13 +13,16 @@ public abstract class AbstractWatchdog implements Watchdog
 		if(ms > 0)
 		{
 			mCBs.put(id, ms);
+			
+			schedule(id, ms);
 		}
 		else
 		{
-			mCBs.remove(id);
+			if(mCBs.remove(id) != null)
+			{
+				schedule(id, 0);
+			}
 		}
-		
-		schedule(id, ms);
 	}
 	
 	public void callback(String id)
