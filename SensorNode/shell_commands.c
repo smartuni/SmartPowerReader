@@ -208,6 +208,7 @@ int estop_cmd(int argc, char **argv)
     /* Check if we use the right amount of argmunets. */
     if (argc < 2 || argc > 2) {
         printf("estop usage: estop [ on | off ]\n");
+        return 1;
     }
 
     /* Compare the first argument and turn it on or off. */
