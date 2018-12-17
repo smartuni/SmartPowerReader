@@ -3,7 +3,7 @@
         <div class="col-3">
 
             <mat-form-field class="col-10">
-                <mat-select multiple placeholder="Select device" disableOptionCentering="true">
+                <mat-select multiple placeholder="Select device" disableOptionCentering="true" >
                     <mat-option (onSelectionChange)="change($event)"
                                 class="vertical-align"
                                 *ngFor="let device of sensors; let i = index"

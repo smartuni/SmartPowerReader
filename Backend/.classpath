@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="libs/utils.jar"/>
 	<classpathentry kind="lib" path="libs/cf-con.jar"/>
 	<classpathentry kind="lib" path="libs/cf-core.jar"/>
-	<classpathentry kind="lib" path="//filer2.is.haw-hamburg.de/user/abp403/git/SmartPowerReader/Backend/libs/jacob.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="libs/jacob.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

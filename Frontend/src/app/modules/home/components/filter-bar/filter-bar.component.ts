@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {formatDate} from '@angular/common';
 import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
