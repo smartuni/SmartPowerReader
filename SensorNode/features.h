@@ -25,9 +25,11 @@ extern "C" {
 #define FEATURE_USE_BUTTONS (1)
 
 /**
- * @brief TODO
+ * NOTE: Not implemented or functional yet! [Optional]
  */
+/*
 void features_list(void);
+*/
 
 /**
  * @brief   writes available features on the board

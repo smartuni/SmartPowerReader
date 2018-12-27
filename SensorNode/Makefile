@@ -32,9 +32,13 @@ CFLAGS += -DIEEE802154_DEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
 # Used peripheral
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_gpio
-# For random hwgenerator
-FEATURES_REQUIRED += periph_hwrng
-USEMODULE += random
+
+# Rene: This is for my board, because i do not have this :-)
+ifneq (,$(filter nucleo-f466re,$(BOARD)))
+		# For random hwgenerator
+		FEATURES_REQUIRED += periph_hwrng
+		USEMODULE += random
+endif
 
 # Used pkg
 USEPKG += tinycbor

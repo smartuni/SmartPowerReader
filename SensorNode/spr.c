@@ -31,9 +31,12 @@
 #include "features.h"
 
 #include "button.h"
+#include "periph/gpio.h"
 #if FEATURE_USE_BUTTONS
-    button_t * estop_btn;
-    button_t * manual_btn;
+    //button_t * estop_btn;
+    //button_t * manual_btn;
+    gpio_t estop_btn;
+    gpio_t manual_btn;
 #endif /* FEATURE_USE_BUTTONS */
 
 #include "lcd1602a.h"
@@ -348,23 +351,64 @@ static void cb_estop(void *arg)
 {
     (void)arg;
     // TODO: implement code for sending via coap
-    // printf("SPR: INT -> cb estop\n");
-    // printf("INT: external interrupt from pin %i\n", (int)arg);
+    // NOTE: Do not use something like printf here!
 }
 
 /* Callback function for the manual pin */
+/*
 static void cb_manual(void *arg)
 {
     (void)arg;
     // TODO: implement code for sending via coap
-    // printf("SPR: INT ->cb manual\n");
-    // printf("INT: external interrupt from pin %i\n", (int)arg);
+    // NOTE: Do not use something like printf here!
 }
+*/
 #endif /* FEATURE_USE_BUTTONS */
 
 void spr_init(lcd1602a_dev_t * lcd)
 {
 #if FEATURE_USE_BUTTONS
+
+    /* Initializing the pin for the estop button.
+     * NOTE: Try to use another pin configuration for port and pin number!
+     */
+    int estop_pin = 2;
+    int estop_port = 4; /*< PORT_A = 0; B = 1; C = 2; D = 3; E = 4 */
+
+    estop_btn = GPIO_PIN(estop_port, estop_pin);
+
+    gpio_irq_enable(estop_btn);
+
+    if (gpio_init_int(estop_btn, GPIO_IN_PU, GPIO_RISING, cb_estop, (void *)estop_pin) < 0) {
+        printf(">>> ERROR: init_int of GPIO_PIN(%i, %i) failed\n", estop_port, estop_pin);
+    } else {
+        printf(">>> GPIO_PIN(%i, %i) successfully initialized as ext int\n", estop_port, estop_pin);
+    }
+
+    /* Initializing the pin for the manual button.
+     * NOTE: Try to use another pin configuration for port and pin number!
+     */
+
+    // NOTE: First try one button at the time!! Try the manual button, when
+    // The estop button works!
+    /*
+    int manual_pin = 3;
+    int manual_port = 4;
+    manual_btn = GPIO_PIN(manual_port, manual_pin);
+
+    gpio_irq_enable(manual_btn);
+
+    if (gpio_init_int(manual_btn, GPIO_IN_PU, GPIO_RISING, cb_manual, (void *)manual_pin) < 0) {
+        printf(">>> ERROR: init_int of GPIO_PIN(%i, %i) failed\n", manual_port, manual_pin);
+    } else {
+        printf(">>> GPIO_PIN(%i, %i) successfully initialized as ext int\n", manual_port, manual_pin);
+    }
+    */
+
+    /*
+    // We not use button.c for the moment. Instead we just use directly
+    // The RIOT GPIO abstraction layer to initialize the pins for the Buttons
+    // and the interrupts. Just in case the button-wrapper does not work atm.
     int port_e = 4;
     int ret_code = 0;
 
@@ -379,40 +423,19 @@ void spr_init(lcd1602a_dev_t * lcd)
     if (ret_code < 0) {
         printf("SPR: INIT -> failed to initialize manual button\n");
     }
-#endif
+    */
+#else
+    printf("SPR: Buttons not enabled!\n");
+#endif /* FEATURE_USE_BUTTONS */
+
 
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
 #if FEATURE_USE_DISPLAY
     spr_lcd = lcd;
-    /* Initialize the LCD */
-    // NOTE: PhyWave board config! Because we are only use this one here!
-    /*
-    int PORT_A = 0;
-    int PORT_C = 2;
-    int PORT_E = 4;
-
-    spr_lcd.register_select_pin = GPIO_PIN(PORT_E, 4);
-    spr_lcd.read_write_pin = GPIO_PIN(PORT_A, 19);
-    spr_lcd.enable_pin = GPIO_PIN(PORT_A, 2);
-    spr_lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    spr_lcd.data_pins[1] = 0; // Not used.
-    spr_lcd.data_pins[2] = 0; // Not used.
-    spr_lcd.data_pins[3] = 0; // Not used.
-    spr_lcd.data_pins[4] = GPIO_PIN(PORT_A, 1);
-    spr_lcd.data_pins[5] = GPIO_PIN(PORT_C, 4);
-    spr_lcd.data_pins[6] = GPIO_PIN(PORT_C, 7);
-    spr_lcd.data_pins[7] = GPIO_PIN(PORT_C, 5);
-    spr_lcd.iface = spr_iface;
-    spr_lcd.dotsize = spr_dotsize;
-    spr_lcd.lines = 2;
-    spr_lcd.collumns = 16;
-
-    lcd1602a_init(spr_lcd);
-    */
 #else
-    printf("SPR: lcd not used\n");
+    printf("SPR: LCD not enabled!\n");
     (void)lcd;
 #endif /* FEATURE_USE_DISPLAY */
 

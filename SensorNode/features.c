@@ -9,6 +9,7 @@
 
 extern void dumpbytes(const uint8_t *buf, size_t len);
 
+/*
 void features_list(void)
 {
     printf("Features: list:\n");
@@ -26,6 +27,7 @@ void features_list(void)
     printf("[ OFF \n]");
 #endif
 }
+*/
 
 void features_init(uint8_t *buf, size_t maxlen)
 {
