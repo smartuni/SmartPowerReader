@@ -28,6 +28,8 @@
 #include "cbor.h"
 #include "net/gnrc/rpl/dodag.h"
 
+#include "backend.h"
+
 #include "features.h"
 
 #include "button.h"
@@ -345,6 +347,36 @@ static void find_base_station(char * base_addr)
     ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
 }
 
+static inline void send_cbor(const char *key, bool val, char *addr, char *port)
+{
+    uint8_t key_buf[32];
+    CborEncoder encoder;
+    CborEncoder map;
+    cbor_encoder_init(&encoder, key_buf, sizeof(key_buf), 0);
+    CborError err = cbor_encoder_create_map(&encoder, &map, 1);
+    if (err != 0)
+        printf("error: create map %d\n", err);
+
+    cbor_encode_text_stringz(&map, key);
+    cbor_encode_boolean(&map, val);
+    cbor_encoder_close_container(&encoder, &map);
+
+    dumpbytes((const uint8_t *)&key_buf, sizeof(key_buf));
+
+    coap_pkt_t pdu;
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_CONFIG);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+
+    memcpy(pdu.payload, &key_buf[0], sizeof(key_buf));
+    size_t len = gcoap_finish(&pdu, sizeof(key_buf), COAP_FORMAT_CBOR);
+    // printf("len: %u. ip: %s. port: %s\n", len, argv[2], argv[3]);
+    if (send(&buf[0], len, addr, port) == 0)
+    {
+        puts("gcoap_cli: msg send failed");
+    }
+}
+
 #if FEATURE_USE_BUTTONS
 /* Callback function for the estop pin */
 static void cb_estop(void *arg)
@@ -450,4 +482,62 @@ void spr_init(lcd1602a_dev_t * lcd)
     xtimer_sleep(2);
     /* Register Basisstation */
     _register(base_addr);
+}
+
+/**
+* Ein 'true' signalisiert, dass der Nutzen den "E-Stop"
+* Button auf dem Messknoten gedrueckt hat und der
+* Messknoten die Stromzufuhr gekappt hat.
+ */
+int estop_cmd(int argc, char **argv)
+{
+    /* Check if we use the right amount of argmunets. */
+    if (argc < 2 || argc > 4) {
+        printf("estop usage: estop [ on | off ]\n");
+        return 1;
+    }
+
+    /* Compare the first argument and turn it on or off. */
+    if (strcmp(argv[1], "on") == 0) {
+        send_cbor("ESTOP", true, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else if (strcmp(argv[1], "off") == 0) {
+        send_cbor("ESTOP", false, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else {
+        printf("Usage: estop [ on | off ]\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+/**
+* Signalisiert, dass der Nutzer den 'Manual-Modus am
+* Messknoten aktiviert hat: d.h., dass der 'switch_state'
+* keinen Einfluss mehr hat; Strom ist dauerhaft an.
+* Dieser Manual-Mode kann vom Endnutzer genutzt werden um
+* den switch_state zu ueberschreiben.
+ */
+int manual_cmd(int argc, char **argv)
+{
+    /* Check if we use the right amount of argmunets. */
+    if (argc < 2 || argc > 4) {
+        printf("Usage: manual [ on | off ]\n");
+        return 1;
+    }
+
+    /* Compare the first argument and turn it on or off. */
+    if (strcmp(argv[1], "on") == 0) {
+        send_cbor("MANUAL", true, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else if (strcmp(argv[1], "off") == 0) {
+        send_cbor("MANUAL", false, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else {
+        printf("Usage: manual [ on | off ]\n");
+        return 1;
+    }
+
+    return 0;
 }

@@ -34,11 +34,11 @@ FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_gpio
 
 # Rene: This is for my board, because i do not have this :-)
-ifneq (,$(filter nucleo-f466re,$(BOARD)))
+#ifneq (,$(filter nucleo-f446re,$(BOARD)))
 		# For random hwgenerator
-		FEATURES_REQUIRED += periph_hwrng
-		USEMODULE += random
-endif
+FEATURES_REQUIRED += periph_hwrng
+USEMODULE += random
+#endif
 
 # Used pkg
 USEPKG += tinycbor
