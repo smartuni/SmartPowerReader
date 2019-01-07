@@ -10,6 +10,7 @@ import * as fromRoot from 'store/reducers';
 import {UpdateSensorsSAction} from 'store/actions/sensors';
 import {TimeSelectorComponent} from '../time-selector/time-selector.component';
 import * as moment from 'moment';
+import {DurationInputArg2} from 'moment';
 
 
 @Component({
@@ -206,7 +207,8 @@ export class FilterBarComponent implements OnInit {
         });
     }
 
-    private analyseTime(time: number, type: string) {
+    private analyseTime(time: number, type: DurationInputArg2) {
+        console.log(time, type);
         moment().subtract(10, 'days').calendar(); // 12/28/2018
 
         // moment().subtract(5, day);
