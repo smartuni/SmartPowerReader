@@ -13,6 +13,8 @@
 #include "fmt.h"
 #include "xtimer.h"
 #include "timex.h"
+#include "net/gcoap.h"
+#include "cbor.h"
 
 #include "ct_sensor.h"
 #include "lcd1602a.h"
@@ -193,60 +195,6 @@ int testcurrent_cmd(int argc, char **argv)
 
         // Sleep for a moment.
         xtimer_periodic_wakeup(&last, delay);
-    }
-
-    return 0;
-}
-
-/**
-* Ein 'true' signalisiert, dass der Nutzen den "E-Stop"
-* Button auf dem Messknoten gedrueckt hat und der
-* Messknoten die Stromzufuhr gekappt hat.
- */
-int estop_cmd(int argc, char **argv)
-{
-    /* Check if we use the right amount of argmunets. */
-    if (argc < 2 || argc > 2) {
-        printf("estop usage: estop [ on | off ]\n");
-        return 1;
-    }
-
-    /* Compare the first argument and turn it on or off. */
-    if (strcmp(argv[1], "on") == 0) {
-        // TODO ...
-    } else if (strcmp(argv[1], "off") == 0) {
-        // TODO ...
-    } else {
-        printf("Usage: estop [ on | off ]\n");
-        return 1;
-    }
-
-    return 0;
-}
-
-/**
-* Signalisiert, dass der Nutzer den 'Manual-Modus am
-* Messknoten aktiviert hat: d.h., dass der 'switch_state'
-* keinen Einfluss mehr hat; Strom ist dauerhaft an.
-* Dieser Manual-Mode kann vom Endnutzer genutzt werden um
-* den switch_state zu ueberschreiben.
- */
-int manual_cmd(int argc, char **argv)
-{
-    /* Check if we use the right amount of argmunets. */
-    if (argc < 2 || argc > 2) {
-        printf("Usage: manual [ on | off ]\n");
-        return 1;
-    }
-
-    /* Compare the first argument and turn it on or off. */
-    if (strcmp(argv[1], "on") == 0) {
-        // TODO ...
-    } else if (strcmp(argv[1], "off") == 0) {
-        // TODO ...
-    } else {
-        printf("Usage: manual [ on | off ]\n");
-        return 1;
     }
 
     return 0;

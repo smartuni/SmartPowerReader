@@ -32,9 +32,13 @@ CFLAGS += -DIEEE802154_DEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
 # Used peripheral
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_gpio
-# For random hwgenerator
+
+# Rene: This is for my board, because i do not have this :-)
+#ifneq (,$(filter nucleo-f446re,$(BOARD)))
+		# For random hwgenerator
 FEATURES_REQUIRED += periph_hwrng
 USEMODULE += random
+#endif
 
 # Used pkg
 USEPKG += tinycbor
@@ -48,6 +52,7 @@ USEMODULE += gnrc_ipv6_default
 USEMODULE += gcoap
 # RPL module for multi-hop networking
 USEMODULE += gnrc_rpl
+USEMODULE += auto_init_gnrc_rpl
 # Additional networking modules that can be dropped if not needed
 USEMODULE += gnrc_icmpv6_echo
 
@@ -63,6 +68,14 @@ USEMODULE += saul_default
 USEMODULE += xtimer
 # Used for buttons with isr's
 USEMODULE += periph_gpio_irq
+# Workaround for link-local not found
+USEMODULE += netstats_l2
+USEMODULE += netstats_ipv6
+USEMODULE += netstats_rpl
+
+# Uncomment this to join RPL DODAGs even if DIOs do not contain
+# DODAG Configuration Options (see the doc for more info)
+CFLAGS += -DGNRC_RPL_DODAG_CONF_OPTIONAL_ON_JOIN
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the

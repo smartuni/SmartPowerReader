@@ -54,8 +54,6 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
-    //features_list();
-
     lcd1602a_dev_t lcd;
 
 #if FEATURE_USE_DISPLAY
@@ -121,7 +119,7 @@ int main(void)
                 }
             }
         }
-    #endif /* FEATURE_USE_DISPLAYFEATURE_SHOW_IP_ON_START */
+    #endif /* FEATURE_SHOW_IP_ON_START */
 #endif /* FEATURE_USE_DISPLAY */
 
     /* for the thread running the shell */

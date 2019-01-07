@@ -36,10 +36,11 @@ int button_init(button_t * button, int port, int pin, gpio_cb_t cb, void *arg)
     DEBUG("Button: INIT -> port=%d pin=%d\n", port, pin);
     *button = GPIO_PIN(port, pin);
     /* Our buttons are always initalized as input. */
-    int ret_code = gpio_init(*button, GPIO_IN);
+    // int ret_code = gpio_init(*button, GPIO_IN);
+    int ret_code = 1;
 
     gpio_irq_enable(*button);
-    if (gpio_init_int(*button, GPIO_IN, GPIO_RISING, cb, arg) < 0) {
+    if (gpio_init_int(*button, GPIO_IN_PU, GPIO_RISING, cb, arg) < 0) {
         printf("Button: INIT -> unable to init interrupt for port=%d, pin=%d\n", port, pin);
     }
 

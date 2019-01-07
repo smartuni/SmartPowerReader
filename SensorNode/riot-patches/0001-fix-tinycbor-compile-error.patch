@@ -1,0 +1,23 @@
+From b57c06eb18f1e3d1d2d23e08effc00c7201dbcba Mon Sep 17 00:00:00 2001
+From: pokgak <m.aimanismail@gmail.com>
+Date: Thu, 27 Dec 2018 18:52:06 +0100
+Subject: [PATCH] fix tinycbor compile error
+
+---
+ pkg/tinycbor/Makefile.tinycbor | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/pkg/tinycbor/Makefile.tinycbor b/pkg/tinycbor/Makefile.tinycbor
+index 06c9ad724..ab82d1663 100644
+--- a/pkg/tinycbor/Makefile.tinycbor
++++ b/pkg/tinycbor/Makefile.tinycbor
+@@ -6,5 +6,6 @@ SRC += cborencoder_close_container_checked.c
+ SRC += cborparser.c
+ SRC += cborpretty.c
+ SRC += cborvalidation.c
++SRC += cborparser_dup_string.c
+ 
+ include $(RIOTBASE)/Makefile.base
+-- 
+2.17.1
+

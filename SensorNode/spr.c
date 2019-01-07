@@ -28,12 +28,17 @@
 #include "cbor.h"
 #include "net/gnrc/rpl/dodag.h"
 
+#include "backend.h"
+
 #include "features.h"
 
 #include "button.h"
+#include "periph/gpio.h"
 #if FEATURE_USE_BUTTONS
-    button_t * estop_btn;
-    button_t * manual_btn;
+    //button_t * estop_btn;
+    //button_t * manual_btn;
+    gpio_t estop_btn;
+    gpio_t manual_btn;
 #endif /* FEATURE_USE_BUTTONS */
 
 #include "lcd1602a.h"
@@ -87,9 +92,10 @@ static gcoap_listener_t _listener = {
 
 /* configs send to /config */
 struct spr_config {
-    uint64_t interval;  /* Interval for measuring */
-    bool estop;      /* Is the estop enabled or not*/
-    bool manual;     /* */
+    uint64_t pwr_period;    /* pwr_period (interval) for measuring */
+    bool switch_state;      /* current power state (ON/OFF) */
+    bool estop;             /* estop mode flag */
+    bool manual;            /* Manual control flag */
 };
 
 static struct spr_config cfg = { 0 };
@@ -116,8 +122,8 @@ static void *send_data(void *arg)
     coap_pkt_t pdu;
     size_t len;
 
-    /* stop send if interval 0 */
-    uint32_t sleeptime = cfg.interval;
+    /* stop send if pwr_period 0 */
+    uint32_t sleeptime = cfg.pwr_period;
 
     float apparent;
 
@@ -166,8 +172,8 @@ static void *send_data(void *arg)
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
-        /* set packet CONFIRMABLE if interval >= 15 minutes */
-        if (cfg.interval >= CON_THRESH) {
+        /* set packet CONFIRMABLE if pwr_period >= 15 minutes */
+        if (cfg.pwr_period >= CON_THRESH) {
             coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
         }
         else {
@@ -184,7 +190,7 @@ static void *send_data(void *arg)
         }
 
         xtimer_sleep(sleeptime);
-        sleeptime = cfg.interval;
+        sleeptime = cfg.pwr_period;
     }
 
     /* reset pid to 0 if thread stopped */
@@ -231,6 +237,8 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
     switch (method_flag) {
         case COAP_GET:
+            puts("Got GET at /config");
+
             if (pdu->content_type == COAP_FORMAT_CBOR) {
                 puts("config handler: got cbor!");
                 dumpbytes(pdu->payload, pdu->payload_len);
@@ -238,20 +246,29 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
             CborEncoder encoder;
-            uint8_t encoder_buf[128];
+            uint8_t encoder_buf[64];
             cbor_encoder_init(&encoder, encoder_buf, sizeof(encoder_buf), 0);
 
             CborEncoder map;
-            CborError err = cbor_encoder_create_map(&encoder, &map, 1);   /* 1 == number of element in cfg struct */
+            CborError err = cbor_encoder_create_map(&encoder, &map, 4);   /* 4 == number of element in cfg struct */
             if (err != 0)
                 printf("error: create map %d\n", err);
 
-            err = cbor_encode_text_stringz(&map, "interval");
-            if (err != 0)
-                printf("error: encode string %d\n", err);
-            err = cbor_encode_uint(&map , (uint64_t)cfg.interval);
-            if (err != 0)
-                printf("error: encode interval %d\n", err);
+            /* encode pwr_period */
+            cbor_encode_text_stringz(&map, "pwr_period");
+            cbor_encode_uint(&map , (uint64_t)cfg.pwr_period);
+
+            /* encode switch_state */
+            cbor_encode_text_stringz(&map, "switch_state");
+            cbor_encode_boolean(&map , cfg.switch_state);
+
+            /* encode estop status */
+            cbor_encode_text_stringz(&map, "estop");
+            cbor_encode_boolean(&map , cfg.estop);
+
+            /* encode manual status */
+            cbor_encode_text_stringz(&map, "manual");
+            cbor_encode_boolean(&map , cfg.manual);
 
             err = cbor_encoder_close_container(&encoder, &map);
             if (err != 0)
@@ -263,7 +280,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             return gcoap_finish(pdu, sizeof(encoder_buf), COAP_FORMAT_CBOR);
 
         case COAP_PUT: {
-            puts("got put at config handler");
+            puts("got PUT at /config");
             if (pdu->content_type == COAP_FORMAT_CBOR) {
                 dumpbytes(pdu->payload, pdu->payload_len);
             }
@@ -285,16 +302,46 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             else
                 printf("error: cbor %d\n", err);
 
-            /* find interval pair in map */
-            CborValue interval;
-            cbor_value_map_find_value(&iterator, "period", &interval);
-            if (cbor_value_get_type(&interval) != CborIntegerType) {
-                puts("not integer");
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            /* find configs in map */
+
+            CborValue pwr_period;
+            cbor_value_map_find_value(&iterator, "PWR_PERIOD", &pwr_period);
+            if (cbor_value_get_type(&pwr_period) != CborInvalidType) {
+                cbor_value_get_uint64(&pwr_period, &cfg.pwr_period);
+                printf("Got new pwr_period: %llu\n", cfg.pwr_period);
+
+                /* we don't need to do anything here. senddata thread checks
+                 * pwr_periods and stop when 0 */
             }
-            /* get value of interval */
-            cbor_value_get_uint64(&interval, &cfg.interval);
-            printf("Got new interval: %llu\n", cfg.interval);
+
+
+            /* device can be turned on/off from frontend ONLY when manual == false */
+            if (!cfg.manual) {
+                CborValue switch_state;
+                cbor_value_map_find_value(&iterator, "SWITCH_STATE", &switch_state);
+                if (cbor_value_get_type(&switch_state) != CborInvalidType) {
+                    cbor_value_get_boolean(&switch_state, &cfg.switch_state);
+                    printf("Got new switch_state: %s\n", cfg.switch_state ? "true" : "false");
+
+                    /* switch the device on/off */
+                    // TODO
+                }
+            }
+
+            CborValue manual;
+            cbor_value_map_find_value(&iterator, "MANUAL", &manual);
+            if (cbor_value_get_type(&manual) != CborInvalidType) {
+                cbor_value_get_boolean(&manual, &cfg.manual);
+                printf("Got new manual: %s\n", cfg.manual ? "true" : "false");
+            }
+
+            // FIXME: do estop configurable from frontend? this maybe can be removed
+            CborValue estop;
+            cbor_value_map_find_value(&iterator, "ESTOP", &estop);
+            if (cbor_value_get_type(&estop) != CborInvalidType) {
+                cbor_value_get_boolean(&estop, &cfg.estop);
+                printf("Got new estop: %s\n", cfg.estop ? "true" : "false");
+            }
 
             if (senddata_pid == 0) {
                 /* start thread send_data */
@@ -342,27 +389,100 @@ static void find_base_station(char * base_addr)
     ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
 }
 
+static inline void send_cbor(const char *key, bool val, char *addr, char *port)
+{
+    uint8_t key_buf[32];
+    CborEncoder encoder;
+    CborEncoder map;
+    cbor_encoder_init(&encoder, key_buf, sizeof(key_buf), 0);
+    CborError err = cbor_encoder_create_map(&encoder, &map, 1);
+    if (err != 0)
+        printf("error: create map %d\n", err);
+
+    cbor_encode_text_stringz(&map, key);
+    cbor_encode_boolean(&map, val);
+    cbor_encoder_close_container(&encoder, &map);
+
+    dumpbytes((const uint8_t *)&key_buf, sizeof(key_buf));
+
+    coap_pkt_t pdu;
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_CONFIG);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+
+    memcpy(pdu.payload, &key_buf[0], sizeof(key_buf));
+    size_t len = gcoap_finish(&pdu, sizeof(key_buf), COAP_FORMAT_CBOR);
+    // printf("len: %u. ip: %s. port: %s\n", len, argv[2], argv[3]);
+    if (send(&buf[0], len, addr, port) == 0)
+    {
+        puts("gcoap_cli: msg send failed");
+    }
+}
+
 #if FEATURE_USE_BUTTONS
 /* Callback function for the estop pin */
 static void cb_estop(void *arg)
 {
+    (void)arg;
     // TODO: implement code for sending via coap
-    printf("SPR: INT -> cb estop\n");
-    printf("INT: external interrupt from pin %i\n", (int)arg);
+    // NOTE: Do not use something like printf here!
 }
 
 /* Callback function for the manual pin */
+/*
 static void cb_manual(void *arg)
 {
+    (void)arg;
     // TODO: implement code for sending via coap
-    printf("SPR: INT ->cb manual\n");
-    printf("INT: external interrupt from pin %i\n", (int)arg);
+    // NOTE: Do not use something like printf here!
 }
+*/
 #endif /* FEATURE_USE_BUTTONS */
 
 void spr_init(lcd1602a_dev_t * lcd)
 {
 #if FEATURE_USE_BUTTONS
+
+    /* Initializing the pin for the estop button.
+     * NOTE: Try to use another pin configuration for port and pin number!
+     */
+    int estop_pin = 2;
+    int estop_port = 4; /*< PORT_A = 0; B = 1; C = 2; D = 3; E = 4 */
+
+    estop_btn = GPIO_PIN(estop_port, estop_pin);
+
+    gpio_irq_enable(estop_btn);
+
+    if (gpio_init_int(estop_btn, GPIO_IN_PU, GPIO_RISING, cb_estop, (void *)estop_pin) < 0) {
+        printf(">>> ERROR: init_int of GPIO_PIN(%i, %i) failed\n", estop_port, estop_pin);
+    } else {
+        printf(">>> GPIO_PIN(%i, %i) successfully initialized as ext int\n", estop_port, estop_pin);
+    }
+
+    /* Initializing the pin for the manual button.
+     * NOTE: Try to use another pin configuration for port and pin number!
+     */
+
+    // NOTE: First try one button at the time!! Try the manual button, when
+    // The estop button works!
+    /*
+    int manual_pin = 3;
+    int manual_port = 4;
+    manual_btn = GPIO_PIN(manual_port, manual_pin);
+
+    gpio_irq_enable(manual_btn);
+
+    if (gpio_init_int(manual_btn, GPIO_IN_PU, GPIO_RISING, cb_manual, (void *)manual_pin) < 0) {
+        printf(">>> ERROR: init_int of GPIO_PIN(%i, %i) failed\n", manual_port, manual_pin);
+    } else {
+        printf(">>> GPIO_PIN(%i, %i) successfully initialized as ext int\n", manual_port, manual_pin);
+    }
+    */
+
+    /*
+    // We not use button.c for the moment. Instead we just use directly
+    // The RIOT GPIO abstraction layer to initialize the pins for the Buttons
+    // and the interrupts. Just in case the button-wrapper does not work atm.
     int port_e = 4;
     int ret_code = 0;
 
@@ -377,40 +497,19 @@ void spr_init(lcd1602a_dev_t * lcd)
     if (ret_code < 0) {
         printf("SPR: INIT -> failed to initialize manual button\n");
     }
-#endif
+    */
+#else
+    printf("SPR: Buttons not enabled!\n");
+#endif /* FEATURE_USE_BUTTONS */
+
 
     /* Initialize the adc on line 0 with 12 bit resolution. */
     init_adc(LINE, RES);
 
 #if FEATURE_USE_DISPLAY
     spr_lcd = lcd;
-    /* Initialize the LCD */
-    // NOTE: PhyWave board config! Because we are only use this one here!
-    /*
-    int PORT_A = 0;
-    int PORT_C = 2;
-    int PORT_E = 4;
-
-    spr_lcd.register_select_pin = GPIO_PIN(PORT_E, 4);
-    spr_lcd.read_write_pin = GPIO_PIN(PORT_A, 19);
-    spr_lcd.enable_pin = GPIO_PIN(PORT_A, 2);
-    spr_lcd.data_pins[0] = 0; // Not used. We use a 4-Bit interface here.
-    spr_lcd.data_pins[1] = 0; // Not used.
-    spr_lcd.data_pins[2] = 0; // Not used.
-    spr_lcd.data_pins[3] = 0; // Not used.
-    spr_lcd.data_pins[4] = GPIO_PIN(PORT_A, 1);
-    spr_lcd.data_pins[5] = GPIO_PIN(PORT_C, 4);
-    spr_lcd.data_pins[6] = GPIO_PIN(PORT_C, 7);
-    spr_lcd.data_pins[7] = GPIO_PIN(PORT_C, 5);
-    spr_lcd.iface = spr_iface;
-    spr_lcd.dotsize = spr_dotsize;
-    spr_lcd.lines = 2;
-    spr_lcd.collumns = 16;
-
-    lcd1602a_init(spr_lcd);
-    */
 #else
-    printf("SPR: lcd not used\n");
+    printf("SPR: LCD not enabled!\n");
     (void)lcd;
 #endif /* FEATURE_USE_DISPLAY */
 
@@ -425,4 +524,62 @@ void spr_init(lcd1602a_dev_t * lcd)
     xtimer_sleep(2);
     /* Register Basisstation */
     _register(base_addr);
+}
+
+/**
+* Ein 'true' signalisiert, dass der Nutzen den "E-Stop"
+* Button auf dem Messknoten gedrueckt hat und der
+* Messknoten die Stromzufuhr gekappt hat.
+ */
+int estop_cmd(int argc, char **argv)
+{
+    /* Check if we use the right amount of argmunets. */
+    if (argc < 2 || argc > 4) {
+        printf("estop usage: estop [ on | off ]\n");
+        return 1;
+    }
+
+    /* Compare the first argument and turn it on or off. */
+    if (strcmp(argv[1], "on") == 0) {
+        send_cbor("ESTOP", true, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else if (strcmp(argv[1], "off") == 0) {
+        send_cbor("ESTOP", false, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else {
+        printf("Usage: estop [ on | off ]\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+/**
+* Signalisiert, dass der Nutzer den 'Manual-Modus am
+* Messknoten aktiviert hat: d.h., dass der 'switch_state'
+* keinen Einfluss mehr hat; Strom ist dauerhaft an.
+* Dieser Manual-Mode kann vom Endnutzer genutzt werden um
+* den switch_state zu ueberschreiben.
+ */
+int manual_cmd(int argc, char **argv)
+{
+    /* Check if we use the right amount of argmunets. */
+    if (argc < 2 || argc > 4) {
+        printf("Usage: manual [ on | off ]\n");
+        return 1;
+    }
+
+    /* Compare the first argument and turn it on or off. */
+    if (strcmp(argv[1], "on") == 0) {
+        send_cbor("MANUAL", true, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else if (strcmp(argv[1], "off") == 0) {
+        send_cbor("MANUAL", false, argv[2], argv[3]);
+        // TODO: Update the spr_config parameters
+    } else {
+        printf("Usage: manual [ on | off ]\n");
+        return 1;
+    }
+
+    return 0;
 }
