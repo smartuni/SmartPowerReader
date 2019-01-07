@@ -88,6 +88,12 @@ public class Configuration implements Saveable, Loadable
 			mCounter = counter;
 		}
 		
+		@Override
+		public String toString( )
+		{
+			return super.toString().toLowerCase();
+		}
+		
 		public JsonValue getDefault( ) { return mDefault; }
 		public boolean isCounter( ) { return mCounter; }
 		public boolean isWriteable( ) { return mWriteable; }

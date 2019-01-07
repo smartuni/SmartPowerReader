@@ -23,6 +23,7 @@ import spr.net.UDPBroker;
 import spr.net.UniqueAddress;
 import spr.net.common.Message;
 import spr.net.common.Node;
+import spr.resource.ConfigResource;
 import spr.resource.HelloResource;
 import spr.resource.MeasurementResource;
 import spr.task.Task;
@@ -229,6 +230,7 @@ public class SystemBuilder
 			Node<Task> net = new Node<>(Units.IDs.COAP);
 			
 			mServer.add(new MeasurementResource(Configuration.Feature.PWR_PERIOD, net));
+			mServer.add(new ConfigResource(net));
 			mServer.add(new HelloResource(net));
 			
 			builder.install(new CoapServerUnit(mServer, net));
