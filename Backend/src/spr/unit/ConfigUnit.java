@@ -255,6 +255,8 @@ public class ConfigUnit extends BaseUnit
 				coap = new UniqueAddress(Units.IDs.COAP, e.location);
 			}
 			
+			LOG.log("PUT coap://[%s]:5683/config (%s)", e.ip, data.toString());
+			
 			getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
 			
 			e.data.stream().filter(Feature::isCounter).forEach(f -> setTimer(e, f));
