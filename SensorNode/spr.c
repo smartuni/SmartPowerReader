@@ -39,6 +39,9 @@
     //button_t * manual_btn;
     gpio_t estop_btn;
     gpio_t manual_btn;
+    gpio_t estop_led = GPIO_PIN(PORT_D, 5);
+    gpio_t manual_led = GPIO_PIN(PORT_E, 3);
+    gpio_t switch_state_led = GPIO_PIN(PORT_D, 7);
 #endif /* FEATURE_USE_BUTTONS */
 
 #include "lcd1602a.h"
@@ -229,6 +232,22 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
   return -1;
 }
 
+/* Called everytime one of cfg values (estop, manual, switch_state) changed */
+static void _eval_switch_state_led(void) {
+    if (cfg.estop) {
+        gpio_write(switch_state_led, 0);
+        puts("DEBUG: switch_state_led turned OFF");
+    }
+    else if (cfg.manual || cfg.switch_state) {
+        gpio_write(switch_state_led, 1);
+        puts("DEBUG: switch_state_led turned ON");
+    }
+    else {
+        gpio_write(switch_state_led, 0);
+        puts("DEBUG: switch_state_led turned OFF");
+    }
+}
+
 static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void)ctx;
@@ -314,19 +333,14 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
                  * pwr_periods and stop when 0 */
             }
 
-
             /* device can be turned on/off from frontend ONLY when manual == false 
              * AND estop == false */
-            if (!cfg.manual && !cfg.estop) {
-                CborValue switch_state;
-                cbor_value_map_find_value(&iterator, "switch_state", &switch_state);
-                if (cbor_value_get_type(&switch_state) != CborInvalidType) {
-                    cbor_value_get_boolean(&switch_state, &cfg.switch_state);
-                    printf("Got new switch_state: %s\n", cfg.switch_state ? "true" : "false");
-
-                    /* switch the device on/off */
-                    // TODO
-                }
+            CborValue switch_state;
+            cbor_value_map_find_value(&iterator, "switch_state", &switch_state);
+            if (cbor_value_get_type(&switch_state) != CborInvalidType) {
+                cbor_value_get_boolean(&switch_state, &cfg.switch_state);
+                printf("Got new switch_state: %s\n", cfg.switch_state ? "true" : "false");
+                _eval_switch_state_led();
             }
 
             if (senddata_pid == 0) {
@@ -410,19 +424,28 @@ static inline void send_cbor(const char *key, bool val, char *addr, char *port)
 static void cb_estop(void *arg)
 {
     (void)arg;
+    puts("estop pressed");
     // TODO: implement code for sending via coap
     // NOTE: Do not use something like printf here!
+
+    cfg.estop = !cfg.estop;
+    send_cbor("estop", cfg.estop, base_addr, BACKEND_PORT);
+    _eval_switch_state_led();
 }
 
 /* Callback function for the manual pin */
-/*
 static void cb_manual(void *arg)
 {
     (void)arg;
+    puts("manual pressed");
     // TODO: implement code for sending via coap
     // NOTE: Do not use something like printf here!
+
+    cfg.manual = !cfg.manual;
+    send_cbor("manual", cfg.manual, base_addr, BACKEND_PORT);
+    _eval_switch_state_led();
 }
-*/
+
 #endif /* FEATURE_USE_BUTTONS */
 
 void spr_init(lcd1602a_dev_t * lcd)
@@ -432,7 +455,7 @@ void spr_init(lcd1602a_dev_t * lcd)
     /* Initializing the pin for the estop button.
      * NOTE: Try to use another pin configuration for port and pin number!
      */
-    int estop_pin = 2;
+    int estop_pin = 18;
     int estop_port = 4; /*< PORT_A = 0; B = 1; C = 2; D = 3; E = 4 */
 
     estop_btn = GPIO_PIN(estop_port, estop_pin);
@@ -451,8 +474,7 @@ void spr_init(lcd1602a_dev_t * lcd)
 
     // NOTE: First try one button at the time!! Try the manual button, when
     // The estop button works!
-    /*
-    int manual_pin = 3;
+    int manual_pin = 19;
     int manual_port = 4;
     manual_btn = GPIO_PIN(manual_port, manual_pin);
 
@@ -463,8 +485,11 @@ void spr_init(lcd1602a_dev_t * lcd)
     } else {
         printf(">>> GPIO_PIN(%i, %i) successfully initialized as ext int\n", manual_port, manual_pin);
     }
-    */
 
+    gpio_init(manual_led, GPIO_OUT);
+    gpio_init(estop_led, GPIO_OUT);
+    gpio_init(switch_state_led, GPIO_OUT);
+    gpio_clear(switch_state_led);
     /*
     // We not use button.c for the moment. Instead we just use directly
     // The RIOT GPIO abstraction layer to initialize the pins for the Buttons
@@ -521,21 +546,23 @@ int estop_cmd(int argc, char **argv)
 {
     /* Check if we use the right amount of argmunets. */
     if (argc < 2 || argc > 4) {
-        printf("estop usage: estop [ on | off ]\n");
+        printf("estop usage: estop [ on | off | status ]\n");
         return 1;
     }
 
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
-        send_cbor("ESTOP", true, base_addr, BACKEND_PORT);
+        send_cbor("estop", true, base_addr, BACKEND_PORT);
         cfg.estop = true;
-        // TODO: Update the spr_config parameters
+        _eval_switch_state_led();
     } else if (strcmp(argv[1], "off") == 0) {
-        send_cbor("ESTOP", false, base_addr, BACKEND_PORT);
+        send_cbor("estop", false, base_addr, BACKEND_PORT);
         cfg.estop = false;
-        // TODO: Update the spr_config parameters
+        _eval_switch_state_led();
+    } else if (strcmp(argv[1], "status") == 0) {
+        printf("Current estop status: %s\n", cfg.estop ? "true" : "false");
     } else {
-        printf("Usage: estop [ on | off ]\n");
+        printf("Usage: estop [ on | off | status]\n");
         return 1;
     }
 
@@ -553,23 +580,54 @@ int manual_cmd(int argc, char **argv)
 {
     /* Check if we use the right amount of argmunets. */
     if (argc < 2 || argc > 4) {
-        printf("Usage: manual [ on | off ]\n");
+        printf("Usage: manual [ on | off | status ]\n");
         return 1;
     }
 
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
-        send_cbor("MANUAL", true, base_addr, BACKEND_PORT);
+        send_cbor("manual", true, base_addr, BACKEND_PORT);
         cfg.manual = true;
-        // TODO: Update the spr_config parameters
+        _eval_switch_state_led();
     } else if (strcmp(argv[1], "off") == 0) {
-        send_cbor("MANUAL", false, base_addr, BACKEND_PORT);
+        send_cbor("manual", false, base_addr, BACKEND_PORT);
         cfg.manual = false;
-        // TODO: Update the spr_config parameters
+        _eval_switch_state_led();
+    } else if (strcmp(argv[1], "status") == 0) {
+        printf("Current manual status: %s\n", cfg.manual ? "true" : "false");
     } else {
-        printf("Usage: manual [ on | off ]\n");
+        printf("Usage: manual [ on | off | status ]\n");
         return 1;
     }
+
+    return 0;
+}
+
+int switch_cmd(int argc, char **argv)
+{
+    /* Check if we use the right amount of argmunets. */
+    if (argc < 2 || argc > 4) {
+        printf("Usage: switch [ on | off | status ]\n");
+        return 1;
+    }
+
+    /* Compare the first argument and turn it on or off. */
+    if (strcmp(argv[1], "on") == 0) {
+        send_cbor("switch", true, base_addr, BACKEND_PORT);
+        cfg.switch_state = true;
+        // TODO: Update the spr_config parameters
+        _eval_switch_state_led();
+    } else if (strcmp(argv[1], "off") == 0) {
+        send_cbor("switch", false, base_addr, BACKEND_PORT);
+        cfg.switch_state = false;
+        _eval_switch_state_led();
+    } else if (strcmp(argv[1], "status") == 0) {
+        printf("Current switch_state: %s\n", cfg.switch_state ? "true" : "false");
+    } else {
+        printf("Usage: switch [ on | off | status]\n");
+        return 1;
+    }
+
 
     return 0;
 }
