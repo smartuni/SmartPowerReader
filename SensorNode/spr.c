@@ -305,7 +305,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             /* find configs in map */
 
             CborValue pwr_period;
-            cbor_value_map_find_value(&iterator, "PWR_PERIOD", &pwr_period);
+            cbor_value_map_find_value(&iterator, "pwr_period", &pwr_period);
             if (cbor_value_get_type(&pwr_period) != CborInvalidType) {
                 cbor_value_get_uint64(&pwr_period, &cfg.pwr_period);
                 printf("Got new pwr_period: %llu\n", cfg.pwr_period);
@@ -319,7 +319,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
              * AND estop == false */
             if (!cfg.manual && !cfg.estop) {
                 CborValue switch_state;
-                cbor_value_map_find_value(&iterator, "SWITCH_STATE", &switch_state);
+                cbor_value_map_find_value(&iterator, "switch_state", &switch_state);
                 if (cbor_value_get_type(&switch_state) != CborInvalidType) {
                     cbor_value_get_boolean(&switch_state, &cfg.switch_state);
                     printf("Got new switch_state: %s\n", cfg.switch_state ? "true" : "false");
@@ -528,9 +528,11 @@ int estop_cmd(int argc, char **argv)
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
         send_cbor("ESTOP", true, base_addr, BACKEND_PORT);
+        cfg.estop = true;
         // TODO: Update the spr_config parameters
     } else if (strcmp(argv[1], "off") == 0) {
         send_cbor("ESTOP", false, base_addr, BACKEND_PORT);
+        cfg.estop = false;
         // TODO: Update the spr_config parameters
     } else {
         printf("Usage: estop [ on | off ]\n");
@@ -558,9 +560,11 @@ int manual_cmd(int argc, char **argv)
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
         send_cbor("MANUAL", true, base_addr, BACKEND_PORT);
+        cfg.manual = true;
         // TODO: Update the spr_config parameters
     } else if (strcmp(argv[1], "off") == 0) {
         send_cbor("MANUAL", false, base_addr, BACKEND_PORT);
+        cfg.manual = false;
         // TODO: Update the spr_config parameters
     } else {
         printf("Usage: manual [ on | off ]\n");

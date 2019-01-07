@@ -1,5 +1,286 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
+/***/ "./node_modules/moment/locale sync recursive ^\\.\\/.*$":
+/*!**************************************************!*\
+  !*** ./node_modules/moment/locale sync ^\.\/.*$ ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./af": "./node_modules/moment/locale/af.js",
+	"./af.js": "./node_modules/moment/locale/af.js",
+	"./ar": "./node_modules/moment/locale/ar.js",
+	"./ar-dz": "./node_modules/moment/locale/ar-dz.js",
+	"./ar-dz.js": "./node_modules/moment/locale/ar-dz.js",
+	"./ar-kw": "./node_modules/moment/locale/ar-kw.js",
+	"./ar-kw.js": "./node_modules/moment/locale/ar-kw.js",
+	"./ar-ly": "./node_modules/moment/locale/ar-ly.js",
+	"./ar-ly.js": "./node_modules/moment/locale/ar-ly.js",
+	"./ar-ma": "./node_modules/moment/locale/ar-ma.js",
+	"./ar-ma.js": "./node_modules/moment/locale/ar-ma.js",
+	"./ar-sa": "./node_modules/moment/locale/ar-sa.js",
+	"./ar-sa.js": "./node_modules/moment/locale/ar-sa.js",
+	"./ar-tn": "./node_modules/moment/locale/ar-tn.js",
+	"./ar-tn.js": "./node_modules/moment/locale/ar-tn.js",
+	"./ar.js": "./node_modules/moment/locale/ar.js",
+	"./az": "./node_modules/moment/locale/az.js",
+	"./az.js": "./node_modules/moment/locale/az.js",
+	"./be": "./node_modules/moment/locale/be.js",
+	"./be.js": "./node_modules/moment/locale/be.js",
+	"./bg": "./node_modules/moment/locale/bg.js",
+	"./bg.js": "./node_modules/moment/locale/bg.js",
+	"./bm": "./node_modules/moment/locale/bm.js",
+	"./bm.js": "./node_modules/moment/locale/bm.js",
+	"./bn": "./node_modules/moment/locale/bn.js",
+	"./bn.js": "./node_modules/moment/locale/bn.js",
+	"./bo": "./node_modules/moment/locale/bo.js",
+	"./bo.js": "./node_modules/moment/locale/bo.js",
+	"./br": "./node_modules/moment/locale/br.js",
+	"./br.js": "./node_modules/moment/locale/br.js",
+	"./bs": "./node_modules/moment/locale/bs.js",
+	"./bs.js": "./node_modules/moment/locale/bs.js",
+	"./ca": "./node_modules/moment/locale/ca.js",
+	"./ca.js": "./node_modules/moment/locale/ca.js",
+	"./cs": "./node_modules/moment/locale/cs.js",
+	"./cs.js": "./node_modules/moment/locale/cs.js",
+	"./cv": "./node_modules/moment/locale/cv.js",
+	"./cv.js": "./node_modules/moment/locale/cv.js",
+	"./cy": "./node_modules/moment/locale/cy.js",
+	"./cy.js": "./node_modules/moment/locale/cy.js",
+	"./da": "./node_modules/moment/locale/da.js",
+	"./da.js": "./node_modules/moment/locale/da.js",
+	"./de": "./node_modules/moment/locale/de.js",
+	"./de-at": "./node_modules/moment/locale/de-at.js",
+	"./de-at.js": "./node_modules/moment/locale/de-at.js",
+	"./de-ch": "./node_modules/moment/locale/de-ch.js",
+	"./de-ch.js": "./node_modules/moment/locale/de-ch.js",
+	"./de.js": "./node_modules/moment/locale/de.js",
+	"./dv": "./node_modules/moment/locale/dv.js",
+	"./dv.js": "./node_modules/moment/locale/dv.js",
+	"./el": "./node_modules/moment/locale/el.js",
+	"./el.js": "./node_modules/moment/locale/el.js",
+	"./en-au": "./node_modules/moment/locale/en-au.js",
+	"./en-au.js": "./node_modules/moment/locale/en-au.js",
+	"./en-ca": "./node_modules/moment/locale/en-ca.js",
+	"./en-ca.js": "./node_modules/moment/locale/en-ca.js",
+	"./en-gb": "./node_modules/moment/locale/en-gb.js",
+	"./en-gb.js": "./node_modules/moment/locale/en-gb.js",
+	"./en-ie": "./node_modules/moment/locale/en-ie.js",
+	"./en-ie.js": "./node_modules/moment/locale/en-ie.js",
+	"./en-il": "./node_modules/moment/locale/en-il.js",
+	"./en-il.js": "./node_modules/moment/locale/en-il.js",
+	"./en-nz": "./node_modules/moment/locale/en-nz.js",
+	"./en-nz.js": "./node_modules/moment/locale/en-nz.js",
+	"./eo": "./node_modules/moment/locale/eo.js",
+	"./eo.js": "./node_modules/moment/locale/eo.js",
+	"./es": "./node_modules/moment/locale/es.js",
+	"./es-do": "./node_modules/moment/locale/es-do.js",
+	"./es-do.js": "./node_modules/moment/locale/es-do.js",
+	"./es-us": "./node_modules/moment/locale/es-us.js",
+	"./es-us.js": "./node_modules/moment/locale/es-us.js",
+	"./es.js": "./node_modules/moment/locale/es.js",
+	"./et": "./node_modules/moment/locale/et.js",
+	"./et.js": "./node_modules/moment/locale/et.js",
+	"./eu": "./node_modules/moment/locale/eu.js",
+	"./eu.js": "./node_modules/moment/locale/eu.js",
+	"./fa": "./node_modules/moment/locale/fa.js",
+	"./fa.js": "./node_modules/moment/locale/fa.js",
+	"./fi": "./node_modules/moment/locale/fi.js",
+	"./fi.js": "./node_modules/moment/locale/fi.js",
+	"./fo": "./node_modules/moment/locale/fo.js",
+	"./fo.js": "./node_modules/moment/locale/fo.js",
+	"./fr": "./node_modules/moment/locale/fr.js",
+	"./fr-ca": "./node_modules/moment/locale/fr-ca.js",
+	"./fr-ca.js": "./node_modules/moment/locale/fr-ca.js",
+	"./fr-ch": "./node_modules/moment/locale/fr-ch.js",
+	"./fr-ch.js": "./node_modules/moment/locale/fr-ch.js",
+	"./fr.js": "./node_modules/moment/locale/fr.js",
+	"./fy": "./node_modules/moment/locale/fy.js",
+	"./fy.js": "./node_modules/moment/locale/fy.js",
+	"./gd": "./node_modules/moment/locale/gd.js",
+	"./gd.js": "./node_modules/moment/locale/gd.js",
+	"./gl": "./node_modules/moment/locale/gl.js",
+	"./gl.js": "./node_modules/moment/locale/gl.js",
+	"./gom-latn": "./node_modules/moment/locale/gom-latn.js",
+	"./gom-latn.js": "./node_modules/moment/locale/gom-latn.js",
+	"./gu": "./node_modules/moment/locale/gu.js",
+	"./gu.js": "./node_modules/moment/locale/gu.js",
+	"./he": "./node_modules/moment/locale/he.js",
+	"./he.js": "./node_modules/moment/locale/he.js",
+	"./hi": "./node_modules/moment/locale/hi.js",
+	"./hi.js": "./node_modules/moment/locale/hi.js",
+	"./hr": "./node_modules/moment/locale/hr.js",
+	"./hr.js": "./node_modules/moment/locale/hr.js",
+	"./hu": "./node_modules/moment/locale/hu.js",
+	"./hu.js": "./node_modules/moment/locale/hu.js",
+	"./hy-am": "./node_modules/moment/locale/hy-am.js",
+	"./hy-am.js": "./node_modules/moment/locale/hy-am.js",
+	"./id": "./node_modules/moment/locale/id.js",
+	"./id.js": "./node_modules/moment/locale/id.js",
+	"./is": "./node_modules/moment/locale/is.js",
+	"./is.js": "./node_modules/moment/locale/is.js",
+	"./it": "./node_modules/moment/locale/it.js",
+	"./it.js": "./node_modules/moment/locale/it.js",
+	"./ja": "./node_modules/moment/locale/ja.js",
+	"./ja.js": "./node_modules/moment/locale/ja.js",
+	"./jv": "./node_modules/moment/locale/jv.js",
+	"./jv.js": "./node_modules/moment/locale/jv.js",
+	"./ka": "./node_modules/moment/locale/ka.js",
+	"./ka.js": "./node_modules/moment/locale/ka.js",
+	"./kk": "./node_modules/moment/locale/kk.js",
+	"./kk.js": "./node_modules/moment/locale/kk.js",
+	"./km": "./node_modules/moment/locale/km.js",
+	"./km.js": "./node_modules/moment/locale/km.js",
+	"./kn": "./node_modules/moment/locale/kn.js",
+	"./kn.js": "./node_modules/moment/locale/kn.js",
+	"./ko": "./node_modules/moment/locale/ko.js",
+	"./ko.js": "./node_modules/moment/locale/ko.js",
+	"./ku": "./node_modules/moment/locale/ku.js",
+	"./ku.js": "./node_modules/moment/locale/ku.js",
+	"./ky": "./node_modules/moment/locale/ky.js",
+	"./ky.js": "./node_modules/moment/locale/ky.js",
+	"./lb": "./node_modules/moment/locale/lb.js",
+	"./lb.js": "./node_modules/moment/locale/lb.js",
+	"./lo": "./node_modules/moment/locale/lo.js",
+	"./lo.js": "./node_modules/moment/locale/lo.js",
+	"./lt": "./node_modules/moment/locale/lt.js",
+	"./lt.js": "./node_modules/moment/locale/lt.js",
+	"./lv": "./node_modules/moment/locale/lv.js",
+	"./lv.js": "./node_modules/moment/locale/lv.js",
+	"./me": "./node_modules/moment/locale/me.js",
+	"./me.js": "./node_modules/moment/locale/me.js",
+	"./mi": "./node_modules/moment/locale/mi.js",
+	"./mi.js": "./node_modules/moment/locale/mi.js",
+	"./mk": "./node_modules/moment/locale/mk.js",
+	"./mk.js": "./node_modules/moment/locale/mk.js",
+	"./ml": "./node_modules/moment/locale/ml.js",
+	"./ml.js": "./node_modules/moment/locale/ml.js",
+	"./mn": "./node_modules/moment/locale/mn.js",
+	"./mn.js": "./node_modules/moment/locale/mn.js",
+	"./mr": "./node_modules/moment/locale/mr.js",
+	"./mr.js": "./node_modules/moment/locale/mr.js",
+	"./ms": "./node_modules/moment/locale/ms.js",
+	"./ms-my": "./node_modules/moment/locale/ms-my.js",
+	"./ms-my.js": "./node_modules/moment/locale/ms-my.js",
+	"./ms.js": "./node_modules/moment/locale/ms.js",
+	"./mt": "./node_modules/moment/locale/mt.js",
+	"./mt.js": "./node_modules/moment/locale/mt.js",
+	"./my": "./node_modules/moment/locale/my.js",
+	"./my.js": "./node_modules/moment/locale/my.js",
+	"./nb": "./node_modules/moment/locale/nb.js",
+	"./nb.js": "./node_modules/moment/locale/nb.js",
+	"./ne": "./node_modules/moment/locale/ne.js",
+	"./ne.js": "./node_modules/moment/locale/ne.js",
+	"./nl": "./node_modules/moment/locale/nl.js",
+	"./nl-be": "./node_modules/moment/locale/nl-be.js",
+	"./nl-be.js": "./node_modules/moment/locale/nl-be.js",
+	"./nl.js": "./node_modules/moment/locale/nl.js",
+	"./nn": "./node_modules/moment/locale/nn.js",
+	"./nn.js": "./node_modules/moment/locale/nn.js",
+	"./pa-in": "./node_modules/moment/locale/pa-in.js",
+	"./pa-in.js": "./node_modules/moment/locale/pa-in.js",
+	"./pl": "./node_modules/moment/locale/pl.js",
+	"./pl.js": "./node_modules/moment/locale/pl.js",
+	"./pt": "./node_modules/moment/locale/pt.js",
+	"./pt-br": "./node_modules/moment/locale/pt-br.js",
+	"./pt-br.js": "./node_modules/moment/locale/pt-br.js",
+	"./pt.js": "./node_modules/moment/locale/pt.js",
+	"./ro": "./node_modules/moment/locale/ro.js",
+	"./ro.js": "./node_modules/moment/locale/ro.js",
+	"./ru": "./node_modules/moment/locale/ru.js",
+	"./ru.js": "./node_modules/moment/locale/ru.js",
+	"./sd": "./node_modules/moment/locale/sd.js",
+	"./sd.js": "./node_modules/moment/locale/sd.js",
+	"./se": "./node_modules/moment/locale/se.js",
+	"./se.js": "./node_modules/moment/locale/se.js",
+	"./si": "./node_modules/moment/locale/si.js",
+	"./si.js": "./node_modules/moment/locale/si.js",
+	"./sk": "./node_modules/moment/locale/sk.js",
+	"./sk.js": "./node_modules/moment/locale/sk.js",
+	"./sl": "./node_modules/moment/locale/sl.js",
+	"./sl.js": "./node_modules/moment/locale/sl.js",
+	"./sq": "./node_modules/moment/locale/sq.js",
+	"./sq.js": "./node_modules/moment/locale/sq.js",
+	"./sr": "./node_modules/moment/locale/sr.js",
+	"./sr-cyrl": "./node_modules/moment/locale/sr-cyrl.js",
+	"./sr-cyrl.js": "./node_modules/moment/locale/sr-cyrl.js",
+	"./sr.js": "./node_modules/moment/locale/sr.js",
+	"./ss": "./node_modules/moment/locale/ss.js",
+	"./ss.js": "./node_modules/moment/locale/ss.js",
+	"./sv": "./node_modules/moment/locale/sv.js",
+	"./sv.js": "./node_modules/moment/locale/sv.js",
+	"./sw": "./node_modules/moment/locale/sw.js",
+	"./sw.js": "./node_modules/moment/locale/sw.js",
+	"./ta": "./node_modules/moment/locale/ta.js",
+	"./ta.js": "./node_modules/moment/locale/ta.js",
+	"./te": "./node_modules/moment/locale/te.js",
+	"./te.js": "./node_modules/moment/locale/te.js",
+	"./tet": "./node_modules/moment/locale/tet.js",
+	"./tet.js": "./node_modules/moment/locale/tet.js",
+	"./tg": "./node_modules/moment/locale/tg.js",
+	"./tg.js": "./node_modules/moment/locale/tg.js",
+	"./th": "./node_modules/moment/locale/th.js",
+	"./th.js": "./node_modules/moment/locale/th.js",
+	"./tl-ph": "./node_modules/moment/locale/tl-ph.js",
+	"./tl-ph.js": "./node_modules/moment/locale/tl-ph.js",
+	"./tlh": "./node_modules/moment/locale/tlh.js",
+	"./tlh.js": "./node_modules/moment/locale/tlh.js",
+	"./tr": "./node_modules/moment/locale/tr.js",
+	"./tr.js": "./node_modules/moment/locale/tr.js",
+	"./tzl": "./node_modules/moment/locale/tzl.js",
+	"./tzl.js": "./node_modules/moment/locale/tzl.js",
+	"./tzm": "./node_modules/moment/locale/tzm.js",
+	"./tzm-latn": "./node_modules/moment/locale/tzm-latn.js",
+	"./tzm-latn.js": "./node_modules/moment/locale/tzm-latn.js",
+	"./tzm.js": "./node_modules/moment/locale/tzm.js",
+	"./ug-cn": "./node_modules/moment/locale/ug-cn.js",
+	"./ug-cn.js": "./node_modules/moment/locale/ug-cn.js",
+	"./uk": "./node_modules/moment/locale/uk.js",
+	"./uk.js": "./node_modules/moment/locale/uk.js",
+	"./ur": "./node_modules/moment/locale/ur.js",
+	"./ur.js": "./node_modules/moment/locale/ur.js",
+	"./uz": "./node_modules/moment/locale/uz.js",
+	"./uz-latn": "./node_modules/moment/locale/uz-latn.js",
+	"./uz-latn.js": "./node_modules/moment/locale/uz-latn.js",
+	"./uz.js": "./node_modules/moment/locale/uz.js",
+	"./vi": "./node_modules/moment/locale/vi.js",
+	"./vi.js": "./node_modules/moment/locale/vi.js",
+	"./x-pseudo": "./node_modules/moment/locale/x-pseudo.js",
+	"./x-pseudo.js": "./node_modules/moment/locale/x-pseudo.js",
+	"./yo": "./node_modules/moment/locale/yo.js",
+	"./yo.js": "./node_modules/moment/locale/yo.js",
+	"./zh-cn": "./node_modules/moment/locale/zh-cn.js",
+	"./zh-cn.js": "./node_modules/moment/locale/zh-cn.js",
+	"./zh-hk": "./node_modules/moment/locale/zh-hk.js",
+	"./zh-hk.js": "./node_modules/moment/locale/zh-hk.js",
+	"./zh-tw": "./node_modules/moment/locale/zh-tw.js",
+	"./zh-tw.js": "./node_modules/moment/locale/zh-tw.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
+
+/***/ }),
+
 /***/ "./src/$$_lazy_route_resource lazy recursive":
 /*!**********************************************************!*\
   !*** ./src/$$_lazy_route_resource lazy namespace object ***!
@@ -159,21 +440,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
 /* harmony import */ var core_footer_footer_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core/footer/footer.component */ "./src/app/core/footer/footer.component.ts");
 /* harmony import */ var core_header_header_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core/header/header.component */ "./src/app/core/header/header.component.ts");
-/* harmony import */ var _modules_home_components_edit_edit_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/home/components/edit/edit.component */ "./src/app/modules/home/components/edit/edit.component.ts");
-/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./app-routing.module */ "./src/app/app-routing.module.ts");
-/* harmony import */ var _modules_home_home_module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/home/home.module */ "./src/app/modules/home/home.module.ts");
-/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
-/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
-/* harmony import */ var _store_reducers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./store/reducers */ "./src/app/store/reducers/index.ts");
-/* harmony import */ var _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ngrx/store-devtools */ "./node_modules/@ngrx/store-devtools/fesm5/store-devtools.js");
-/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./app-routing.module */ "./src/app/app-routing.module.ts");
+/* harmony import */ var _modules_home_home_module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/home/home.module */ "./src/app/modules/home/home.module.ts");
+/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var _store_reducers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./store/reducers */ "./src/app/store/reducers/index.ts");
+/* harmony import */ var _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ngrx/store-devtools */ "./node_modules/@ngrx/store-devtools/fesm5/store-devtools.js");
+/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
 
 
 
@@ -198,17 +477,14 @@ var AppModule = /** @class */ (function () {
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
-                _app_routing_module__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"],
-                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_8__["BrowserAnimationsModule"],
-                _modules_home_home_module__WEBPACK_IMPORTED_MODULE_7__["HomeModule"],
-                _ngrx_store__WEBPACK_IMPORTED_MODULE_9__["StoreModule"].forRoot(_store_reducers__WEBPACK_IMPORTED_MODULE_10__["reducers"], { metaReducers: _store_reducers__WEBPACK_IMPORTED_MODULE_10__["metaReducers"] }),
-                !environments_environment__WEBPACK_IMPORTED_MODULE_12__["environment"].production ? _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_11__["StoreDevtoolsModule"].instrument() : [],
+                _app_routing_module__WEBPACK_IMPORTED_MODULE_5__["AppRoutingModule"],
+                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
+                _modules_home_home_module__WEBPACK_IMPORTED_MODULE_6__["HomeModule"],
+                _ngrx_store__WEBPACK_IMPORTED_MODULE_8__["StoreModule"].forRoot(_store_reducers__WEBPACK_IMPORTED_MODULE_9__["reducers"], { metaReducers: _store_reducers__WEBPACK_IMPORTED_MODULE_9__["metaReducers"] }),
+                !environments_environment__WEBPACK_IMPORTED_MODULE_11__["environment"].production ? _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_10__["StoreDevtoolsModule"].instrument() : [],
             ],
             providers: [],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_2__["AppComponent"]],
-            entryComponents: [
-                _modules_home_components_edit_edit_component__WEBPACK_IMPORTED_MODULE_5__["EditComponent"]
-            ]
         })
     ], AppModule);
     return AppModule;
@@ -353,7 +629,7 @@ var HeaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <table class=\"table borderless mt-3\">\n        <tbody>\n        <tr class=\"vertical-align\">\n            <td>\n                Device Id\n            </td>\n            <td>\n                <select class=\"form-control\" formControlName=\"deviceId\"\n                        (change)=\"onChangeSensor($event)\">\n                    <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                        {{sensor.name ? sensor.name : sensor.id}}\n                    </option>\n                </select>\n            </td>\n            <td>\n                Name\n            </td>\n            <td>\n\n                <input type=\"text\"\n                       class=\"form-control\"\n                       id=\"deviceName\"\n                       formControlName=\"deviceName\">\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">\n                Period\n            </td>\n            <td *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">\n                <input type=\"number\"\n                       class=\"form-control col-6\"\n                       id=\"period\"\n                       formControlName=\"period\">\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                Turn on\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                <mat-slide-toggle\n                        class=\"switch-state vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"activated\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isEmergencyAvailable\">\n                Emergency\n            </td>\n            <td *ngIf=\"isEmergencyAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"emergency\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                Manual\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"manual\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n\n\n    <!--<div class=\"body\">-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-2\">-->\n    <!--<div class=\"first-column\">-->\n    <!--<div class=\"input-group  align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Device Id</span>-->\n    <!--</div>-->\n    <!--<div class=\"input-form\">-->\n    <!--<select class=\"form-control\" formControlName=\"deviceId\"-->\n    <!--(change)=\"onChangeSensor($event)\">-->\n    <!--<option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">-->\n    <!--{{sensor.name ? sensor.name : sensor.id}}-->\n    <!--</option>-->\n    <!--</select>-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"second-column\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Name</span>-->\n    <!--</div>-->\n    <!--<input type=\"text\"-->\n    <!--class=\"form-control\"-->\n    <!--id=\"deviceName\"-->\n    <!--formControlName=\"deviceName\">-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Period</span>-->\n    <!--</div>-->\n    <!--<input type=\"number\"-->\n    <!--class=\"form-control col-3\"-->\n    <!--id=\"period\"-->\n    <!--formControlName=\"period\">-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isSwitchStateAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !selectedSensor.data.PWR_PERIOD && isSwitchStateAvailable,-->\n    <!--'second-column': !!selectedSensor.data.PWR_PERIOD &&  isSwitchStateAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Turn on</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"switch-state vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"activated\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"isEmergencyAvailable\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Emergency</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"emergency\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isManualAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !isEmergencyAvailable && isManualAvailable,-->\n    <!--'second-column': isEmergencyAvailable &&  isManualAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">-->\n    <!--Manual-->\n    <!--</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"manual\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n    <!--</div>-->\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
+module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <table class=\"table borderless mt-3\">\n        <tbody>\n        <tr class=\"vertical-align\">\n            <td>\n                Device Id\n            </td>\n            <td>\n                <select class=\"form-control\" formControlName=\"deviceId\"\n                        (change)=\"onChangeSensor($event)\">\n                    <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                        {{sensor.name ? sensor.name : sensor.id}}\n                    </option>\n                </select>\n            </td>\n            <td>\n                Name\n            </td>\n            <td>\n\n                <input type=\"text\"\n                       class=\"form-control\"\n                       id=\"deviceName\"\n                       formControlName=\"deviceName\">\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isPeriodAvailable\">\n                Period\n            </td>\n            <td *ngIf=\"isPeriodAvailable\">\n                <input type=\"number\"\n                       class=\"form-control col-6\"\n                       id=\"period\"\n                       formControlName=\"period\">\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                Turn on\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                <mat-slide-toggle\n                        class=\"switch-state vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"activated\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isEmergencyAvailable\">\n                Emergency\n            </td>\n            <td *ngIf=\"isEmergencyAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"emergency\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                Manual\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"manual\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n\n\n    <!--<div class=\"body\">-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-2\">-->\n    <!--<div class=\"first-column\">-->\n    <!--<div class=\"input-group  align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Device Id</span>-->\n    <!--</div>-->\n    <!--<div class=\"input-form\">-->\n    <!--<select class=\"form-control\" formControlName=\"deviceId\"-->\n    <!--(change)=\"onChangeSensor($event)\">-->\n    <!--<option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">-->\n    <!--{{sensor.name ? sensor.name : sensor.id}}-->\n    <!--</option>-->\n    <!--</select>-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"second-column\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Name</span>-->\n    <!--</div>-->\n    <!--<input type=\"text\"-->\n    <!--class=\"form-control\"-->\n    <!--id=\"deviceName\"-->\n    <!--formControlName=\"deviceName\">-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Period</span>-->\n    <!--</div>-->\n    <!--<input type=\"number\"-->\n    <!--class=\"form-control col-3\"-->\n    <!--id=\"period\"-->\n    <!--formControlName=\"period\">-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isSwitchStateAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !selectedSensor.data.PWR_PERIOD && isSwitchStateAvailable,-->\n    <!--'second-column': !!selectedSensor.data.PWR_PERIOD &&  isSwitchStateAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Turn on</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"switch-state vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"activated\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"isEmergencyAvailable\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Emergency</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"emergency\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isManualAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !isEmergencyAvailable && isManualAvailable,-->\n    <!--'second-column': isEmergencyAvailable &&  isManualAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">-->\n    <!--Manual-->\n    <!--</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"manual\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n    <!--</div>-->\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
 
 /***/ }),
 
@@ -421,11 +697,13 @@ var EditComponent = /** @class */ (function () {
         if (!!this.selectedSensor.data) {
             editedSensor['data'] = {};
         }
-        if (!!this.selectedSensor.data.PWR_PERIOD) {
-            editedSensor['data']['PWR_PERIOD'] = formValue.period;
+        if (this.selectedSensor.data.hasOwnProperty('pwr_period')) {
+            editedSensor['data']['pwr_period'] = formValue.period;
+            // editedSensor['data']['PWR_PERIOD'] = formValue.period;
         }
         if (this.isSwitchStateAvailable) {
-            editedSensor['data']['SWITCH_STATE'] = formValue.activated;
+            editedSensor['data']['switch_state'] = formValue.activated;
+            // editedSensor['data']['SWITCH_STATE'] = formValue.activated;
         }
         this.sensorService.updateSensors(editedSensor).subscribe(function (res) {
             _this.onUpdated.emit(editedSensor);
@@ -437,14 +715,15 @@ var EditComponent = /** @class */ (function () {
     EditComponent.prototype.onChangeSensor = function (event) {
         var id = event.target.value;
         this.selectedSensor = this.sensors.find(function (sensor) { return sensor.id === id; });
-        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.SWITCH_STATE !== null && this.selectedSensor.data.SWITCH_STATE !== undefined;
-        this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.ESTOP !== null && this.selectedSensor.data.ESTOP !== undefined;
-        this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.MANUAL !== null && this.selectedSensor.data.MANUAL !== undefined;
+        this.isPeriodAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('pwr_period');
+        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('switch_state');
+        this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('estop');
+        this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('manual');
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.PWR_PERIOD ? this.selectedSensor.data.PWR_PERIOD : null);
-        this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
-        this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
-        this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
+        this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
+        this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.switch_state : false);
+        this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.estop : false);
+        this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.manual : false);
     };
     EditComponent.prototype.close = function () {
         this.onClosed.emit();
@@ -479,7 +758,7 @@ var EditComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-10\">\n                <mat-select multiple placeholder=\"Select device\" disableOptionCentering=\"true\" >\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                class=\"vertical-align\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device\">\n                        <div class=\"row vertical-align\">\n                            <div class=\"col-9 description\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col-3 text-right vertical-align\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'CONNECTED'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'DISCONNECTED'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Configuration\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 input-field inline\">\n                            <input align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-3 \">\n                            <input align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
+module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-10\">\n                <mat-select multiple placeholder=\"Select device\" disableOptionCentering=\"true\" >\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                class=\"vertical-align\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device\">\n                        <div class=\"row vertical-align\">\n                            <div class=\"col-9 description\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col-3 text-right vertical-align\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'CONNECTED'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'DISCONNECTED'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Configuration\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-4\">\n                            <input class=\"col\" align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-4 \">\n                            <input  class=\"col\" align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>-->\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectLast()\">Test</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
 
 /***/ }),
 
@@ -513,6 +792,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
 /* harmony import */ var store_reducers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! store/reducers */ "./src/app/store/reducers/index.ts");
 /* harmony import */ var store_actions_sensors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! store/actions/sensors */ "./src/app/store/actions/sensors.ts");
+/* harmony import */ var _time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../time-selector/time-selector.component */ "./src/app/modules/home/components/time-selector/time-selector.component.ts");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_10__);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -531,6 +813,8 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
 var FilterBarComponent = /** @class */ (function () {
     function FilterBarComponent(modalService, store) {
         this.modalService = modalService;
@@ -538,6 +822,36 @@ var FilterBarComponent = /** @class */ (function () {
         this.sensors = [];
         this.onChangedValue = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.selectedDevices = [];
+        this.supportedType = [
+            {
+                name: 'Second',
+                type: 'seconds'
+            },
+            {
+                name: 'Minute',
+                type: 'minutes'
+            },
+            {
+                name: 'Hour',
+                type: 'hours'
+            },
+            {
+                name: 'Day',
+                type: 'days'
+            },
+            {
+                name: 'Week',
+                type: 'weeks'
+            },
+            {
+                name: 'Month',
+                type: 'months'
+            },
+            {
+                name: 'Year',
+                type: 'years'
+            }
+        ];
     }
     FilterBarComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -552,8 +866,8 @@ var FilterBarComponent = /** @class */ (function () {
         this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
             startDate: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](today),
             endDate: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](today),
-            startTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('00:00'),
-            endTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('23:59')
+            startTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('00:00:01'),
+            endTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('23:59:59')
         });
         var raw = this.form.getRawValue();
         this.startTime = this.combineToDate(raw.startDate, raw.startTime);
@@ -590,6 +904,12 @@ var FilterBarComponent = /** @class */ (function () {
                 _this.modalService.destroy();
             }
         });
+    };
+    FilterBarComponent.prototype.selectHour = function (offset) {
+        if (offset === void 0) { offset = 0; }
+        var date = this.convertDateToHashMap(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addDays"])(new Date(), offset));
+        this.form.controls['startDate'].setValue(date);
+        this.form.controls['endDate'].setValue(date);
     };
     FilterBarComponent.prototype.selectDate = function (offset) {
         if (offset === void 0) { offset = 0; }
@@ -650,6 +970,32 @@ var FilterBarComponent = /** @class */ (function () {
                 var index = this.selectedDevices.findIndex(function (item) { return device.id === item[0]; });
                 this.selectedDevices.splice(index, 1);
             }
+        }
+    };
+    FilterBarComponent.prototype.selectLast = function () {
+        var _this = this;
+        this.modalService.init(_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_9__["TimeSelectorComponent"], { supportedType: this.supportedType }, {
+            onUpdated: function (rawValue) {
+                _this.analyseTime(rawValue.time, rawValue.type);
+                _this.modalService.destroy();
+            },
+            onClosed: function () {
+                _this.modalService.destroy();
+            }
+        });
+    };
+    FilterBarComponent.prototype.analyseTime = function (time, type) {
+        var fromDate = moment__WEBPACK_IMPORTED_MODULE_10__().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        var toDate = moment__WEBPACK_IMPORTED_MODULE_10__().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
+            var startDate = this.convertDateToHashMap(fromDate);
+            var endDate = this.convertDateToHashMap(toDate);
+            this.form.controls['startDate'].setValue(startDate);
+            this.form.controls['endDate'].setValue(endDate);
+        }
+        else {
+            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes() + ':' + fromDate.getSeconds());
+            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes() + ':' + toDate.getSeconds());
         }
     };
     __decorate([
@@ -814,6 +1160,95 @@ var GraphSummaryComponent = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/modules/home/components/time-selector/time-selector.component.html":
+/*!************************************************************************************!*\
+  !*** ./src/app/modules/home/components/time-selector/time-selector.component.html ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Select Time</div>\n\n    <div class=\"body\">\n\n        <div class=\"row justify-content-between vertical-align mt-2\">\n            <div class=\"input-group  align-items-center\">\n                <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Time</span>\n                </div>\n                <div class=\"input-form\">\n                    <input type=\"number\"\n                           class=\"form-control\"\n                           id=\"time\"\n                           formControlName=\"time\">\n                </div>\n\n            </div>\n\n        </div>\n\n        <div class=\"row justify-content-between vertical-align mt-3\">\n            <mat-button-toggle-group formControlName=\"type\" name=\"type\" aria-label=\"Type\">\n                <mat-button-toggle  [value]=\"type.type\" *ngFor='let type of supportedType; let i = index'>\n                    {{ type.name }}\n                </mat-button-toggle>\n            </mat-button-toggle-group>\n\n        </div>\n\n\n    </div>\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"submit()\">OK</button>\n        </div>\n    </div>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/modules/home/components/time-selector/time-selector.component.scss":
+/*!************************************************************************************!*\
+  !*** ./src/app/modules/home/components/time-selector/time-selector.component.scss ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ".cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.row {\n  margin-right: 0;\n  margin-left: 0; }\n"
+
+/***/ }),
+
+/***/ "./src/app/modules/home/components/time-selector/time-selector.component.ts":
+/*!**********************************************************************************!*\
+  !*** ./src/app/modules/home/components/time-selector/time-selector.component.ts ***!
+  \**********************************************************************************/
+/*! exports provided: TimeSelectorComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TimeSelectorComponent", function() { return TimeSelectorComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var TimeSelectorComponent = /** @class */ (function () {
+    function TimeSelectorComponent() {
+        this.onClosed = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
+        this.onUpdated = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
+    }
+    TimeSelectorComponent.prototype.ngOnInit = function () {
+        this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
+            time: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](0, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(0)]),
+            type: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required])
+        });
+    };
+    TimeSelectorComponent.prototype.isFormValid = function () {
+        return !this.form.invalid;
+    };
+    TimeSelectorComponent.prototype.close = function () {
+        this.onClosed.emit();
+    };
+    TimeSelectorComponent.prototype.submit = function () {
+        var formValue = this.form.getRawValue();
+        this.onUpdated.emit(formValue);
+    };
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
+        __metadata("design:type", Object)
+    ], TimeSelectorComponent.prototype, "onClosed", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
+        __metadata("design:type", Object)
+    ], TimeSelectorComponent.prototype, "onUpdated", void 0);
+    TimeSelectorComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-time-selector',
+            template: __webpack_require__(/*! ./time-selector.component.html */ "./src/app/modules/home/components/time-selector/time-selector.component.html"),
+            styles: [__webpack_require__(/*! ./time-selector.component.scss */ "./src/app/modules/home/components/time-selector/time-selector.component.scss")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], TimeSelectorComponent);
+    return TimeSelectorComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/modules/home/constants/constants.ts":
 /*!*****************************************************!*\
   !*** ./src/app/modules/home/constants/constants.ts ***!
@@ -894,12 +1329,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_sensor_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./services/sensor.service */ "./src/app/modules/home/services/sensor.service.ts");
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
+/* harmony import */ var _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./components/time-selector/time-selector.component */ "./src/app/modules/home/components/time-selector/time-selector.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -931,16 +1368,22 @@ var HomeModule = /** @class */ (function () {
                 _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatDatepickerModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatNativeDateModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatIconModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatSlideToggleModule"]
+                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatSlideToggleModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatButtonToggleModule"]
             ],
             declarations: [
                 _pages_home_page_component__WEBPACK_IMPORTED_MODULE_3__["HomePageComponent"],
                 _components_edit_edit_component__WEBPACK_IMPORTED_MODULE_4__["EditComponent"],
                 _components_filter_bar_filter_bar_component__WEBPACK_IMPORTED_MODULE_5__["FilterBarComponent"],
-                _components_graph_summary_graph_summary_component__WEBPACK_IMPORTED_MODULE_6__["GraphSummaryComponent"]
+                _components_graph_summary_graph_summary_component__WEBPACK_IMPORTED_MODULE_6__["GraphSummaryComponent"],
+                _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_13__["TimeSelectorComponent"]
             ],
             providers: [
                 _services_sensor_service__WEBPACK_IMPORTED_MODULE_10__["SensorService"]
+            ],
+            entryComponents: [
+                _components_edit_edit_component__WEBPACK_IMPORTED_MODULE_4__["EditComponent"],
+                _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_13__["TimeSelectorComponent"]
             ]
         })
     ], HomeModule);
@@ -992,6 +1435,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(rxjs_compat_add_observable_interval__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs-compat/add/operator/takeWhile */ "./node_modules/rxjs-compat/add/operator/takeWhile.js");
 /* harmony import */ var rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(rxjs_compat_add_operator_takeWhile__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var moment_min_locales_min__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! moment/min/locales.min */ "./node_modules/moment/min/locales.min.js");
+/* harmony import */ var moment_min_locales_min__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(moment_min_locales_min__WEBPACK_IMPORTED_MODULE_8__);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1008,6 +1455,8 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
 var HomePageComponent = /** @class */ (function () {
     function HomePageComponent(sensorService, store) {
         this.sensorService = sensorService;
@@ -1015,6 +1464,7 @@ var HomePageComponent = /** @class */ (function () {
     }
     HomePageComponent.prototype.ngOnInit = function () {
         var _this = this;
+        moment__WEBPACK_IMPORTED_MODULE_7__["locale"]('en');
         setTimeout(function () {
             _this.getAllSensors();
         }, 500);

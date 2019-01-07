@@ -1,0 +1,31 @@
+.cancel-button {
+  background-color: #cc1c35;
+  color: white;
+}
+
+.save-button {
+  background-color: #009688;
+  color: white;
+}
+
+button {
+  width: 100px;
+  height: 35px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 0 0.75rem #e4e4e4;
+}
+
+.header {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.form-control {
+  border-radius: 0.25rem !important;
+}
+
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}

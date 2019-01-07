@@ -6,69 +6,77 @@
 body {
   font-family: 'Varela Round', 'Open Sans', sans-serif;
   font-size: .9em;
-h1,h2,h3,h4,h5,h6 {
-  font-family: 'Varela Round', 'Open Sans', sans-serif;
-}
-a {
-  cursor: pointer;
-}
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Varela Round', 'Open Sans', sans-serif;
+  }
+
+  a {
+    cursor: pointer;
+  }
 }
 
 
 .navbar {
-.navbar-brand {
-  color: #6a6a6a;
-  font-size: 22px;
-img {
-  display: inline-block;
-  margin-right: 8px;
-  width: 50px;
-  height: 50px;
-}
-}
-.navbar-nav .nav-link {
-  color: #6a6a6a;
-  padding-top: 0;
-  padding-bottom: 0;
-  height: 50px;
-  line-height: 50px;
-}
+  .navbar-brand {
+    color: #6a6a6a;
+    font-size: 22px;
+
+    img {
+      display: inline-block;
+      margin-right: 8px;
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  .navbar-nav .nav-link {
+    color: #6a6a6a;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 50px;
+    line-height: 50px;
+  }
 }
 
-hidden{
-  display:none;
-}
-.show{
-  display:block;
+hidden {
+  display: none;
 }
 
-.modal-wrapper{
+.show {
+  display: block;
+}
+
+.modal-wrapper {
   position: fixed;
   width: 100%;
   height: 100%;
-  top:0;
+  top: 0;
   z-index: 2000;
   display: none;
-.modal-subwrapper{
-  z-index: 3000;
-  width: 100%;
-  height: 100%;
-#modal-container {
-  background: #ffffff;
-  z-index: 4000;
-  padding: 15px 25px;
-  max-width: 700px;
-  width: 100%;
-}
-}
-.modal-background {
-  background: rgba(10,10,10,.5);
-  width: 100%;
-  height: 100%;
-  top:0;
-  position: fixed;
-  z-index: 2000;
-}
+
+  .modal-subwrapper {
+    z-index: 3000;
+    width: 100%;
+    height: 100%;
+
+    #modal-container {
+      background: #ffffff;
+      z-index: 4000;
+      padding: 15px 25px;
+      max-width: 700px;
+      width: 100%;
+    }
+  }
+
+  .modal-background {
+    background: rgba(10, 10, 10, .5);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    position: fixed;
+    z-index: 2000;
+  }
 }
 
 .vertical-align {
@@ -84,12 +92,29 @@ hidden{
 
 }
 
-input.ng-dirty.ng-invalid{
+input.ng-dirty.ng-invalid {
   border: 1px solid rgb(252, 100, 45) !important;
   background-color: rgb(255, 248, 246) !important;
 }
+
 .input-error-text {
   color: rgb(217, 57, 0) !important;
   line-height: 18px;
 }
 
+mat-button-toggle {
+}
+
+.mat-button-toggle-disabled {
+  background-color: red;
+}
+
+.mat-button-toggle-checked {
+  background-color: #005cbf;
+  color: #ffffff !important;
+}
+
+row {
+  margin-left: 0;
+  margin-right: 0;
+}

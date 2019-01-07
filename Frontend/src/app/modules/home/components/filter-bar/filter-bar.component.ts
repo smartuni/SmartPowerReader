@@ -8,6 +8,9 @@ import {EditComponent} from '../edit/edit.component';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
 import {UpdateSensorsSAction} from 'store/actions/sensors';
+import {TimeSelectorComponent} from '../time-selector/time-selector.component';
+import * as moment from 'moment';
+import {DurationInputArg2} from 'moment';
 
 
 @Component({
@@ -27,6 +30,36 @@ export class FilterBarComponent implements OnInit {
     now: string;
 
     selectedDevices = [];
+    supportedType = [
+        {
+            name: 'Second',
+            type: 'seconds'
+        },
+        {
+            name: 'Minute',
+            type: 'minutes'
+        },
+        {
+            name: 'Hour',
+            type: 'hours'
+        },
+        {
+            name: 'Day',
+            type: 'days'
+        },
+        {
+            name: 'Week',
+            type: 'weeks'
+        },
+        {
+            name: 'Month',
+            type: 'months'
+        },
+        {
+            name: 'Year',
+            type: 'years'
+        }
+    ];
 
     constructor(private modalService: ModalService,
                 private store: Store<fromRoot.State>) {
@@ -44,8 +77,8 @@ export class FilterBarComponent implements OnInit {
         this.form = new FormGroup({
                 startDate: new FormControl(today),
                 endDate: new FormControl(today),
-                startTime: new FormControl('00:00'),
-                endTime: new FormControl('23:59')
+                startTime: new FormControl('00:00:01'),
+                endTime: new FormControl('23:59:59')
             }
         );
 
@@ -90,6 +123,12 @@ export class FilterBarComponent implements OnInit {
                 this.modalService.destroy();
             }
         });
+    }
+
+    selectHour(offset: number = 0) {
+        const date = this.convertDateToHashMap(addDays(new Date(), offset));
+        this.form.controls['startDate'].setValue(date);
+        this.form.controls['endDate'].setValue(date);
     }
 
     selectDate(offset: number = 0) {
@@ -155,5 +194,71 @@ export class FilterBarComponent implements OnInit {
             }
         }
     }
+
+    selectLast() {
+        this.modalService.init(TimeSelectorComponent, {supportedType: this.supportedType}, {
+            onUpdated: (rawValue) => {
+                this.analyseTime(rawValue.time, rawValue.type);
+                this.modalService.destroy();
+            },
+            onClosed: () => {
+                this.modalService.destroy();
+            }
+        });
+    }
+
+    private analyseTime(time: number, type: DurationInputArg2) {
+        const fromDate = moment().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        const toDate = moment().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
+
+
+            const startDate = this.convertDateToHashMap(fromDate);
+            const endDate = this.convertDateToHashMap(toDate);
+            this.form.controls['startDate'].setValue(startDate);
+            this.form.controls['endDate'].setValue(endDate);
+
+        } else {
+            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes() + ':' + fromDate.getSeconds());
+            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes() + ':' + toDate.getSeconds());
+
+        }
+    }
+
+    // private analyseTime(time: number, type: number) {
+    //     if (type === 0) {
+    //
+    //     } else if (type === 1) {
+    //
+    //     } else if (type === 2) {
+    //
+    //     } else if (type === 3) {
+    //         if (time === 0) {
+    //             this.selectDate();
+    //         } else {
+    //             this.selectDate(-time);
+    //         }
+    //
+    //     } else if (type === 4) {
+    //         if (time === 0) {
+    //             this.selectWeek();
+    //         } else {
+    //             this.selectWeek(-time, -1);
+    //         }
+    //     } else if (type === 5) {
+    //         if (time === 0) {
+    //             this.selectMonth();
+    //         } else {
+    //             this.selectMonth(-time, -1);
+    //         }
+    //
+    //     } else if (type === 6) {
+    //         if (time === 0) {
+    //             this.selectYear();
+    //         } else {
+    //             this.selectYear(-time);
+    //         }
+    //     }
+    // }
 
 }
