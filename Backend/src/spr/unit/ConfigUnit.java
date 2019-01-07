@@ -49,6 +49,8 @@ public class ConfigUnit extends BaseUnit
 	private final Configuration mConfig;
 	private final Producer<File> mGen;
 	private final Watchdog mWatchdog;
+	private final Map<String, JsonObject> mCache;
+	
 	private File mLast;
 	
 	public ConfigUnit(File orig, Producer<File> gen, Node<Task> g)
@@ -60,6 +62,7 @@ public class ConfigUnit extends BaseUnit
 		mConfig = new Configuration();
 		mGen = gen;
 		mWatchdog = wd;
+		mCache = new HashMap<>();
 		
 		registerMessageHandler(Tasks.Configuration.NEW, this::handleNew);
 		registerMessageHandler(Tasks.Configuration.CONFIGURE, this::handleConfigure);
@@ -214,8 +217,6 @@ public class ConfigUnit extends BaseUnit
 	
 	private JsonValue generateConfig(Configuration.Entry e)
 	{
-		Map<String, JsonObject> mCache = new HashMap<>();
-		
 		JsonObject o = mCache.get(e.ip);
 		JsonObject n = e.data.stream()
 			.filter(f -> !f.isWriteable())
@@ -223,7 +224,7 @@ public class ConfigUnit extends BaseUnit
 		
 		if(o != null)
 		{
-			n = (JsonObject) SPRUtils.substract(n, o);
+			n = (JsonObject) SPRUtils.subtract(n, o);
 		}
 		
 		if(n.keySet().isEmpty())

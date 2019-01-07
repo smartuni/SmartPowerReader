@@ -7,7 +7,7 @@ import dave.json.JsonValue;
 
 public final class SPRUtils
 {
-	public static JsonValue substract(JsonValue a, JsonValue b)
+	public static JsonValue subtract(JsonValue a, JsonValue b)
 	{
 		if((a instanceof JsonObject) && (b instanceof JsonObject))
 		{
@@ -16,9 +16,12 @@ public final class SPRUtils
 			JsonObject r = new JsonObject();
 			
 			ao.keySet().forEach(key -> {
-				if(!bo.keySet().contains(key) || !Objects.equals(ao.get(key), bo.get(key)))
+				JsonValue va = ao.get(key);
+				JsonValue vb = (bo.contains(key) ? bo.get(key) : null);
+				
+				if(vb == null || !Objects.equals(va, vb))
 				{
-					r.put(key, ao.get(key));
+					r.put(key, subtract(va, vb));
 				}
 			});
 			
