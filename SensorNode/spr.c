@@ -246,7 +246,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
             CborEncoder encoder;
-            uint8_t encoder_buf[128];
+            uint8_t encoder_buf[64];
             cbor_encoder_init(&encoder, encoder_buf, sizeof(encoder_buf), 0);
 
             CborEncoder map;
