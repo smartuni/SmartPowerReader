@@ -17,6 +17,7 @@ export class EditComponent implements OnInit {
     isSwitchStateAvailable: boolean;
     isEmergencyAvailable: boolean;
     isManualAvailable: boolean;
+    isPeriodAvailable: boolean;
 
 
     constructor(private sensorService: SensorService) {
@@ -75,13 +76,16 @@ export class EditComponent implements OnInit {
         // this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
         // this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
         // this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
+        console.log(this.selectedSensor);
+        this.isPeriodAvailable = !!this.selectedSensor.data && !!this.selectedSensor.data.pwr_period;
+        console.log(this.selectedSensor, this.isPeriodAvailable);
 
         this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.switch_state !== null && this.selectedSensor.data.switch_state !== undefined;
         this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.estop !== null && this.selectedSensor.data.estop !== undefined;
         this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.manual !== null && this.selectedSensor.data.manual !== undefined;
 
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.pwr_period ? this.selectedSensor.data.pwr_period : null);
+        this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
         this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.switch_state : false);
         this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.estop : false);
         this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.manual : false);

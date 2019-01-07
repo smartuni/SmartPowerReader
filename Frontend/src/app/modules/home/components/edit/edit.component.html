@@ -26,10 +26,10 @@
             </td>
         </tr>
         <tr class="vertical-align" *ngIf="!!selectedSensor && !!selectedSensor.data">
-            <td *ngIf="!!selectedSensor.data.pwr_period">
+            <td *ngIf="isPeriodAvailable">
                 Period
             </td>
-            <td *ngIf="!!selectedSensor.data.pwr_period">
+            <td *ngIf="isPeriodAvailable">
                 <input type="number"
                        class="form-control col-6"
                        id="period"
