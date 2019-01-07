@@ -237,6 +237,8 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
     switch (method_flag) {
         case COAP_GET:
+            puts("Got GET at /config");
+
             if (pdu->content_type == COAP_FORMAT_CBOR) {
                 puts("config handler: got cbor!");
                 dumpbytes(pdu->payload, pdu->payload_len);
@@ -248,16 +250,25 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             cbor_encoder_init(&encoder, encoder_buf, sizeof(encoder_buf), 0);
 
             CborEncoder map;
-            CborError err = cbor_encoder_create_map(&encoder, &map, 1);   /* 1 == number of element in cfg struct */
+            CborError err = cbor_encoder_create_map(&encoder, &map, 4);   /* 4 == number of element in cfg struct */
             if (err != 0)
                 printf("error: create map %d\n", err);
 
-            err = cbor_encode_text_stringz(&map, "interval");
-            if (err != 0)
-                printf("error: encode string %d\n", err);
-            err = cbor_encode_uint(&map , (uint64_t)cfg.interval);
-            if (err != 0)
-                printf("error: encode interval %d\n", err);
+            /* encode pwr_period */
+            cbor_encode_text_stringz(&map, "pwr_period");
+            cbor_encode_uint(&map , (uint64_t)cfg.pwr_period);
+
+            /* encode switch_state */
+            cbor_encode_text_stringz(&map, "switch_state");
+            cbor_encode_boolean(&map , cfg.switch_state);
+
+            /* encode estop status */
+            cbor_encode_text_stringz(&map, "estop");
+            cbor_encode_boolean(&map , cfg.estop);
+
+            /* encode manual status */
+            cbor_encode_text_stringz(&map, "manual");
+            cbor_encode_boolean(&map , cfg.manual);
 
             err = cbor_encoder_close_container(&encoder, &map);
             if (err != 0)
