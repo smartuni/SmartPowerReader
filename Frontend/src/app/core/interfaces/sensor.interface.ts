@@ -5,7 +5,7 @@ export interface Sensor {
     name: string;
     series?: any;
     status?: SensorStatus;
-    data: SensorConfiguration;
+    data: any;
 }
 
 // interface SensorConfiguration {

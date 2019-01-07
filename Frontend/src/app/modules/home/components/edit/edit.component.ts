@@ -45,7 +45,7 @@ export class EditComponent implements OnInit {
         if (!!this.selectedSensor.data) {
             editedSensor['data'] = {};
         }
-        if (!!this.selectedSensor.data.pwr_period) {
+        if (this.selectedSensor.data.hasOwnProperty('pwr_period')) {
             editedSensor['data']['pwr_period'] = formValue.period;
 
             // editedSensor['data']['PWR_PERIOD'] = formValue.period;
@@ -77,12 +77,11 @@ export class EditComponent implements OnInit {
         // this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
         // this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
         console.log(this.selectedSensor);
-        this.isPeriodAvailable = !!this.selectedSensor.data && !!this.selectedSensor.data.pwr_period;
-        console.log(this.selectedSensor, this.isPeriodAvailable);
+        this.isPeriodAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('pwr_period');
 
-        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.switch_state !== null && this.selectedSensor.data.switch_state !== undefined;
-        this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.estop !== null && this.selectedSensor.data.estop !== undefined;
-        this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.manual !== null && this.selectedSensor.data.manual !== undefined;
+        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('switch_state');
+        this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('estop');
+        this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('manual');
 
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
         this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
