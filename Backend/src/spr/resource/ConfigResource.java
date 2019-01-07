@@ -1,5 +1,6 @@
 package spr.resource;
 
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 
 import dave.json.JsonObject;
@@ -34,6 +35,8 @@ public class ConfigResource extends Resource
 		});
 		
 		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.CONFIGURE, newSession(), packet));
+
+		ex.respond(ResponseCode.VALID);
 	}
 	
 	private static final Logger LOG = Logger.get("coap-config");
