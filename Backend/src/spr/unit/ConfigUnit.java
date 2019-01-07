@@ -226,9 +226,7 @@ public class ConfigUnit extends BaseUnit
 		
 		if(r.keySet().isEmpty())
 		{
-			n = null;
-			
-			mCache.remove(e.ip);
+			r = null;
 		}
 		else
 		{
