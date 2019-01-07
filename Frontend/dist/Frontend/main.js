@@ -715,16 +715,6 @@ var EditComponent = /** @class */ (function () {
     EditComponent.prototype.onChangeSensor = function (event) {
         var id = event.target.value;
         this.selectedSensor = this.sensors.find(function (sensor) { return sensor.id === id; });
-        // this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.SWITCH_STATE !== null && this.selectedSensor.data.SWITCH_STATE !== undefined;
-        // this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.ESTOP !== null && this.selectedSensor.data.ESTOP !== undefined;
-        // this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.MANUAL !== null && this.selectedSensor.data.MANUAL !== undefined;
-        //
-        // this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        // this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.PWR_PERIOD ? this.selectedSensor.data.PWR_PERIOD : null);
-        // this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
-        // this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
-        // this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
-        console.log(this.selectedSensor);
         this.isPeriodAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('pwr_period');
         this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('switch_state');
         this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('estop');
@@ -995,10 +985,18 @@ var FilterBarComponent = /** @class */ (function () {
         });
     };
     FilterBarComponent.prototype.analyseTime = function (time, type) {
-        console.log(time, type);
-        moment__WEBPACK_IMPORTED_MODULE_10__().subtract(10, 'days').calendar(); // 12/28/2018
-        // moment().subtract(5, day);
-        console.log(time, type);
+        var fromDate = moment__WEBPACK_IMPORTED_MODULE_10__().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        var toDate = moment__WEBPACK_IMPORTED_MODULE_10__().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
+            var startDate = this.convertDateToHashMap(fromDate);
+            var endDate = this.convertDateToHashMap(toDate);
+            this.form.controls['startDate'].setValue(startDate);
+            this.form.controls['endDate'].setValue(endDate);
+        }
+        else {
+            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes());
+            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes());
+        }
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),

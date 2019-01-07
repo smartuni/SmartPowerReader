@@ -208,11 +208,21 @@ export class FilterBarComponent implements OnInit {
     }
 
     private analyseTime(time: number, type: DurationInputArg2) {
-        console.log(time, type);
-        moment().subtract(10, 'days').calendar(); // 12/28/2018
+        const fromDate = moment().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        const toDate = moment().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+        if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
 
-        // moment().subtract(5, day);
-        console.log(time, type);
+
+            const startDate = this.convertDateToHashMap(fromDate);
+            const endDate = this.convertDateToHashMap(toDate);
+            this.form.controls['startDate'].setValue(startDate);
+            this.form.controls['endDate'].setValue(endDate);
+
+        } else {
+            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes());
+            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes());
+
+        }
     }
 
     // private analyseTime(time: number, type: number) {

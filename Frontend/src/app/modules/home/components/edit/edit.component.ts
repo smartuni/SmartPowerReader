@@ -67,16 +67,7 @@ export class EditComponent implements OnInit {
     onChangeSensor(event) {
         const id = event.target.value;
         this.selectedSensor = this.sensors.find(sensor => sensor.id === id);
-        // this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.SWITCH_STATE !== null && this.selectedSensor.data.SWITCH_STATE !== undefined;
-        // this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.ESTOP !== null && this.selectedSensor.data.ESTOP !== undefined;
-        // this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.MANUAL !== null && this.selectedSensor.data.MANUAL !== undefined;
-        //
-        // this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        // this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.PWR_PERIOD ? this.selectedSensor.data.PWR_PERIOD : null);
-        // this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
-        // this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
-        // this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
-        console.log(this.selectedSensor);
+
         this.isPeriodAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('pwr_period');
 
         this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('switch_state');
