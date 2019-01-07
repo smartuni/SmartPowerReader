@@ -126,7 +126,7 @@ static void _eval_switch_state_led(void) {
 
 static inline void send_cbor(const char *key, bool val, char *addr, char *port)
 {
-    uint8_t key_buf[32];
+    uint8_t key_buf[16];
     CborEncoder encoder;
     CborEncoder map;
     cbor_encoder_init(&encoder, key_buf, sizeof(key_buf), 0);
@@ -137,8 +137,6 @@ static inline void send_cbor(const char *key, bool val, char *addr, char *port)
     cbor_encode_text_stringz(&map, key);
     cbor_encode_boolean(&map, val);
     cbor_encoder_close_container(&encoder, &map);
-
-    dumpbytes((const uint8_t *)&key_buf, sizeof(key_buf));
 
     coap_pkt_t pdu;
     uint8_t buf[GCOAP_PDU_BUF_SIZE];
@@ -330,7 +328,6 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
             if (pdu->content_type == COAP_FORMAT_CBOR) {
                 puts("config handler: got cbor!");
-                dumpbytes(pdu->payload, pdu->payload_len);
             }
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
@@ -365,6 +362,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
 
             puts("debug: sending this bytes:");
             dumpbytes((const uint8_t *)&encoder_buf, sizeof(encoder_buf));
+            puts("");
 
             return gcoap_finish(pdu, sizeof(encoder_buf), COAP_FORMAT_CBOR);
 
@@ -372,6 +370,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             puts("got PUT at /config");
             if (pdu->content_type == COAP_FORMAT_CBOR) {
                 dumpbytes(pdu->payload, pdu->payload_len);
+                puts("");
             }
             /* parse payload to CborValue it*/
             CborParser parser;
@@ -441,8 +440,6 @@ static void _register(char *base_addr)
 
     uint8_t features_buf[64];
     features_init(features_buf, sizeof(features_buf));
-    /* print all out for debugging */
-    dumpbytes((const uint8_t *)&features_buf, sizeof(features_buf));
 
     /* copy features to payload */
     memcpy(pdu.payload, features_buf, sizeof(features_buf));
