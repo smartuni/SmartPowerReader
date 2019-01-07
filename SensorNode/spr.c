@@ -92,9 +92,10 @@ static gcoap_listener_t _listener = {
 
 /* configs send to /config */
 struct spr_config {
-    uint64_t interval;  /* Interval for measuring */
-    bool estop;      /* Is the estop enabled or not*/
-    bool manual;     /* */
+    uint64_t pwr_period;    /* pwr_period (interval) for measuring */
+    bool switch_state;      /* current power state (ON/OFF) */
+    bool estop;             /* estop mode flag */
+    bool manual;            /* Manual control flag */
 };
 
 static struct spr_config cfg = { 0 };
@@ -121,8 +122,8 @@ static void *send_data(void *arg)
     coap_pkt_t pdu;
     size_t len;
 
-    /* stop send if interval 0 */
-    uint32_t sleeptime = cfg.interval;
+    /* stop send if pwr_period 0 */
+    uint32_t sleeptime = cfg.pwr_period;
 
     float apparent;
 
@@ -171,8 +172,8 @@ static void *send_data(void *arg)
         /* copy read value to packet payload */
         memcpy(pdu.payload, &apparent, sizeof (apparent));
 
-        /* set packet CONFIRMABLE if interval >= 15 minutes */
-        if (cfg.interval >= CON_THRESH) {
+        /* set packet CONFIRMABLE if pwr_period >= 15 minutes */
+        if (cfg.pwr_period >= CON_THRESH) {
             coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
         }
         else {
@@ -189,7 +190,7 @@ static void *send_data(void *arg)
         }
 
         xtimer_sleep(sleeptime);
-        sleeptime = cfg.interval;
+        sleeptime = cfg.pwr_period;
     }
 
     /* reset pid to 0 if thread stopped */
@@ -290,16 +291,16 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             else
                 printf("error: cbor %d\n", err);
 
-            /* find interval pair in map */
-            CborValue interval;
-            cbor_value_map_find_value(&iterator, "period", &interval);
-            if (cbor_value_get_type(&interval) != CborIntegerType) {
+            /* find pwr_period pair in map */
+            CborValue pwr_period;
+            cbor_value_map_find_value(&iterator, "period", &pwr_period);
+            if (cbor_value_get_type(&pwr_period) != CborIntegerType) {
                 puts("not integer");
                 return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
             }
-            /* get value of interval */
-            cbor_value_get_uint64(&interval, &cfg.interval);
-            printf("Got new interval: %llu\n", cfg.interval);
+            /* get value of pwr_period */
+            cbor_value_get_uint64(&pwr_period, &cfg.pwr_period);
+            printf("Got new pwr_period: %llu\n", cfg.pwr_period);
 
             if (senddata_pid == 0) {
                 /* start thread send_data */
