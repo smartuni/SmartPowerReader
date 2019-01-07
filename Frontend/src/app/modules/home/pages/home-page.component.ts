@@ -7,6 +7,9 @@ import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingActio
 
 import 'rxjs-compat/add/observable/interval';
 import 'rxjs-compat/add/operator/takeWhile';
+import * as moment from 'moment';
+
+import 'moment/min/locales.min';
 
 @Component({
     selector: 'app-homepage',
@@ -25,6 +28,7 @@ export class HomePageComponent implements OnInit {
     }
 
     ngOnInit() {
+        moment.locale('en');
         setTimeout(() => {
             this.getAllSensors();
         }, 500);

@@ -8,10 +8,17 @@ export interface Sensor {
     data: SensorConfiguration;
 }
 
+// interface SensorConfiguration {
+//     PWR_PERIOD?: number;
+//     SWITCH_STATE?: boolean;
+//     ESTOP?: boolean;
+//     MANUAL?: boolean;
+// }
+
 interface SensorConfiguration {
-    PWR_PERIOD?: number;
-    SWITCH_STATE?: boolean;
-    ESTOP?: boolean;
-    MANUAL?: boolean;
+    pwr_period?: number;
+    switch_state?: boolean;
+    estop?: boolean;
+    manual?: boolean;
 }
 

@@ -44,11 +44,15 @@ export class EditComponent implements OnInit {
         if (!!this.selectedSensor.data) {
             editedSensor['data'] = {};
         }
-        if (!!this.selectedSensor.data.PWR_PERIOD) {
-            editedSensor['data']['PWR_PERIOD'] = formValue.period;
+        if (!!this.selectedSensor.data.pwr_period) {
+            editedSensor['data']['pwr_period'] = formValue.period;
+
+            // editedSensor['data']['PWR_PERIOD'] = formValue.period;
         }
         if (this.isSwitchStateAvailable) {
-            editedSensor['data']['SWITCH_STATE'] = formValue.activated;
+            editedSensor['data']['switch_state'] = formValue.activated;
+
+            // editedSensor['data']['SWITCH_STATE'] = formValue.activated;
         }
         this.sensorService.updateSensors(editedSensor).subscribe(res => {
             this.onUpdated.emit(editedSensor);
@@ -62,15 +66,25 @@ export class EditComponent implements OnInit {
     onChangeSensor(event) {
         const id = event.target.value;
         this.selectedSensor = this.sensors.find(sensor => sensor.id === id);
-        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.SWITCH_STATE !== null && this.selectedSensor.data.SWITCH_STATE !== undefined;
-        this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.ESTOP !== null && this.selectedSensor.data.ESTOP !== undefined;
-        this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.MANUAL !== null && this.selectedSensor.data.MANUAL !== undefined;
+        // this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.SWITCH_STATE !== null && this.selectedSensor.data.SWITCH_STATE !== undefined;
+        // this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.ESTOP !== null && this.selectedSensor.data.ESTOP !== undefined;
+        // this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.MANUAL !== null && this.selectedSensor.data.MANUAL !== undefined;
+        //
+        // this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
+        // this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.PWR_PERIOD ? this.selectedSensor.data.PWR_PERIOD : null);
+        // this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
+        // this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
+        // this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
+
+        this.isSwitchStateAvailable = !!this.selectedSensor.data && this.selectedSensor.data.switch_state !== null && this.selectedSensor.data.switch_state !== undefined;
+        this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.estop !== null && this.selectedSensor.data.estop !== undefined;
+        this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.manual !== null && this.selectedSensor.data.manual !== undefined;
 
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.PWR_PERIOD ? this.selectedSensor.data.PWR_PERIOD : null);
-        this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.SWITCH_STATE : false);
-        this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.ESTOP : false);
-        this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.MANUAL : false);
+        this.form.controls['period'].setValue(!!this.selectedSensor.data && !!this.selectedSensor.data.pwr_period ? this.selectedSensor.data.pwr_period : null);
+        this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.switch_state : false);
+        this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.estop : false);
+        this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.manual : false);
 
     }
 

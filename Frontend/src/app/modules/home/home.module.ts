@@ -12,6 +12,7 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SensorService} from './services/sensor.service';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {
+    MatButtonToggleModule,
     MatDatepickerModule,
     MatFormFieldModule,
     MatIconModule,
@@ -19,6 +20,7 @@ import {
     MatSelectModule,
     MatSlideToggleModule
 } from '@angular/material';
+import {TimeSelectorComponent} from './components/time-selector/time-selector.component';
 
 
 @NgModule({
@@ -35,16 +37,22 @@ import {
         MatDatepickerModule,
         MatNativeDateModule,
         MatIconModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatButtonToggleModule
     ],
     declarations: [
         HomePageComponent,
         EditComponent,
         FilterBarComponent,
-        GraphSummaryComponent
+        GraphSummaryComponent,
+        TimeSelectorComponent
     ],
     providers: [
         SensorService
+    ],
+    entryComponents: [
+        EditComponent,
+        TimeSelectorComponent
     ]
 })
 export class HomeModule {

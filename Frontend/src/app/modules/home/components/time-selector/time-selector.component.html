@@ -1,0 +1,40 @@
+<div [formGroup]="form">
+    <div class="header text-center">Select Time</div>
+
+    <div class="body">
+
+        <div class="row justify-content-between vertical-align mt-2">
+            <div class="input-group  align-items-center">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Time</span>
+                </div>
+                <div class="input-form">
+                    <input type="number"
+                           class="form-control"
+                           id="time"
+                           formControlName="time">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row justify-content-between vertical-align mt-3">
+            <mat-button-toggle-group formControlName="type" name="type" aria-label="Type">
+                <mat-button-toggle  [value]="type.type" *ngFor='let type of supportedType; let i = index'>
+                    {{ type.name }}
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+
+        </div>
+
+
+    </div>
+
+    <div class="footer mt-4">
+        <div class="row justify-content-between">
+            <button type="button" class="cancel-button" (click)="close()">Cancel</button>
+            <button type="button" class="save-button" [disabled]="!isFormValid()" (click)="submit()">OK</button>
+        </div>
+    </div>
+</div>
