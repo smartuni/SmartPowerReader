@@ -528,9 +528,11 @@ int estop_cmd(int argc, char **argv)
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
         send_cbor("ESTOP", true, base_addr, BACKEND_PORT);
+        cfg.estop = true;
         // TODO: Update the spr_config parameters
     } else if (strcmp(argv[1], "off") == 0) {
         send_cbor("ESTOP", false, base_addr, BACKEND_PORT);
+        cfg.estop = false;
         // TODO: Update the spr_config parameters
     } else {
         printf("Usage: estop [ on | off ]\n");
@@ -558,9 +560,11 @@ int manual_cmd(int argc, char **argv)
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
         send_cbor("MANUAL", true, base_addr, BACKEND_PORT);
+        cfg.manual = true;
         // TODO: Update the spr_config parameters
     } else if (strcmp(argv[1], "off") == 0) {
         send_cbor("MANUAL", false, base_addr, BACKEND_PORT);
+        cfg.manual = false;
         // TODO: Update the spr_config parameters
     } else {
         printf("Usage: manual [ on | off ]\n");
