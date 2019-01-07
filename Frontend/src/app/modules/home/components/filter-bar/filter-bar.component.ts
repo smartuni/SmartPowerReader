@@ -77,8 +77,8 @@ export class FilterBarComponent implements OnInit {
         this.form = new FormGroup({
                 startDate: new FormControl(today),
                 endDate: new FormControl(today),
-                startTime: new FormControl('00:00'),
-                endTime: new FormControl('23:59')
+                startTime: new FormControl('00:00:01'),
+                endTime: new FormControl('23:59:59')
             }
         );
 
@@ -219,8 +219,8 @@ export class FilterBarComponent implements OnInit {
             this.form.controls['endDate'].setValue(endDate);
 
         } else {
-            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes());
-            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes());
+            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes() + ':' + fromDate.getSeconds());
+            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes() + ':' + toDate.getSeconds());
 
         }
     }
