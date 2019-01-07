@@ -280,7 +280,7 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             return gcoap_finish(pdu, sizeof(encoder_buf), COAP_FORMAT_CBOR);
 
         case COAP_PUT: {
-            puts("got put at config handler");
+            puts("got PUT at /config");
             if (pdu->content_type == COAP_FORMAT_CBOR) {
                 dumpbytes(pdu->payload, pdu->payload_len);
             }
@@ -302,16 +302,46 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             else
                 printf("error: cbor %d\n", err);
 
-            /* find pwr_period pair in map */
+            /* find configs in map */
+
             CborValue pwr_period;
-            cbor_value_map_find_value(&iterator, "period", &pwr_period);
-            if (cbor_value_get_type(&pwr_period) != CborIntegerType) {
-                puts("not integer");
-                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            cbor_value_map_find_value(&iterator, "PWR_PERIOD", &pwr_period);
+            if (cbor_value_get_type(&pwr_period) != CborInvalidType) {
+                cbor_value_get_uint64(&pwr_period, &cfg.pwr_period);
+                printf("Got new pwr_period: %llu\n", cfg.pwr_period);
+
+                /* we don't need to do anything here. senddata thread checks
+                 * pwr_periods and stop when 0 */
             }
-            /* get value of pwr_period */
-            cbor_value_get_uint64(&pwr_period, &cfg.pwr_period);
-            printf("Got new pwr_period: %llu\n", cfg.pwr_period);
+
+
+            /* device can be turned on/off from frontend ONLY when manual == false */
+            if (!cfg.manual) {
+                CborValue switch_state;
+                cbor_value_map_find_value(&iterator, "SWITCH_STATE", &switch_state);
+                if (cbor_value_get_type(&switch_state) != CborInvalidType) {
+                    cbor_value_get_boolean(&switch_state, &cfg.switch_state);
+                    printf("Got new switch_state: %s\n", cfg.switch_state ? "true" : "false");
+
+                    /* switch the device on/off */
+                    // TODO
+                }
+            }
+
+            CborValue manual;
+            cbor_value_map_find_value(&iterator, "MANUAL", &manual);
+            if (cbor_value_get_type(&manual) != CborInvalidType) {
+                cbor_value_get_boolean(&manual, &cfg.manual);
+                printf("Got new manual: %s\n", cfg.manual ? "true" : "false");
+            }
+
+            // FIXME: do estop configurable from frontend? this maybe can be removed
+            CborValue estop;
+            cbor_value_map_find_value(&iterator, "ESTOP", &estop);
+            if (cbor_value_get_type(&estop) != CborInvalidType) {
+                cbor_value_get_boolean(&estop, &cfg.estop);
+                printf("Got new estop: %s\n", cfg.estop ? "true" : "false");
+            }
 
             if (senddata_pid == 0) {
                 /* start thread send_data */
