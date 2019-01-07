@@ -2,7 +2,6 @@ package spr.resource;
 
 import org.eclipse.californium.core.server.resources.CoapExchange;
 
-import dave.json.JsonBuilder;
 import dave.json.JsonObject;
 import dave.json.JsonValue;
 import dave.util.log.Logger;
@@ -28,7 +27,7 @@ public class ConfigResource extends Resource
 		String id = ex.getSourceAddress().getHostAddress();
 		JsonObject json = (JsonObject) Converter.toJSON(ex.getRequestPayload());
 		ConfigData config = new ConfigData(id, new Data(json));
-		JsonValue packet = (new JsonBuilder()).put("data", config.save()).toJSON();
+		JsonValue packet = config.save();
 		
 		config.config.stream().filter(f -> !f.isWriteable()).forEach(f -> {
 			LOG.log(Severity.WARNING, "Node tried to write read-only property %s!", f.toString());

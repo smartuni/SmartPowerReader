@@ -277,7 +277,7 @@ public class ConfigUnit extends BaseUnit
 			JsonObject json = new JsonObject();
 			
 			json.putString("id", id);
-			json.put("config", config.save());
+			json.put("data", config.save());
 			
 			return json;
 		}
@@ -288,7 +288,7 @@ public class ConfigUnit extends BaseUnit
 			JsonObject o = (JsonObject) json;
 			
 			String id = o.getString("id");
-			Data config = Data.load(o.get("config"));
+			Data config = Data.load(o.get("data"));
 			
 			return new ConfigData(id, config);
 		}
