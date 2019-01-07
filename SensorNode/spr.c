@@ -103,6 +103,14 @@ struct spr_config {
 
 static struct spr_config cfg = { 0 };
 
+/**
+ * The following variables are used to `software debounce` the button used for
+ * manual and estop. The time difference between each button press muss be
+ * at least 0.5 ms */
+static uint32_t manual_last_debounce = 0;
+static uint32_t estop_last_debounce = 0;
+static uint32_t debounce_threshold = 500000;   /* 0.5 second */
+
 static void *send_data(void *arg)
 {
     (void)arg;
@@ -424,26 +432,31 @@ static inline void send_cbor(const char *key, bool val, char *addr, char *port)
 static void cb_estop(void *arg)
 {
     (void)arg;
-    puts("estop pressed");
-    // TODO: implement code for sending via coap
-    // NOTE: Do not use something like printf here!
 
-    cfg.estop = !cfg.estop;
-    send_cbor("estop", cfg.estop, base_addr, BACKEND_PORT);
-    _eval_switch_state_led();
+    if ((xtimer_now_usec() - estop_last_debounce) > debounce_threshold) {
+        puts("estop pressed");
+
+        cfg.estop = !cfg.estop;
+        send_cbor("estop", cfg.estop, base_addr, BACKEND_PORT);
+        _eval_switch_state_led();
+        estop_last_debounce = xtimer_now_usec();
+    }
+
 }
 
 /* Callback function for the manual pin */
 static void cb_manual(void *arg)
 {
     (void)arg;
-    puts("manual pressed");
-    // TODO: implement code for sending via coap
-    // NOTE: Do not use something like printf here!
 
-    cfg.manual = !cfg.manual;
-    send_cbor("manual", cfg.manual, base_addr, BACKEND_PORT);
-    _eval_switch_state_led();
+    if ((xtimer_now_usec() - manual_last_debounce) > debounce_threshold) {
+        puts("manual pressed");
+
+        cfg.manual = !cfg.manual;
+        send_cbor("manual", cfg.manual, base_addr, BACKEND_PORT);
+        _eval_switch_state_led();
+        manual_last_debounce = xtimer_now_usec();
+    }
 }
 
 #endif /* FEATURE_USE_BUTTONS */
