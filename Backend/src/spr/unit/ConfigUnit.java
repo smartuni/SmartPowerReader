@@ -41,6 +41,7 @@ import spr.task.Tasks;
 import spr.unit.CoapServerUnit.Directive;
 import spr.util.AbstractWatchdog;
 import spr.util.Converter;
+import spr.util.SPRUtils;
 import spr.util.Watchdog;
 
 public class ConfigUnit extends BaseUnit
@@ -211,21 +212,53 @@ public class ConfigUnit extends BaseUnit
 
 // ----------------------------------------------------------------------------------------------------	
 	
-	private void pushConfiguration(Configuration.Entry e)
+	private JsonValue generateConfig(Configuration.Entry e)
 	{
-		Address coap = new LocalAddress(Units.IDs.COAP);
+		Map<String, JsonObject> mCache = new HashMap<>();
 		
-		if(e.location != null)
+		JsonObject o = mCache.get(e.ip);
+		JsonObject n = e.data.stream()
+			.filter(f -> !f.isWriteable())
+			.collect(JsonCollectors.ofObject((json, f) -> json.put(f.toString(), e.data.get(f))));
+		
+		if(o != null)
 		{
-			coap = new UniqueAddress(Units.IDs.COAP, e.location);
+			n = (JsonObject) SPRUtils.substract(n, o);
 		}
 		
-		byte[] payload = Converter.toCBOR(e.data.save());
-		CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload, Directive.PUT, Resource.Format.CBOR);
+		if(n.keySet().isEmpty())
+		{
+			n = null;
+			
+			mCache.remove(e.ip);
+		}
+		else
+		{
+			mCache.put(e.ip, n);
+		}
 		
-		getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
+		return n;
+	}
+	
+	private void pushConfiguration(Configuration.Entry e)
+	{
+		JsonValue data = generateConfig(e);
 		
-		e.data.stream().filter(Feature::isCounter).forEach(f -> setTimer(e, f));
+		if(data != null)
+		{
+			Address coap = new LocalAddress(Units.IDs.COAP);
+			byte[] payload = Converter.toCBOR(data);
+			CoapServerUnit.Packet packet = new CoapServerUnit.Packet(e.ip, PORT, "config", payload, Directive.PUT, Resource.Format.CBOR);
+			
+			if(e.location != null)
+			{
+				coap = new UniqueAddress(Units.IDs.COAP, e.location);
+			}
+			
+			getNode().send(coap, new Task(Tasks.Coap.SEND, newSession(), packet));
+			
+			e.data.stream().filter(Feature::isCounter).forEach(f -> setTimer(e, f));
+		}
 	}
 	
 	private void updateConfig(Configuration.Entry e)
