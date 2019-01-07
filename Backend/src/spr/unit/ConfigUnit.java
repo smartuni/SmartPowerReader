@@ -140,7 +140,7 @@ public class ConfigUnit extends BaseUnit
 		}
 		
 		updateConfig(e);
-		pushConfiguration(e);
+		pushConfiguration(e, true);
 	}
 	
 	private void handleConfigure(Message<Task> p)
@@ -173,7 +173,7 @@ public class ConfigUnit extends BaseUnit
 				{
 					e = e.addData(new Data(json.getObject("data")));
 					
-					pushConfiguration(e);
+					pushConfiguration(e, false);
 				}
 				
 				updateConfig(e);
@@ -241,8 +241,13 @@ public class ConfigUnit extends BaseUnit
 		return n;
 	}
 	
-	private void pushConfiguration(Configuration.Entry e)
+	private void pushConfiguration(Configuration.Entry e, boolean force)
 	{
+		if(force)
+		{
+			mCache.remove(e.ip);
+		}
+		
 		JsonValue data = generateConfig(e);
 		
 		if(data != null)
