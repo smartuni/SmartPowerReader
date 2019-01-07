@@ -315,8 +315,9 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
             }
 
 
-            /* device can be turned on/off from frontend ONLY when manual == false */
-            if (!cfg.manual) {
+            /* device can be turned on/off from frontend ONLY when manual == false 
+             * AND estop == false */
+            if (!cfg.manual && !cfg.estop) {
                 CborValue switch_state;
                 cbor_value_map_find_value(&iterator, "SWITCH_STATE", &switch_state);
                 if (cbor_value_get_type(&switch_state) != CborInvalidType) {
@@ -326,21 +327,6 @@ static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *
                     /* switch the device on/off */
                     // TODO
                 }
-            }
-
-            CborValue manual;
-            cbor_value_map_find_value(&iterator, "MANUAL", &manual);
-            if (cbor_value_get_type(&manual) != CborInvalidType) {
-                cbor_value_get_boolean(&manual, &cfg.manual);
-                printf("Got new manual: %s\n", cfg.manual ? "true" : "false");
-            }
-
-            // FIXME: do estop configurable from frontend? this maybe can be removed
-            CborValue estop;
-            cbor_value_map_find_value(&iterator, "ESTOP", &estop);
-            if (cbor_value_get_type(&estop) != CborInvalidType) {
-                cbor_value_get_boolean(&estop, &cfg.estop);
-                printf("Got new estop: %s\n", cfg.estop ? "true" : "false");
             }
 
             if (senddata_pid == 0) {
@@ -541,10 +527,10 @@ int estop_cmd(int argc, char **argv)
 
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
-        send_cbor("ESTOP", true, argv[2], argv[3]);
+        send_cbor("ESTOP", true, base_addr, BACKEND_PORT);
         // TODO: Update the spr_config parameters
     } else if (strcmp(argv[1], "off") == 0) {
-        send_cbor("ESTOP", false, argv[2], argv[3]);
+        send_cbor("ESTOP", false, base_addr, BACKEND_PORT);
         // TODO: Update the spr_config parameters
     } else {
         printf("Usage: estop [ on | off ]\n");
@@ -571,10 +557,10 @@ int manual_cmd(int argc, char **argv)
 
     /* Compare the first argument and turn it on or off. */
     if (strcmp(argv[1], "on") == 0) {
-        send_cbor("MANUAL", true, argv[2], argv[3]);
+        send_cbor("MANUAL", true, base_addr, BACKEND_PORT);
         // TODO: Update the spr_config parameters
     } else if (strcmp(argv[1], "off") == 0) {
-        send_cbor("MANUAL", false, argv[2], argv[3]);
+        send_cbor("MANUAL", false, base_addr, BACKEND_PORT);
         // TODO: Update the spr_config parameters
     } else {
         printf("Usage: manual [ on | off ]\n");
