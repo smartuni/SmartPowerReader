@@ -42,7 +42,7 @@ void features_init(uint8_t *buf, size_t maxlen)
 
     /* set pwr_period */
     cbor_encode_text_stringz(&features, "pwr_period");
-    cbor_encode_uint(&features, (uint64_t) 1000);
+    cbor_encode_uint(&features, (uint64_t) 0);
 
     /* set switch_state */
     cbor_encode_text_stringz(&features, "switch_state");
