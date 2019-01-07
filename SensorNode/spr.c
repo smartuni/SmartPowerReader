@@ -57,6 +57,7 @@
 #define SENDDATA_QUEUE_SIZE     (8)
 
 #define CON_THRESH              (300)
+#define DEBOUNCE_THRESHOLD      (500000)       /**< 0.5 second */
 
 #define BACKEND_REG             "/new-device"  /**< Backend resource to register new devices */
 #define BACKEND_SEND            "/measure"     /**< Backend resource to accept measurements */
@@ -81,6 +82,10 @@ static char base_addr[NANOCOAP_URI_MAX];
 static kernel_pid_t senddata_pid;
 static char senddata_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
 
+/* variables for button_listener_thread */
+static kernel_pid_t button_listener_pid;
+static char button_listener_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
+
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
     { "/config", COAP_GET | COAP_PUT, _config_handler, NULL },
@@ -103,13 +108,86 @@ struct spr_config {
 
 static struct spr_config cfg = { 0 };
 
-/**
- * The following variables are used to `software debounce` the button used for
- * manual and estop. The time difference between each button press muss be
- * at least 0.5 ms */
-static uint32_t manual_last_debounce = 0;
-static uint32_t estop_last_debounce = 0;
-static uint32_t debounce_threshold = 500000;   /* 0.5 second */
+/* Called everytime one of cfg values (estop, manual, switch_state) changed */
+static void _eval_switch_state_led(void) {
+    if (cfg.estop) {
+        gpio_write(switch_state_led, 0);
+        puts("DEBUG: switch_state_led turned OFF");
+    }
+    else if (cfg.manual || cfg.switch_state) {
+        gpio_write(switch_state_led, 1);
+        puts("DEBUG: switch_state_led turned ON");
+    }
+    else {
+        gpio_write(switch_state_led, 0);
+        puts("DEBUG: switch_state_led turned OFF");
+    }
+}
+
+static inline void send_cbor(const char *key, bool val, char *addr, char *port)
+{
+    uint8_t key_buf[32];
+    CborEncoder encoder;
+    CborEncoder map;
+    cbor_encoder_init(&encoder, key_buf, sizeof(key_buf), 0);
+    CborError err = cbor_encoder_create_map(&encoder, &map, 1);
+    if (err != 0)
+        printf("error: create map %d\n", err);
+
+    cbor_encode_text_stringz(&map, key);
+    cbor_encode_boolean(&map, val);
+    cbor_encoder_close_container(&encoder, &map);
+
+    dumpbytes((const uint8_t *)&key_buf, sizeof(key_buf));
+
+    coap_pkt_t pdu;
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_CONFIG);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+
+    memcpy(pdu.payload, &key_buf[0], sizeof(key_buf));
+    size_t len = gcoap_finish(&pdu, sizeof(key_buf), COAP_FORMAT_CBOR);
+    // printf("len: %u. ip: %s. port: %s\n", len, argv[2], argv[3]);
+    if (send(&buf[0], len, addr, port) == 0)
+    {
+        puts("gcoap_cli: msg send failed");
+    }
+}
+
+static void *button_cb_listener(void *arg)
+{
+    (void) arg;
+    uint32_t manual_last_debounce = 0;
+    uint32_t estop_last_debounce = 0;
+
+    msg_t msg;
+
+    while (1) {
+        msg_receive(&msg);
+        if (strcmp(msg.content.ptr, "ESTOP") == 0) {
+            if ((xtimer_now_usec() - estop_last_debounce) > DEBOUNCE_THRESHOLD) {
+                puts("estop pressed");
+
+                cfg.estop = !cfg.estop;
+                send_cbor("estop", cfg.estop, base_addr, BACKEND_PORT);
+                _eval_switch_state_led();
+                estop_last_debounce = xtimer_now_usec();
+            }
+        }
+        else if (strcmp(msg.content.ptr, "MANUAL") == 0) {
+            if ((xtimer_now_usec() - manual_last_debounce) > DEBOUNCE_THRESHOLD) {
+                puts("manual pressed");
+
+                cfg.manual = !cfg.manual;
+                send_cbor("manual", cfg.manual, base_addr, BACKEND_PORT);
+                _eval_switch_state_led();
+                manual_last_debounce = xtimer_now_usec();
+            }
+        }
+    }
+
+    return NULL;
+}
 
 static void *send_data(void *arg)
 {
@@ -238,22 +316,6 @@ static ssize_t _value_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *c
       }
   }
   return -1;
-}
-
-/* Called everytime one of cfg values (estop, manual, switch_state) changed */
-static void _eval_switch_state_led(void) {
-    if (cfg.estop) {
-        gpio_write(switch_state_led, 0);
-        puts("DEBUG: switch_state_led turned OFF");
-    }
-    else if (cfg.manual || cfg.switch_state) {
-        gpio_write(switch_state_led, 1);
-        puts("DEBUG: switch_state_led turned ON");
-    }
-    else {
-        gpio_write(switch_state_led, 0);
-        puts("DEBUG: switch_state_led turned OFF");
-    }
 }
 
 static ssize_t _config_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx)
@@ -397,51 +459,14 @@ static void find_base_station(char * base_addr)
     ipv6_addr_to_str(base_addr, &dodag_id, IPV6_ADDR_MAX_STR_LEN);
 }
 
-static inline void send_cbor(const char *key, bool val, char *addr, char *port)
-{
-    uint8_t key_buf[32];
-    CborEncoder encoder;
-    CborEncoder map;
-    cbor_encoder_init(&encoder, key_buf, sizeof(key_buf), 0);
-    CborError err = cbor_encoder_create_map(&encoder, &map, 1);
-    if (err != 0)
-        printf("error: create map %d\n", err);
-
-    cbor_encode_text_stringz(&map, key);
-    cbor_encode_boolean(&map, val);
-    cbor_encoder_close_container(&encoder, &map);
-
-    dumpbytes((const uint8_t *)&key_buf, sizeof(key_buf));
-
-    coap_pkt_t pdu;
-    uint8_t buf[GCOAP_PDU_BUF_SIZE];
-    gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, COAP_METHOD_PUT, BACKEND_CONFIG);
-    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
-
-    memcpy(pdu.payload, &key_buf[0], sizeof(key_buf));
-    size_t len = gcoap_finish(&pdu, sizeof(key_buf), COAP_FORMAT_CBOR);
-    // printf("len: %u. ip: %s. port: %s\n", len, argv[2], argv[3]);
-    if (send(&buf[0], len, addr, port) == 0)
-    {
-        puts("gcoap_cli: msg send failed");
-    }
-}
-
 #if FEATURE_USE_BUTTONS
 /* Callback function for the estop pin */
 static void cb_estop(void *arg)
 {
     (void)arg;
 
-    if ((xtimer_now_usec() - estop_last_debounce) > debounce_threshold) {
-        puts("estop pressed");
-
-        cfg.estop = !cfg.estop;
-        send_cbor("estop", cfg.estop, base_addr, BACKEND_PORT);
-        _eval_switch_state_led();
-        estop_last_debounce = xtimer_now_usec();
-    }
-
+    msg_t msg = { .content = { .ptr = "ESTOP" } };
+    msg_send(&msg, button_listener_pid);
 }
 
 /* Callback function for the manual pin */
@@ -449,14 +474,8 @@ static void cb_manual(void *arg)
 {
     (void)arg;
 
-    if ((xtimer_now_usec() - manual_last_debounce) > debounce_threshold) {
-        puts("manual pressed");
-
-        cfg.manual = !cfg.manual;
-        send_cbor("manual", cfg.manual, base_addr, BACKEND_PORT);
-        _eval_switch_state_led();
-        manual_last_debounce = xtimer_now_usec();
-    }
+    msg_t msg = { .content = { .ptr = "MANUAL" } };
+    msg_send(&msg, button_listener_pid);
 }
 
 #endif /* FEATURE_USE_BUTTONS */
@@ -548,6 +567,11 @@ void spr_init(lcd1602a_dev_t * lcd)
     xtimer_sleep(2);
     /* Register Basisstation */
     _register(base_addr);
+
+    /* Start button callback listener */
+    button_listener_pid = thread_create(button_listener_stack, sizeof(button_listener_stack),
+                                        THREAD_PRIORITY_MAIN - 1, 0, button_cb_listener,
+                                        NULL, "butrcv");
 }
 
 /**
