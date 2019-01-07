@@ -222,12 +222,9 @@ public class ConfigUnit extends BaseUnit
 			.filter(f -> !f.isWriteable())
 			.collect(JsonCollectors.ofObject((json, f) -> json.put(f.toString(), e.data.get(f))));
 		
-		if(o != null)
-		{
-			n = (JsonObject) SPRUtils.subtract(n, o);
-		}
+		JsonObject r = (JsonObject) SPRUtils.subtract(n, o);
 		
-		if(n.keySet().isEmpty())
+		if(r.keySet().isEmpty())
 		{
 			n = null;
 			
@@ -238,7 +235,7 @@ public class ConfigUnit extends BaseUnit
 			mCache.put(e.ip, n);
 		}
 		
-		return n;
+		return r;
 	}
 	
 	private void pushConfiguration(Configuration.Entry e, boolean force)
