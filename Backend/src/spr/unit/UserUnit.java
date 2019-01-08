@@ -15,6 +15,7 @@ import dave.util.log.Logger;
 import dave.util.log.Severity;
 import spr.net.LocalAddress;
 import spr.client.SimpleCommand;
+import spr.common.Configuration;
 import spr.net.common.Message;
 import spr.net.common.Node;
 import spr.task.Task;
@@ -63,7 +64,7 @@ public class UserUnit extends BaseUnit
 		
 		System.out.println("Generating 100 datapoints for " + id + " starting @" + (new Date()).toString() + " with 1h distance");
 		
-		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.NEW, newSession(), id));
+		getNode().send(Units.IDs.CONFIG, new Task(Tasks.Configuration.NEW, newSession(), new ConfigUnit.ConfigData(id, new Configuration.Data(new Configuration.Feature[] { Configuration.Feature.PWR_PERIOD, Configuration.Feature.SWITCH_STATE }))));
 		
 		for(int i = 0 ; i < 100 ; ++i)
 		{
