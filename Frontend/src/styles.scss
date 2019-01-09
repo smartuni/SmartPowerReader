@@ -91,7 +91,20 @@ hidden {
   margin-right: 20px;
 
 }
-
+//
+//mat-form-field , .mat-form-field-wrapper, .mat-form-field-flex, .mat-form-field-infix {
+//  height: 40px;
+//}
+//.mat-form-field-wrapper {
+//  padding-bottom: 0 !important;
+//}
+//.mat-form-field-appearance-outline .mat-form-field-infix {
+//  //padding: 0;
+//  padding: 0.3em 0 0.2em 0;
+//}
+//.mat-form-field-appearance-outline .mat-form-field-wrapper {
+//   margin: 0 !important;
+//}
 input.ng-dirty.ng-invalid {
   border: 1px solid rgb(252, 100, 45) !important;
   background-color: rgb(255, 248, 246) !important;
@@ -117,4 +130,20 @@ mat-button-toggle {
 row {
   margin-left: 0;
   margin-right: 0;
+}
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input[type="time"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="time"] {
+  -moz-appearance: textfield;
 }

@@ -45,7 +45,7 @@ input[type="time"]{
 
 .submit-button, .edit-button {
   height: 35px;
-  width: 120px;
+  //width: 120px;
   background-color: #009688;
   color: white;
   border-radius: 3px;
@@ -53,7 +53,7 @@ input[type="time"]{
 
 .submit-button {
   &:disabled {
-    background-color: #929396;
+    background-color: #6a6a6a;
   }
 }
 

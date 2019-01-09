@@ -27,7 +27,6 @@
     "@ng-bootstrap/ng-bootstrap": "^3.3.0",
     "@ngrx/store": "^6.1.2",
     "@ngrx/store-devtools": "^6.1.2",
-    "@progress/kendo-date-math": "^1.2.0",
     "@swimlane/ngx-charts": "^9.0.0",
     "@types/socket.io-client": "^1.4.32",
     "amazing-time-picker": "^1.5.3",

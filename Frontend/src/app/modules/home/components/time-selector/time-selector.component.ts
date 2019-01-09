@@ -18,12 +18,13 @@ export class TimeSelectorComponent implements OnInit {
 
     ngOnInit() {
         this.form = new FormGroup({
-            time: new FormControl(0, [Validators.min(0)]),
+            time: new FormControl(1, [Validators.min(1), Validators.required]),
             type: new FormControl('', [Validators.required])
         });
     }
 
     isFormValid() {
+        console.log('valid', this.form.invalid)
         return !this.form.invalid;
     }
 

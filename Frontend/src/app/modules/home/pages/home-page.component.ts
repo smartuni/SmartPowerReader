@@ -10,6 +10,7 @@ import 'rxjs-compat/add/operator/takeWhile';
 import * as moment from 'moment';
 
 import 'moment/min/locales.min';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-homepage',
@@ -17,10 +18,9 @@ import 'moment/min/locales.min';
     styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-    from: number;
-    to: number;
 
     @ViewChild(GraphSummaryComponent) graphSummaryComponent: GraphSummaryComponent;
+    subscription: Subscription;
 
     constructor(private sensorService: SensorService,
                 private store: Store<fromRoot.State>) {
@@ -32,33 +32,35 @@ export class HomePageComponent implements OnInit {
         setTimeout(() => {
             this.getAllSensors();
         }, 500);
-        // Observable
-        //     .interval(5000)
-        //     .takeWhile(() => true)
-        //     .subscribe(() =>
+        // this.store.pipe(select(getAutoUpdate)).subscribe(autoUpdate => {
+        //     console.log(autoUpdate);
+        //     if (autoUpdate) {
         //         setTimeout(() => {
         //             this.getAllSensors();
-        //         }, 500)
-        //     );
-
-
-        // interval(60 * 60 * 1000)
-        //     .pipe(
-        //         tap(() => {
-        //             setTimeout(() => {
-        //                 this.getAllSensors();
-        //             }, 500);
-        // })
-        // )
-        // .subscribe();
-
-
+        //         }, 500);
+        //         this.subscription = Observable
+        //             .interval(1000)
+        //             .takeWhile(() => true)
+        //             .subscribe(() => {
+        //                     console.log('123');
+        //                     setTimeout(() => {
+        //                         this.getAllSensors();
+        //                     }, 500);
+        //                 }
+        //             );
+        //
+        //     } else {
+        //         if (this.subscription) {
+        //             this.subscription.unsubscribe();
+        //         }
+        //     }
+        // });
     }
 
     onChangedValue(data) {
-        this.from = this.convertToDate(data['startDate'], data['startTime']).valueOf();
-        this.to = this.convertToDate(data['endDate'], data['endTime']).valueOf();
-        this.graphSummaryComponent.drawGraph(data.selectedDevices, this.from, this.to);
+        const from = this.convertToDate(data['startDate'], data['startTime']).valueOf();
+        const to = this.convertToDate(data['endDate'], data['endTime']).valueOf();
+        this.graphSummaryComponent.drawGraph(data.selectedDevices, from, to);
     }
 
     private convertToDate(date, time) {

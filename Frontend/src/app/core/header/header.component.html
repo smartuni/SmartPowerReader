@@ -1,8 +1,14 @@
-<nav class="top-navbar navbar navbar-light navbar-expand-md bg-faded justify-content-center" id="top-navbar">
+<nav class="top-navbar navbar navbar-light navbar-expand-md bg-faded justify-content-between" id="top-navbar">
     <a class="navbar-brand mr-auto navtop-brand d-flex align-items-center" href="#" id="navtop-brand">
         <div class="smart-power-reader-logo"></div>
         <div>Smart Power Reader</div>
     </a>
+    <div class="col-auto">
+        <mat-checkbox class="example-margin" (change)="onChangeUpdate($event)">Auto update</mat-checkbox>
+
+    </div>
+
+
 
 </nav>
 <div class="top-navbar-padder"></div>

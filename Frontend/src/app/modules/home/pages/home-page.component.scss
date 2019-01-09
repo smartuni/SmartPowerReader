@@ -1,5 +1,5 @@
 @import '../../../../assets/styles/variables';
 
 .main-page {
-  min-height: calc(#{$page_height} - #{$header_height} - #{$footer_height});
+  min-height: calc(#{$page_height} - #{$header_wrapper_height} - #{$footer_height} - 10px);
 }

@@ -11,6 +11,7 @@ import {StoreModule} from '@ngrx/store';
 import {metaReducers, reducers} from './store/reducers';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from 'environments/environment';
+import {SharedModule} from './shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import {environment} from 'environments/environment';
         AppRoutingModule,
         BrowserAnimationsModule,
         HomeModule,
+        SharedModule,
         StoreModule.forRoot(reducers, {metaReducers}),
         !environment.production ? StoreDevtoolsModule.instrument() : [],
     ],

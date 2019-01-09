@@ -1,14 +1,15 @@
-<div class="filter-container" *ngIf="!isLoading">
+<div class="filter-container" >
     <div class="row mt-4" [formGroup]="form">
-        <div class="col-3">
+        <div class="col-3 mr-3">
+            <mat-form-field class="col">
+                <mat-label>{{selectedDevices.length > 0 ? 'Selected devices' : 'Please select device'}}</mat-label>
 
-            <mat-form-field class="col-10">
-                <mat-select multiple placeholder="Select device" disableOptionCentering="true" >
+                <mat-select multiple placeholder="" disableOptionCentering="true" [value]="selectedDevices" [compareWith]="compareFn">
                     <mat-option (onSelectionChange)="change($event)"
                                 class="vertical-align"
                                 *ngFor="let device of sensors; let i = index"
                                 [value]="device">
-                        <div class="row vertical-align">
+                        <div class="row vertical-align" *ngIf="!isLoading">
                             <div class="col-9 description">
                                 {{device.name ? device.name : device.id}}
                             </div>
@@ -22,18 +23,16 @@
                 </mat-select>
             </mat-form-field>
 
-            <div class="row text-right">
-                <div class="col-auto">
-                    <button type="submit" (click)="onSubmit()" [disabled]="!isFormValid" class="submit-button mt-1">
-                        Show
-                    </button>
-                </div>
-                <div class="col-auto">
-                    <button type="button"
-                            class="edit-button mt-1 mr-2"
-                            (click)="editDevice()">Configuration
-                    </button>
-                </div>
+            <div class="row justify-content-between ml-2 mr-3 mt-1">
+                <button type="submit" (click)="onSubmit()" [disabled]="selectedDevices.length === 0 || !isFormValid"
+                        class="submit-button col-auto">
+                    Show
+                </button>
+                <button type="button"
+                        class="edit-button col-auto"
+                        (click)="editDevice()">
+                    Configuration
+                </button>
             </div>
         </div>
         <div class="col">
@@ -60,7 +59,8 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <input class="col" align="middle" formControlName="startTime" type="time" onlyPM='true'>
+                            <input class="col" align="middle" formControlName="startTime" type="time" onlyPM='true'
+                                   step="1">
                         </div>
                     </div>
                 </div>
@@ -84,21 +84,21 @@
                             </div>
                         </div>
                         <div class="col-4 ">
-                            <input  class="col" align="middle" formControlName="endTime" type="time" onlyPM="true">
+                            <input class="col" align="middle" formControlName="endTime" type="time" onlyPM="true"
+                                   step="1">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row mt-4 mr-2 justify-content-between">
-                <!--<button class="filter-button" type="button" (click)="selectDate()">Today</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectDate(-1)">Yesterday</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectWeek(-1, -1)">Last week</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectMonth()">This month</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectMonth(-1, -1)">Last month</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectMonth(-3, -1)">Last 3 months</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectYear()">This year</button>-->
-                <!--<button class="filter-button" type="button" (click)="selectYear(-1)">Last Year</button>-->
-                <button class="filter-button" type="button" (click)="selectLast()">Test</button>
+                <button class="filter-button" type="button" (click)="analyseTime(0, 'days')">Today</button>
+                <button class="filter-button" type="button" (click)="analyseTime(1, 'days')">Yesterday</button>
+                <button class="filter-button" type="button" (click)="analyseTime(1, 'weeks')">Last week</button>
+                <button class="filter-button" type="button" (click)="analyseTime(0, 'months')">This month</button>
+                <button class="filter-button" type="button" (click)="analyseTime(1, 'months')">Last month</button>
+                <button class="filter-button" type="button" (click)="analyseTime(0, 'years')">This year</button>
+                <button class="filter-button" type="button" (click)="analyseTime(1, 'years')">Last Year</button>
+                <button class="filter-button" type="button" (click)="selectLast()">Last Period</button>
 
             </div>
         </div>

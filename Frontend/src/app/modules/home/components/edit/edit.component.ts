@@ -25,8 +25,8 @@ export class EditComponent implements OnInit {
 
     ngOnInit() {
         this.form = new FormGroup({
-            deviceId: new FormControl(''),
-            deviceName: new FormControl(),
+            deviceId: new FormControl('', [Validators.required]),
+            deviceName: new FormControl(null, [Validators.required]),
             period: new FormControl(0, [Validators.min(0)]),
             activated: new FormControl(true),
             manual: new FormControl(''),
@@ -75,7 +75,14 @@ export class EditComponent implements OnInit {
         this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('manual');
 
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
+        if(this.isPeriodAvailable) {
+            this.form.controls['period'].setValidators(Validators.required);
+            this.form.controls['period'].setValue(this.selectedSensor.data.pwr_period);
+        } else {
+            this.form.controls['period'].clearValidators();
+            this.form.controls['period'].setValue(null);
+        }
+        // this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
         this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.switch_state : false);
         this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.estop : false);
         this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.manual : false);

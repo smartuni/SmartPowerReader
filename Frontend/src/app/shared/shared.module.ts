@@ -3,13 +3,15 @@ import {CommonModule} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoadingSpinnerComponent} from './components/loading-spinner/loading-spinner.component';
 import {HttpClientModule} from '@angular/common/http';
+import {CustomMaterialModule} from './custom-material.module';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule
+        HttpClientModule,
+        CustomMaterialModule
     ],
     declarations: [
         LoadingSpinnerComponent
@@ -19,7 +21,8 @@ import {HttpClientModule} from '@angular/common/http';
         FormsModule,
         ReactiveFormsModule,
         LoadingSpinnerComponent,
-        HttpClientModule
+        HttpClientModule,
+        CustomMaterialModule
     ]
 })
 export class SharedModule {

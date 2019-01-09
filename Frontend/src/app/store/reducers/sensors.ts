@@ -1,5 +1,5 @@
 import * as sensors from '../actions/sensors';
-import {Sensor} from '../../core/interfaces/sensor.interface';
+import {Sensor} from 'core/interfaces/sensor.interface';
 
 export interface State {
     sensors: Sensor[];
@@ -30,7 +30,7 @@ export function reducer(state = initialState, action: sensors.Actions): State {
             return Object.assign({}, state, {
                 loading: false,
                 loaded: true,
-                sensors: action.payload,
+                sensors: JSON.parse(JSON.stringify(action.payload)),
                 selectedSensors: []
             });
         }

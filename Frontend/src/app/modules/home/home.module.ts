@@ -11,15 +11,6 @@ import {AmazingTimePickerModule} from 'amazing-time-picker';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SensorService} from './services/sensor.service';
 import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {
-    MatButtonToggleModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatSlideToggleModule
-} from '@angular/material';
 import {TimeSelectorComponent} from './components/time-selector/time-selector.component';
 
 
@@ -32,13 +23,7 @@ import {TimeSelectorComponent} from './components/time-selector/time-selector.co
         NgxChartsModule,
         BrowserAnimationsModule,
         NoopAnimationsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatIconModule,
-        MatSlideToggleModule,
-        MatButtonToggleModule
+
     ],
     declarations: [
         HomePageComponent,

@@ -1,16 +1,19 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {formatDate} from '@angular/common';
-import {addDays, addMonths, Day, firstDayInWeek, firstDayOfMonth, lastDayOfMonth} from '@progress/kendo-date-math';
 import {Sensor} from 'core/interfaces/sensor.interface';
 import {ModalService} from '../../../../shared/services/modal.service';
 import {EditComponent} from '../edit/edit.component';
 import {select, Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
-import {UpdateSensorsSAction} from 'store/actions/sensors';
+import {getAutoUpdate, isCurrentTime} from 'store/reducers';
+import {SelectSensorsAction, UpdateSensorsAction} from 'store/actions/sensors';
 import {TimeSelectorComponent} from '../time-selector/time-selector.component';
 import * as moment from 'moment';
 import {DurationInputArg2} from 'moment';
+import {SelectCurrentPeriodAction} from 'store/actions/filter';
+import {Observable, Subscription} from 'rxjs';
+import {GraphPeriodAction} from 'store/actions/graph';
 
 
 @Component({
@@ -24,10 +27,7 @@ export class FilterBarComponent implements OnInit {
     @Output() onChangedValue = new EventEmitter();
     isLoading: boolean;
 
-    startTime: Date;
-    endTime: Date;
     isFormValid: boolean;
-    now: string;
 
     selectedDevices = [];
     supportedType = [
@@ -60,47 +60,80 @@ export class FilterBarComponent implements OnInit {
             type: 'years'
         }
     ];
+    subscriptionSelectCurrent: Subscription;
+    subscriptionUpdateEndTime: Subscription;
+
 
     constructor(private modalService: ModalService,
                 private store: Store<fromRoot.State>) {
     }
 
     ngOnInit() {
+
         this.isLoading = true;
-        this.now = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-        const todayArr = this.now.split('-');
+
+        const now = moment().toDate();
         const today = {
-            year: +todayArr[0],
-            month: +todayArr[1],
-            day: +todayArr[2]
+            year: now.getFullYear(),
+            month: now.getMonth() + 1,
+            day: now.getDate()
         };
+
         this.form = new FormGroup({
                 startDate: new FormControl(today),
                 endDate: new FormControl(today),
-                startTime: new FormControl('00:00:01'),
+                startTime: new FormControl('00:00:00'),
                 endTime: new FormControl('23:59:59')
             }
         );
+        this.updateEndTime();
+
 
         const raw = this.form.getRawValue();
-        this.startTime = this.combineToDate(raw.startDate, raw.startTime);
-        this.endTime = this.combineToDate(raw.endDate, raw.endTime);
-        this.isFormValid = this.startTime < this.endTime;
+        let startTime = this.combineToDate(raw.startDate, raw.startTime);
+        let endTime = this.combineToDate(raw.endDate, raw.endTime);
+        this.store.dispatch(new GraphPeriodAction(endTime.valueOf()));
+        this.isFormValid = startTime.valueOf() < endTime.valueOf();
 
-        setTimeout(() => {
-            this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
-                this.sensors = sensors;
-                this.isLoading = false;
-            });
-        }, 500);
+        this.checkCurrent(startTime, endTime);
 
+
+        this.store.pipe(select(fromRoot.getSensors)).subscribe(sensors => {
+            this.sensors = sensors;
+            this.isLoading = false;
+        });
+        this.store.pipe(select(getAutoUpdate)).subscribe(autoUpdate => {
+            if (autoUpdate) {
+
+                this.subscriptionSelectCurrent = this.store.pipe(select(isCurrentTime)).subscribe(selectedCurrent => {
+                    if (selectedCurrent) {
+                        this.subscriptionUpdateEndTime = Observable
+                            .interval(1000)
+                            .takeWhile(() => true)
+                            .subscribe(() => {
+                                    this.updateEndTime();
+                                }
+                            );
+                    } else {
+                        if (this.subscriptionUpdateEndTime) {
+                            this.subscriptionUpdateEndTime.unsubscribe();
+                        }
+                    }
+                });
+            } else {
+                this.unsubscribeAll();
+            }
+        });
 
         this.form.valueChanges.subscribe(data => {
             const rawValue = this.form.getRawValue();
-            this.startTime = this.combineToDate(rawValue.startDate, rawValue.startTime);
-            this.endTime = this.combineToDate(rawValue.endDate, rawValue.endTime);
-            this.isFormValid = this.startTime < this.endTime;
+            startTime = this.combineToDate(rawValue.startDate, rawValue.startTime);
+            endTime = this.combineToDate(rawValue.endDate, rawValue.endTime);
+            this.store.dispatch(new GraphPeriodAction(endTime.valueOf()));
+
+            this.checkCurrent(startTime, endTime);
         });
+
     }
 
     onSubmit() {
@@ -116,51 +149,13 @@ export class FilterBarComponent implements OnInit {
             onUpdated: (editedSensor: Sensor) => {
                 const index = this.sensors.findIndex(sensor => sensor.id === editedSensor.id);
                 this.sensors[index] = editedSensor;
-                this.store.dispatch(new UpdateSensorsSAction(this.sensors));
+                this.store.dispatch(new UpdateSensorsAction(this.sensors));
                 this.modalService.destroy();
             },
             onClosed: () => {
                 this.modalService.destroy();
             }
         });
-    }
-
-    selectHour(offset: number = 0) {
-        const date = this.convertDateToHashMap(addDays(new Date(), offset));
-        this.form.controls['startDate'].setValue(date);
-        this.form.controls['endDate'].setValue(date);
-    }
-
-    selectDate(offset: number = 0) {
-        const date = this.convertDateToHashMap(addDays(new Date(), offset));
-        this.form.controls['startDate'].setValue(date);
-        this.form.controls['endDate'].setValue(date);
-    }
-
-    selectWeek(from: number = 0, to: number = 0) {
-        const fromWeek = firstDayInWeek(addDays(new Date(), from), Day.Monday);
-        const toWeek = addDays(firstDayInWeek(addDays(new Date(), to), Day.Monday), 6);
-        const startDate = this.convertDateToHashMap(fromWeek);
-        const endDate = this.convertDateToHashMap(toWeek);
-        this.form.controls['startDate'].setValue(startDate);
-        this.form.controls['endDate'].setValue(endDate);
-    }
-
-    selectMonth(from: number = 0, to: number = 0) {
-        const fromMonth = addMonths(new Date(), from);
-        const toMonth = addMonths(new Date(), to);
-        const startDate = this.convertDateToHashMap(firstDayOfMonth(fromMonth));
-        const endDate = this.convertDateToHashMap(lastDayOfMonth(toMonth));
-        this.form.controls['startDate'].setValue(startDate);
-        this.form.controls['endDate'].setValue(endDate);
-    }
-
-    selectYear(num: number = 0) {
-        const year = new Date().getFullYear() + num;
-        const startYear = this.convertDateToHashMap(new Date(year, 0, 1));
-        const endYear = this.convertDateToHashMap(new Date(year, 11, 31));
-        this.form.controls['startDate'].setValue(startYear);
-        this.form.controls['endDate'].setValue(endYear);
     }
 
     private convertDateToHashMap(date) {
@@ -174,9 +169,8 @@ export class FilterBarComponent implements OnInit {
     }
 
     private combineToDate(dateHashMap: any, time: string) {
-        const date = new Date(dateHashMap.year, dateHashMap.month - 1, dateHashMap.day,
-            +time.substr(0, 2), +time.substr(3, 2));
-        return date;
+        return new Date(dateHashMap.year, dateHashMap.month - 1, dateHashMap.day,
+            +time.substr(0, 2), +time.substr(3, 2), +time.substr(6, 2));
     }
 
     activeHover(className) {
@@ -188,11 +182,13 @@ export class FilterBarComponent implements OnInit {
         if (event.isUserInput) {
             if (event.source.selected) {
                 this.selectedDevices.push([device.id, device.name]);
+
             } else {
                 const index = this.selectedDevices.findIndex(item => device.id === item[0]);
                 this.selectedDevices.splice(index, 1);
             }
         }
+        this.store.dispatch(new SelectSensorsAction(this.selectedDevices));
     }
 
     selectLast() {
@@ -208,57 +204,70 @@ export class FilterBarComponent implements OnInit {
     }
 
     private analyseTime(time: number, type: DurationInputArg2) {
-        const fromDate = moment().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
-        const toDate = moment().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
+
+        const fromDate = moment().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type);
+        let toDate = moment().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type);
+        if (time === 0) {
+            this.store.dispatch(new SelectCurrentPeriodAction(true));
+            toDate = moment();
+        } else {
+            this.store.dispatch(new SelectCurrentPeriodAction(false));
+        }
         if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
-
-
-            const startDate = this.convertDateToHashMap(fromDate);
-            const endDate = this.convertDateToHashMap(toDate);
+            const startDate = this.convertDateToHashMap(fromDate.toDate());
+            const endDate = this.convertDateToHashMap(toDate.toDate());
             this.form.controls['startDate'].setValue(startDate);
             this.form.controls['endDate'].setValue(endDate);
-
+            this.form.controls['startTime'].setValue('00:00:00');
+            if (time !== 0) {
+                this.form.controls['endTime'].setValue('23:59:59');
+            } else {
+                this.updateEndTime();
+            }
         } else {
-            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes() + ':' + fromDate.getSeconds());
-            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes() + ':' + toDate.getSeconds());
+            toDate = fromDate.clone().add(time - 1, type).endOf(type);
+            this.form.controls['startTime'].setValue(this.handleTime(fromDate.toDate()));
+            this.form.controls['endTime'].setValue(this.handleTime(toDate.toDate()));
 
         }
     }
 
-    // private analyseTime(time: number, type: number) {
-    //     if (type === 0) {
-    //
-    //     } else if (type === 1) {
-    //
-    //     } else if (type === 2) {
-    //
-    //     } else if (type === 3) {
-    //         if (time === 0) {
-    //             this.selectDate();
-    //         } else {
-    //             this.selectDate(-time);
-    //         }
-    //
-    //     } else if (type === 4) {
-    //         if (time === 0) {
-    //             this.selectWeek();
-    //         } else {
-    //             this.selectWeek(-time, -1);
-    //         }
-    //     } else if (type === 5) {
-    //         if (time === 0) {
-    //             this.selectMonth();
-    //         } else {
-    //             this.selectMonth(-time, -1);
-    //         }
-    //
-    //     } else if (type === 6) {
-    //         if (time === 0) {
-    //             this.selectYear();
-    //         } else {
-    //             this.selectYear(-time);
-    //         }
-    //     }
-    // }
+    private updateEndTime() {
+        const toDate = moment();
+        this.form.controls['endTime'].setValue(this.handleTime(toDate.toDate()));
+    }
+
+    private convertToTwoNumber(num: number) {
+        return num < 10 ? '0' + num : num;
+    }
+
+    private handleTime(date: Date) {
+        return this.convertToTwoNumber(date.getHours()) + ':' + this.convertToTwoNumber(date.getMinutes()) + ':' + this.convertToTwoNumber(date.getSeconds());
+    }
+
+    private unsubscribeAll() {
+        if (this.subscriptionUpdateEndTime) {
+            this.subscriptionUpdateEndTime.unsubscribe();
+        }
+        if (this.subscriptionSelectCurrent) {
+            this.subscriptionSelectCurrent.unsubscribe();
+        }
+
+    }
+
+    private checkCurrent(startTime: Date, endTime: Date) {
+        this.isFormValid = startTime.valueOf() < endTime.valueOf();
+        const now = new Date();
+        if (this.isFormValid && now.valueOf() - endTime.valueOf() < 300000) {
+            this.store.dispatch(new SelectCurrentPeriodAction(true));
+        } else {
+            this.store.dispatch(new SelectCurrentPeriodAction(false));
+        }
+    }
+
+    compareFn(sensor1: Sensor, sensor2: Sensor) {
+        return sensor1 && sensor2 ? sensor1.id === sensor2.id : sensor1 === sensor2;
+    }
+
 
 }

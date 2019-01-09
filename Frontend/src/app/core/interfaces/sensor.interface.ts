@@ -3,7 +3,7 @@ import {SensorStatus} from '../enum/sensor-status.enum';
 export interface Sensor {
     id: string;
     name: string;
-    series?: any;
+    series?: any[];
     status?: SensorStatus;
     data: any;
 }

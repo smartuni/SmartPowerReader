@@ -6,6 +6,9 @@
 .save-button {
   background-color: #009688;
   color: white;
+  &:disabled {
+    background:  #6a6a6a;
+  }
 }
 
 button {
