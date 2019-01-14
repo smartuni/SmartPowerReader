@@ -158,7 +158,7 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                 action: GET_MEASUREMENT,
                 id: selectedDevices[i][0],
                 from: +JSON.parse(JSON.stringify(this.oldEndTime)),
-                to: to,
+                to: to + 1,
                 count: 1
             };
             setTimeout(() => {
