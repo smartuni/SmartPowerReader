@@ -15,6 +15,7 @@ export class SensorService {
 
     constructor(private httpClient: HttpClient) {
         const url = window.location.href;
+
         this.host = url.split(/http:\/\/|:/)[1];
         // this.host = '192.168.1.236';
         this.serverUrl = 'http://' + this.host + ':3000';
