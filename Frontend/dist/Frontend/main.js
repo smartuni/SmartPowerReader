@@ -447,12 +447,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _store_reducers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./store/reducers */ "./src/app/store/reducers/index.ts");
 /* harmony import */ var _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ngrx/store-devtools */ "./node_modules/@ngrx/store-devtools/fesm5/store-devtools.js");
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _shared_shared_module__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./shared/shared.module */ "./src/app/shared/shared.module.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -480,6 +482,7 @@ var AppModule = /** @class */ (function () {
                 _app_routing_module__WEBPACK_IMPORTED_MODULE_5__["AppRoutingModule"],
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
                 _modules_home_home_module__WEBPACK_IMPORTED_MODULE_6__["HomeModule"],
+                _shared_shared_module__WEBPACK_IMPORTED_MODULE_12__["SharedModule"],
                 _ngrx_store__WEBPACK_IMPORTED_MODULE_8__["StoreModule"].forRoot(_store_reducers__WEBPACK_IMPORTED_MODULE_9__["reducers"], { metaReducers: _store_reducers__WEBPACK_IMPORTED_MODULE_9__["metaReducers"] }),
                 !environments_environment__WEBPACK_IMPORTED_MODULE_11__["environment"].production ? _ngrx_store_devtools__WEBPACK_IMPORTED_MODULE_10__["StoreDevtoolsModule"].instrument() : [],
             ],
@@ -501,7 +504,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<footer class=\"bg-white\">\n    <div class=\"row justify-content-between mx-0 px-0\">\n    <div class=\"col-auto\">\n      <!--<select class=\"custom-select\" (change)=\"setLanguage($event.target.value)\">-->\n        <!--<option *ngFor=\"let lang of languages\"-->\n                <!--[value]=\"lang.code\" [selected]=\"lang.code === this.languageService.getLanguage()\">{{ lang.label }}</option>-->\n      <!--</select>-->\n    </div>\n\n    <div class=\"col-auto\">\n      <ul class=\"nav  ml-auto w-100 justify-content-end\">\n        <li class=\"nav-item\">\n          <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\" routerLink=\"/abouts\">About us</a>\n        </li>\n        <li class=\"nav-item\">\n          <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\" routerLink=\"/faq\">FAQ</a>\n        </li>\n        <li class=\"nav-item\">\n          <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\" routerLink=\"/contacts\">Contact</a>\n        </li>\n        <li class=\"nav-item\">\n          <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\" routerLink=\"/policies\">Policy</a>\n        </li>\n      </ul>\n    </div>\n  </div>\n\n</footer>\n\n\n"
+module.exports = "<footer class=\"bg-white\">\n    <div class=\"row justify-content-between mx-0 px-0\">\n        <div class=\"col-auto\">\n        </div>\n\n        <div class=\"col-auto\">\n            <ul class=\"nav  ml-auto w-100 justify-content-end\">\n                <li class=\"nav-item\">\n                    <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\"\n                       routerLink=\"/abouts\">About us</a>\n                </li>\n                <li class=\"nav-item\">\n                    <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\"\n                       routerLink=\"/faq\">FAQ</a>\n                </li>\n                <li class=\"nav-item\">\n                    <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\"\n                       routerLink=\"/contacts\">Contact</a>\n                </li>\n                <li class=\"nav-item\">\n                    <a class=\"nav-link navbar_item_link\" data-toggle=\"collapse\" data-target=\"#footerNavbar\"\n                       routerLink=\"/policies\">Policy</a>\n                </li>\n            </ul>\n        </div>\n    </div>\n\n</footer>\n\n\n"
 
 /***/ }),
 
@@ -512,7 +515,7 @@ module.exports = "<footer class=\"bg-white\">\n    <div class=\"row justify-cont
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".avatar {\n  height: 50px;\n  width: 50px; }\n\n.buttonFooter {\n  position: -webkit-sticky;\n  position: sticky;\n  bottom: 20px; }\n\nfooter {\n  border-top: 1px solid #e4e4e4;\n  height: 100px;\n  padding: 20px 0; }\n\nfooter a {\n    text-decoration: none;\n    color: #333; }\n"
+module.exports = ".avatar {\n  height: 50px;\n  width: 50px; }\n\n.buttonFooter {\n  position: -webkit-sticky;\n  position: sticky;\n  bottom: 20px; }\n\nfooter {\n  border-top: 1px solid #e4e4e4;\n  height: 70px;\n  padding: 20px 0; }\n\nfooter a {\n    text-decoration: none;\n    color: #333; }\n"
 
 /***/ }),
 
@@ -564,7 +567,7 @@ var FooterComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"top-navbar navbar navbar-light navbar-expand-md bg-faded justify-content-center\" id=\"top-navbar\">\n    <a class=\"navbar-brand mr-auto navtop-brand d-flex align-items-center\" href=\"#\" id=\"navtop-brand\">\n        <div class=\"smart-power-reader-logo\"></div>\n        <div>Smart Power Reader</div>\n    </a>\n\n</nav>\n<div class=\"top-navbar-padder\"></div>\n\n\n\n\n"
+module.exports = "<nav class=\"top-navbar navbar navbar-light navbar-expand-md bg-faded justify-content-between\" id=\"top-navbar\">\n    <a class=\"navbar-brand mr-auto navtop-brand d-flex align-items-center\" href=\"#\" id=\"navtop-brand\">\n        <div class=\"smart-power-reader-logo\"></div>\n        <div>Smart Power Reader</div>\n    </a>\n    <div class=\"col-auto\">\n        <mat-checkbox class=\"example-margin\" (change)=\"onChangeUpdate($event)\">Auto update</mat-checkbox>\n\n    </div>\n\n\n\n</nav>\n<div class=\"top-navbar-padder\"></div>\n\n\n\n\n"
 
 /***/ }),
 
@@ -575,7 +578,7 @@ module.exports = "<nav class=\"top-navbar navbar navbar-light navbar-expand-md b
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "a.nav-link {\n  color: white; }\n\n.nav-item {\n  padding-left: 5px; }\n\n.top-navbar {\n  height: 81px;\n  background: #ffffff;\n  border-bottom: 1px solid #e4e4e4;\n  box-shadow: none !important; }\n\n.top-navbar .smart-power-reader-logo {\n    content: '';\n    background: url('smart-power-reader.jpg') no-repeat;\n    background-size: auto 50px;\n    background-position: center center;\n    width: 100px;\n    float: left;\n    height: 50px; }\n\n.top-navbar .navbar-brand {\n    color: #333; }\n\n.avatar {\n  width: 50px;\n  height: 50px; }\n\n.navbar-brand img {\n  width: auto;\n  height: 50px !important; }\n"
+module.exports = "a.nav-link {\n  color: white; }\n\n.nav-item {\n  padding-left: 5px; }\n\n.top-navbar {\n  height: 81px;\n  background: #ffffff;\n  border-bottom: 1px solid #e4e4e4;\n  box-shadow: none !important;\n  padding: 0; }\n\n.top-navbar .smart-power-reader-logo {\n    content: '';\n    background: url('smart-power-reader.jpg') no-repeat;\n    background-size: auto 50px;\n    background-position: center center;\n    width: 100px;\n    float: left;\n    height: 50px; }\n\n.top-navbar .navbar-brand {\n    color: #333; }\n\n.avatar {\n  width: 50px;\n  height: 50px; }\n\n.navbar-brand img {\n  width: auto;\n  height: 50px !important; }\n"
 
 /***/ }),
 
@@ -590,6 +593,8 @@ module.exports = "a.nav-link {\n  color: white; }\n\n.nav-item {\n  padding-left
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HeaderComponent", function() { return HeaderComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var store_actions_header__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! store/actions/header */ "./src/app/store/actions/header.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -600,12 +605,16 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
 var HeaderComponent = /** @class */ (function () {
-    function HeaderComponent() {
+    function HeaderComponent(store) {
+        this.store = store;
     }
     HeaderComponent.prototype.ngOnInit = function () {
     };
-    HeaderComponent.prototype.logout = function () {
+    HeaderComponent.prototype.onChangeUpdate = function (event) {
+        this.store.dispatch(new store_actions_header__WEBPACK_IMPORTED_MODULE_2__["AutoUpdateAction"](event.checked));
     };
     HeaderComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -613,7 +622,7 @@ var HeaderComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./header.component.html */ "./src/app/core/header/header.component.html"),
             styles: [__webpack_require__(/*! ./header.component.scss */ "./src/app/core/header/header.component.scss")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [_ngrx_store__WEBPACK_IMPORTED_MODULE_1__["Store"]])
     ], HeaderComponent);
     return HeaderComponent;
 }());
@@ -629,7 +638,7 @@ var HeaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <table class=\"table borderless mt-3\">\n        <tbody>\n        <tr class=\"vertical-align\">\n            <td>\n                Device Id\n            </td>\n            <td>\n                <select class=\"form-control\" formControlName=\"deviceId\"\n                        (change)=\"onChangeSensor($event)\">\n                    <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                        {{sensor.name ? sensor.name : sensor.id}}\n                    </option>\n                </select>\n            </td>\n            <td>\n                Name\n            </td>\n            <td>\n\n                <input type=\"text\"\n                       class=\"form-control\"\n                       id=\"deviceName\"\n                       formControlName=\"deviceName\">\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isPeriodAvailable\">\n                Period\n            </td>\n            <td *ngIf=\"isPeriodAvailable\">\n                <input type=\"number\"\n                       class=\"form-control col-6\"\n                       id=\"period\"\n                       formControlName=\"period\">\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                Turn on\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                <mat-slide-toggle\n                        class=\"switch-state vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"activated\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isEmergencyAvailable\">\n                Emergency\n            </td>\n            <td *ngIf=\"isEmergencyAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"emergency\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                Manual\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"manual\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n\n\n    <!--<div class=\"body\">-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-2\">-->\n    <!--<div class=\"first-column\">-->\n    <!--<div class=\"input-group  align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Device Id</span>-->\n    <!--</div>-->\n    <!--<div class=\"input-form\">-->\n    <!--<select class=\"form-control\" formControlName=\"deviceId\"-->\n    <!--(change)=\"onChangeSensor($event)\">-->\n    <!--<option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">-->\n    <!--{{sensor.name ? sensor.name : sensor.id}}-->\n    <!--</option>-->\n    <!--</select>-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"second-column\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Name</span>-->\n    <!--</div>-->\n    <!--<input type=\"text\"-->\n    <!--class=\"form-control\"-->\n    <!--id=\"deviceName\"-->\n    <!--formControlName=\"deviceName\">-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Period</span>-->\n    <!--</div>-->\n    <!--<input type=\"number\"-->\n    <!--class=\"form-control col-3\"-->\n    <!--id=\"period\"-->\n    <!--formControlName=\"period\">-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isSwitchStateAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !selectedSensor.data.PWR_PERIOD && isSwitchStateAvailable,-->\n    <!--'second-column': !!selectedSensor.data.PWR_PERIOD &&  isSwitchStateAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Turn on</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"switch-state vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"activated\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"isEmergencyAvailable\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Emergency</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"emergency\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isManualAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !isEmergencyAvailable && isManualAvailable,-->\n    <!--'second-column': isEmergencyAvailable &&  isManualAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">-->\n    <!--Manual-->\n    <!--</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"manual\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n    <!--</div>-->\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n\n</div>\n"
+module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-center\">Configuration</div>\n    <table class=\"table borderless mt-3\">\n        <tbody>\n        <tr class=\"vertical-align\">\n            <td>\n                Device Id\n            </td>\n            <td>\n                <select class=\"form-control\" formControlName=\"deviceId\"\n                        (change)=\"onChangeSensor($event)\">\n                    <option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">\n                        {{sensor.name ? sensor.name : sensor.id}}\n                    </option>\n                </select>\n            </td>\n            <td>\n                Name\n            </td>\n            <td>\n\n                <input type=\"text\"\n                       class=\"form-control\"\n                       id=\"deviceName\"\n                       formControlName=\"deviceName\">\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isPeriodAvailable\">\n                Period\n            </td>\n            <td *ngIf=\"isPeriodAvailable\">\n                <input type=\"number\"\n                       class=\"form-control col-6\"\n                       id=\"period\"\n                       formControlName=\"period\">\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                Turn on\n            </td>\n            <td *ngIf=\"isSwitchStateAvailable\">\n                <mat-slide-toggle\n                        class=\"switch-state vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"activated\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        <tr class=\"vertical-align\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">\n            <td *ngIf=\"isEmergencyAvailable\">\n                Emergency\n            </td>\n            <td *ngIf=\"isEmergencyAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"emergency\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                Manual\n            </td>\n            <td *ngIf=\"isManualAvailable\">\n                <mat-slide-toggle\n                        class=\"manual-status vertical-align\"\n                        [color]=\"'#009688'\"\n                        formControlName=\"manual\"\n                        [disabled]=\"true\">\n                </mat-slide-toggle>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n\n\n    <!--<div class=\"body\">-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-2\">-->\n    <!--<div class=\"first-column\">-->\n    <!--<div class=\"input-group  align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Device Id</span>-->\n    <!--</div>-->\n    <!--<div class=\"input-form\">-->\n    <!--<select class=\"form-control\" formControlName=\"deviceId\"-->\n    <!--(change)=\"onChangeSensor($event)\">-->\n    <!--<option *ngFor=\"let sensor of sensors; let i = index\" [value]=\"sensor.id\">-->\n    <!--{{sensor.name ? sensor.name : sensor.id}}-->\n    <!--</option>-->\n    <!--</select>-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"second-column\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Name</span>-->\n    <!--</div>-->\n    <!--<input type=\"text\"-->\n    <!--class=\"form-control\"-->\n    <!--id=\"deviceName\"-->\n    <!--formControlName=\"deviceName\">-->\n    <!--</div>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"!!selectedSensor.data.PWR_PERIOD\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Period</span>-->\n    <!--</div>-->\n    <!--<input type=\"number\"-->\n    <!--class=\"form-control col-3\"-->\n    <!--id=\"period\"-->\n    <!--formControlName=\"period\">-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isSwitchStateAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !selectedSensor.data.PWR_PERIOD && isSwitchStateAvailable,-->\n    <!--'second-column': !!selectedSensor.data.PWR_PERIOD &&  isSwitchStateAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Turn on</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"switch-state vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"activated\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n\n    <!--<div class=\"row justify-content-between vertical-align mt-3\" *ngIf=\"!!selectedSensor && !!selectedSensor.data\">-->\n    <!--<div class=\"first-column\" *ngIf=\"isEmergencyAvailable\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">Emergency</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"emergency\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--<div *ngIf=\"isManualAvailable\"-->\n    <!--class=\"vertical-align\"-->\n    <!--[ngClass]=\"{-->\n    <!--'first-column': !isEmergencyAvailable && isManualAvailable,-->\n    <!--'second-column': isEmergencyAvailable &&  isManualAvailable}\">-->\n    <!--<div class=\"input-group align-items-center\">-->\n    <!--<div class=\"input-group-prepend\">-->\n    <!--<span class=\"input-group-text\">-->\n    <!--Manual-->\n    <!--</span>-->\n    <!--</div>-->\n    <!--<mat-slide-toggle-->\n    <!--class=\"manual-status vertical-align\"-->\n    <!--[color]=\"'#009688'\"-->\n    <!--formControlName=\"manual\"-->\n    <!--[disabled]=\"true\">-->\n    <!--</mat-slide-toggle>-->\n    <!--</div>-->\n    <!--</div>-->\n\n    <!--</div>-->\n    <!--</div>-->\n\n    <div class=\"footer mt-4\">\n        <div class=\"row justify-content-between\">\n            <button type=\"button\" class=\"cancel-button\" (click)=\"close()\">Cancel</button>\n            <button type=\"button\" class=\"save-button\" [disabled]=\"!isFormValid()\" (click)=\"save()\">Save</button>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -640,7 +649,7 @@ module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-cente
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.row {\n  margin-left: 0;\n  margin-right: 0;\n  width: 650px; }\n\n.row .first-column {\n    width: 400px; }\n\n.row .first-column .input-group-prepend {\n      width: 90px !important; }\n\n.row .first-column .input-form {\n      width: 300px; }\n\n.row .second-column {\n    width: 250px; }\n\n.row .second-column .form-control {\n      width: 100px; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.borderless {\n  border-top: none; }\n\n.borderless tbody tr {\n    margin-top: 0; }\n\n.borderless tbody tr td {\n      border-top: none;\n      font-size: 1rem; }\n\n.borderless tbody tr td:nth-child(1) {\n      width: 17%; }\n\n.borderless tbody tr td:nth-child(2) {\n      width: 40%; }\n\n.borderless tbody tr td:nth-child(3) {\n      width: 13%; }\n\n.borderless tbody tr td:nth-child(4) {\n      width: 30%; }\n"
+module.exports = ".header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.row {\n  margin-left: 0;\n  margin-right: 0;\n  width: 650px; }\n\n.row .first-column {\n    width: 400px; }\n\n.row .first-column .input-group-prepend {\n      width: 90px !important; }\n\n.row .first-column .input-form {\n      width: 300px; }\n\n.row .second-column {\n    width: 250px; }\n\n.row .second-column .form-control {\n      width: 100px; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\nbutton:disabled {\n    background-color: #6a6a6a; }\n\n.borderless {\n  border-top: none; }\n\n.borderless tbody tr {\n    margin-top: 0; }\n\n.borderless tbody tr td {\n      border-top: none;\n      font-size: 1rem; }\n\n.borderless tbody tr td:nth-child(1) {\n      width: 17%; }\n\n.borderless tbody tr td:nth-child(2) {\n      width: 40%; }\n\n.borderless tbody tr td:nth-child(3) {\n      width: 13%; }\n\n.borderless tbody tr td:nth-child(4) {\n      width: 30%; }\n\nselect {\n  cursor: pointer;\n  /* styling */\n  background-color: white;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  display: inline-block;\n  font: inherit;\n  line-height: 1.5em;\n  padding: 0.5em 3.5em 0.5em 1em;\n  /* reset */\n  margin: 0;\n  box-sizing: border-box;\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  background-image: linear-gradient(45deg, transparent 50%, #ccc 50%), linear-gradient(135deg, #ccc 50%, transparent 50%);\n  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;\n  background-size: 5px 5px, 5px 5px, 1px 1.5em;\n  background-repeat: no-repeat;\n  /* Very imp: hide arrow in IE */ }\n\nselect::-ms-expand {\n    display: none; }\n\nselect:-moz-focusring {\n    color: transparent;\n    text-shadow: none; }\n\nselect:focus {\n    background-image: linear-gradient(45deg, green 50%, transparent 50%), linear-gradient(135deg, transparent 50%, green 50%);\n    background-position: calc(100% - 15px) 1em, calc(100% - 20px) 1em, calc(100% - 2.5em) 0.5em;\n    background-size: 5px 5px, 5px 5px, 1px 1.5em;\n    background-repeat: no-repeat;\n    border-color: green;\n    outline: 0; }\n"
 
 /***/ }),
 
@@ -677,8 +686,8 @@ var EditComponent = /** @class */ (function () {
     }
     EditComponent.prototype.ngOnInit = function () {
         this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
-            deviceId: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
-            deviceName: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](),
+            deviceId: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]),
+            deviceName: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](null, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]),
             period: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](0, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(0)]),
             activated: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](true),
             manual: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](''),
@@ -720,7 +729,15 @@ var EditComponent = /** @class */ (function () {
         this.isEmergencyAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('estop');
         this.isManualAvailable = !!this.selectedSensor.data && this.selectedSensor.data.hasOwnProperty('manual');
         this.form.controls['deviceName'].setValue(this.selectedSensor.name ? this.selectedSensor.name : null);
-        this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
+        if (this.isPeriodAvailable) {
+            this.form.controls['period'].setValidators(_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required);
+            this.form.controls['period'].setValue(this.selectedSensor.data.pwr_period);
+        }
+        else {
+            this.form.controls['period'].clearValidators();
+            this.form.controls['period'].setValue(null);
+        }
+        // this.form.controls['period'].setValue(this.isPeriodAvailable ? this.selectedSensor.data.pwr_period : null);
         this.form.controls['activated'].setValue(this.isSwitchStateAvailable ? this.selectedSensor.data.switch_state : false);
         this.form.controls['emergency'].setValue(this.isEmergencyAvailable ? this.selectedSensor.data.estop : false);
         this.form.controls['manual'].setValue(this.isManualAvailable ? this.selectedSensor.data.manual : false);
@@ -758,7 +775,7 @@ var EditComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3\">\n\n            <mat-form-field class=\"col-10\">\n                <mat-select multiple placeholder=\"Select device\" disableOptionCentering=\"true\" >\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                class=\"vertical-align\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device\">\n                        <div class=\"row vertical-align\">\n                            <div class=\"col-9 description\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col-3 text-right vertical-align\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'CONNECTED'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'DISCONNECTED'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row text-right\">\n                <div class=\"col-auto\">\n                    <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"!isFormValid\" class=\"submit-button mt-1\">\n                        Show\n                    </button>\n                </div>\n                <div class=\"col-auto\">\n                    <button type=\"button\"\n                            class=\"edit-button mt-1 mr-2\"\n                            (click)=\"editDevice()\">Configuration\n                    </button>\n                </div>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-4\">\n                            <input class=\"col\" align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'>\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-4 \">\n                            <input  class=\"col\" align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectDate()\">Today</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectDate(-1)\">Yesterday</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectWeek(-1, -1)\">Last week</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectMonth()\">This month</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-1, -1)\">Last month</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectMonth(-3, -1)\">Last 3 months</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectYear()\">This year</button>-->\n                <!--<button class=\"filter-button\" type=\"button\" (click)=\"selectYear(-1)\">Last Year</button>-->\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectLast()\">Test</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
+module.exports = "<div class=\"filter-container\" >\n    <div class=\"row mt-4\" [formGroup]=\"form\">\n        <div class=\"col-3 mr-3\">\n            <mat-form-field class=\"col\">\n                <mat-label>{{selectedDevices.length > 0 ? 'Selected devices' : 'Please select device'}}</mat-label>\n\n                <mat-select multiple placeholder=\"\" disableOptionCentering=\"true\" [value]=\"selectedDevices\" [compareWith]=\"compareFn\">\n                    <mat-option (onSelectionChange)=\"change($event)\"\n                                class=\"vertical-align\"\n                                *ngFor=\"let device of sensors; let i = index\"\n                                [value]=\"device\">\n                        <div class=\"row vertical-align\" *ngIf=\"!isLoading\">\n                            <div class=\"col-9 description\">\n                                {{device.name ? device.name : device.id}}\n                            </div>\n                            <div class=\"col-3 text-right vertical-align\">\n                                <mat-icon class=\"fas fa-check\" *ngIf=\"device.status === 'CONNECTED'\"></mat-icon>\n                                <mat-icon class=\"fas fa-ban\" *ngIf=\"device.status === 'DISCONNECTED'\"></mat-icon>\n\n                            </div>\n                        </div>\n                    </mat-option>\n                </mat-select>\n            </mat-form-field>\n\n            <div class=\"row justify-content-between ml-2 mr-3 mt-1\">\n                <button type=\"submit\" (click)=\"onSubmit()\" [disabled]=\"selectedDevices.length === 0 || !isFormValid\"\n                        class=\"submit-button col-auto\">\n                    Show\n                </button>\n                <button type=\"button\"\n                        class=\"edit-button col-auto\"\n                        (click)=\"editDevice()\">\n                    Configuration\n                </button>\n            </div>\n        </div>\n        <div class=\"col\">\n            <div class=\"row\">\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 pl-0 header\">From</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group from align-items-center\">\n                                <input class=\"form-control\" id=\"startDate\"\n                                       (click)=\"activeHover('from')\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       name=\"startDate\"\n                                       formControlName=\"startDate\"\n                                       ngbDatepicker\n                                       #startDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\"\n                                            (click)=\"startDate.toggle();activeHover('from')\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-4\">\n                            <input class=\"col\" align=\"middle\" formControlName=\"startTime\" type=\"time\" onlyPM='true'\n                                   step=\"1\">\n                        </div>\n                    </div>\n                </div>\n\n                <div class=\"col-6\">\n                    <div class=\"row vertical-align\">\n                        <div class=\"col-2 header\">To</div>\n                        <div class=\"col-6\">\n                            <div class=\"input-group align-items-center\">\n                                <input class=\"form-control\" id=\"endDate\"\n                                       placeholder=\"yyyy-mm-dd\"\n                                       formControlName=\"endDate\"\n                                       ngbDatepicker\n                                       #endDate=\"ngbDatepicker\">\n                                <div class=\"input-group-append\">\n                                    <button class=\"btn btn-outline-secondary\" (click)=\"endDate.toggle()\" type=\"button\">\n                                        <img src=\"../../../../../assets/img/svg/calendar-icon.svg\"\n                                             style=\"width: 1.2rem; height: 1rem; cursor: pointer;\"/>\n                                    </button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-4 \">\n                            <input class=\"col\" align=\"middle\" formControlName=\"endTime\" type=\"time\" onlyPM=\"true\"\n                                   step=\"1\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row mt-4 mr-2 justify-content-between\">\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(0, 'days')\">Today</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(1, 'days')\">Yesterday</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(1, 'weeks')\">Last week</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(0, 'months')\">This month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(1, 'months')\">Last month</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(0, 'years')\">This year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"analyseTime(1, 'years')\">Last Year</button>\n                <button class=\"filter-button\" type=\"button\" (click)=\"selectLast()\">Last Period</button>\n\n            </div>\n        </div>\n\n    </div>\n</div>\n\n\n\n\n\n"
 
 /***/ }),
 
@@ -769,7 +786,7 @@ module.exports = "<div class=\"filter-container\" *ngIf=\"!isLoading\">\n    <di
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".header {\n  font-size: 25px; }\n\ninput[type=\"time\"] {\n  display: inline-block;\n  padding: .375rem .75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group {\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group .btn-outline-secondary {\n    border-right: 0;\n    border-bottom: 0;\n    border-top: 0; }\n\n.input-group .form-control {\n    border: none; }\n\n.input-group .form-control:focus {\n    border-right: 1px solid black;\n    box-shadow: none; }\n\n.input-group > .form-control:focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.submit-button, .edit-button {\n  height: 35px;\n  width: 120px;\n  background-color: #009688;\n  color: white;\n  border-radius: 3px; }\n\n.submit-button:disabled {\n  background-color: #929396; }\n\n.filter-button {\n  height: 35px;\n  border: 1px solid black;\n  background-color: #E8E8E8;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\ninput[type=\"time\"]:focus {\n  border-color: black;\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.filter-button :hover, .filter-button :focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.description {\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis; }\n\n.mat-select-panel {\n  margin-top: 45px !important; }\n\nmat-icon {\n  height: auto; }\n\n.cdk-overlay-pane {\n  margin-top: 45px !important; }\n"
+module.exports = ".header {\n  font-size: 25px; }\n\ninput[type=\"time\"] {\n  display: inline-block;\n  padding: .375rem .75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group {\n  border: 1px solid black;\n  border-radius: .25rem;\n  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.input-group .btn-outline-secondary {\n    border-right: 0;\n    border-bottom: 0;\n    border-top: 0; }\n\n.input-group .form-control {\n    border: none; }\n\n.input-group .form-control:focus {\n    border-right: 1px solid black;\n    box-shadow: none; }\n\n.input-group > .form-control:focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.submit-button, .edit-button {\n  height: 35px;\n  background-color: #009688;\n  color: white;\n  border-radius: 3px; }\n\n.submit-button:disabled {\n  background-color: #6a6a6a; }\n\n.filter-button {\n  height: 35px;\n  border: 1px solid black;\n  background-color: #E8E8E8;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\ninput[type=\"time\"]:focus {\n  border-color: black;\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.filter-button :hover, .filter-button :focus {\n  box-shadow: 0px 0px 1px 3px #448bfc; }\n\n.description {\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis; }\n\n.mat-select-panel {\n  margin-top: 45px !important; }\n\nmat-icon {\n  height: auto; }\n\n.cdk-overlay-pane {\n  margin-top: 45px !important; }\n"
 
 /***/ }),
 
@@ -786,15 +803,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
-/* harmony import */ var _progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @progress/kendo-date-math */ "./node_modules/@progress/kendo-date-math/dist/es/main.js");
-/* harmony import */ var _shared_services_modal_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../shared/services/modal.service */ "./src/app/shared/services/modal.service.ts");
-/* harmony import */ var _edit_edit_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../edit/edit.component */ "./src/app/modules/home/components/edit/edit.component.ts");
-/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
-/* harmony import */ var store_reducers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! store/reducers */ "./src/app/store/reducers/index.ts");
-/* harmony import */ var store_actions_sensors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! store/actions/sensors */ "./src/app/store/actions/sensors.ts");
-/* harmony import */ var _time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../time-selector/time-selector.component */ "./src/app/modules/home/components/time-selector/time-selector.component.ts");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _shared_services_modal_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../shared/services/modal.service */ "./src/app/shared/services/modal.service.ts");
+/* harmony import */ var _edit_edit_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../edit/edit.component */ "./src/app/modules/home/components/edit/edit.component.ts");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var store_reducers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! store/reducers */ "./src/app/store/reducers/index.ts");
+/* harmony import */ var store_actions_sensors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! store/actions/sensors */ "./src/app/store/actions/sensors.ts");
+/* harmony import */ var _time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../time-selector/time-selector.component */ "./src/app/modules/home/components/time-selector/time-selector.component.ts");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var store_actions_filter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! store/actions/filter */ "./src/app/store/actions/filter.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+/* harmony import */ var store_actions_graph__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! store/actions/graph */ "./src/app/store/actions/graph.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -804,6 +823,9 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
+
+
 
 
 
@@ -856,34 +878,57 @@ var FilterBarComponent = /** @class */ (function () {
     FilterBarComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.isLoading = true;
-        this.now = Object(_angular_common__WEBPACK_IMPORTED_MODULE_2__["formatDate"])(new Date(), 'yyyy-MM-dd', 'en');
-        var todayArr = this.now.split('-');
+        var now = moment__WEBPACK_IMPORTED_MODULE_9__().toDate();
         var today = {
-            year: +todayArr[0],
-            month: +todayArr[1],
-            day: +todayArr[2]
+            year: now.getFullYear(),
+            month: now.getMonth() + 1,
+            day: now.getDate()
         };
         this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
             startDate: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](today),
             endDate: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](today),
-            startTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('00:00:01'),
+            startTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('00:00:00'),
             endTime: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('23:59:59')
         });
+        this.updateEndTime();
         var raw = this.form.getRawValue();
-        this.startTime = this.combineToDate(raw.startDate, raw.startTime);
-        this.endTime = this.combineToDate(raw.endDate, raw.endTime);
-        this.isFormValid = this.startTime < this.endTime;
-        setTimeout(function () {
-            _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_6__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_7__["getSensors"])).subscribe(function (sensors) {
-                _this.sensors = sensors;
-                _this.isLoading = false;
-            });
-        }, 500);
+        var startTime = this.combineToDate(raw.startDate, raw.startTime);
+        var endTime = this.combineToDate(raw.endDate, raw.endTime);
+        this.store.dispatch(new store_actions_graph__WEBPACK_IMPORTED_MODULE_12__["GraphPeriodAction"](endTime.valueOf()));
+        this.isFormValid = startTime.valueOf() < endTime.valueOf();
+        this.checkCurrent(startTime, endTime);
+        this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_5__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_6__["getSensors"])).subscribe(function (sensors) {
+            _this.sensors = sensors;
+            _this.isLoading = false;
+        });
+        this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_5__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_6__["getAutoUpdate"])).subscribe(function (autoUpdate) {
+            if (autoUpdate) {
+                _this.subscriptionSelectCurrent = _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_5__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_6__["isCurrentTime"])).subscribe(function (selectedCurrent) {
+                    if (selectedCurrent) {
+                        _this.subscriptionUpdateEndTime = rxjs__WEBPACK_IMPORTED_MODULE_11__["Observable"]
+                            .interval(1000)
+                            .takeWhile(function () { return true; })
+                            .subscribe(function () {
+                            _this.updateEndTime();
+                        });
+                    }
+                    else {
+                        if (_this.subscriptionUpdateEndTime) {
+                            _this.subscriptionUpdateEndTime.unsubscribe();
+                        }
+                    }
+                });
+            }
+            else {
+                _this.unsubscribeAll();
+            }
+        });
         this.form.valueChanges.subscribe(function (data) {
             var rawValue = _this.form.getRawValue();
-            _this.startTime = _this.combineToDate(rawValue.startDate, rawValue.startTime);
-            _this.endTime = _this.combineToDate(rawValue.endDate, rawValue.endTime);
-            _this.isFormValid = _this.startTime < _this.endTime;
+            startTime = _this.combineToDate(rawValue.startDate, rawValue.startTime);
+            endTime = _this.combineToDate(rawValue.endDate, rawValue.endTime);
+            _this.store.dispatch(new store_actions_graph__WEBPACK_IMPORTED_MODULE_12__["GraphPeriodAction"](endTime.valueOf()));
+            _this.checkCurrent(startTime, endTime);
         });
     };
     FilterBarComponent.prototype.onSubmit = function () {
@@ -893,57 +938,17 @@ var FilterBarComponent = /** @class */ (function () {
     };
     FilterBarComponent.prototype.editDevice = function () {
         var _this = this;
-        this.modalService.init(_edit_edit_component__WEBPACK_IMPORTED_MODULE_5__["EditComponent"], { sensors: this.sensors }, {
+        this.modalService.init(_edit_edit_component__WEBPACK_IMPORTED_MODULE_4__["EditComponent"], { sensors: this.sensors }, {
             onUpdated: function (editedSensor) {
                 var index = _this.sensors.findIndex(function (sensor) { return sensor.id === editedSensor.id; });
                 _this.sensors[index] = editedSensor;
-                _this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_8__["UpdateSensorsSAction"](_this.sensors));
+                _this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_7__["UpdateSensorsAction"](_this.sensors));
                 _this.modalService.destroy();
             },
             onClosed: function () {
                 _this.modalService.destroy();
             }
         });
-    };
-    FilterBarComponent.prototype.selectHour = function (offset) {
-        if (offset === void 0) { offset = 0; }
-        var date = this.convertDateToHashMap(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addDays"])(new Date(), offset));
-        this.form.controls['startDate'].setValue(date);
-        this.form.controls['endDate'].setValue(date);
-    };
-    FilterBarComponent.prototype.selectDate = function (offset) {
-        if (offset === void 0) { offset = 0; }
-        var date = this.convertDateToHashMap(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addDays"])(new Date(), offset));
-        this.form.controls['startDate'].setValue(date);
-        this.form.controls['endDate'].setValue(date);
-    };
-    FilterBarComponent.prototype.selectWeek = function (from, to) {
-        if (from === void 0) { from = 0; }
-        if (to === void 0) { to = 0; }
-        var fromWeek = Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["firstDayInWeek"])(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addDays"])(new Date(), from), _progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["Day"].Monday);
-        var toWeek = Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addDays"])(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["firstDayInWeek"])(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addDays"])(new Date(), to), _progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["Day"].Monday), 6);
-        var startDate = this.convertDateToHashMap(fromWeek);
-        var endDate = this.convertDateToHashMap(toWeek);
-        this.form.controls['startDate'].setValue(startDate);
-        this.form.controls['endDate'].setValue(endDate);
-    };
-    FilterBarComponent.prototype.selectMonth = function (from, to) {
-        if (from === void 0) { from = 0; }
-        if (to === void 0) { to = 0; }
-        var fromMonth = Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addMonths"])(new Date(), from);
-        var toMonth = Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["addMonths"])(new Date(), to);
-        var startDate = this.convertDateToHashMap(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["firstDayOfMonth"])(fromMonth));
-        var endDate = this.convertDateToHashMap(Object(_progress_kendo_date_math__WEBPACK_IMPORTED_MODULE_3__["lastDayOfMonth"])(toMonth));
-        this.form.controls['startDate'].setValue(startDate);
-        this.form.controls['endDate'].setValue(endDate);
-    };
-    FilterBarComponent.prototype.selectYear = function (num) {
-        if (num === void 0) { num = 0; }
-        var year = new Date().getFullYear() + num;
-        var startYear = this.convertDateToHashMap(new Date(year, 0, 1));
-        var endYear = this.convertDateToHashMap(new Date(year, 11, 31));
-        this.form.controls['startDate'].setValue(startYear);
-        this.form.controls['endDate'].setValue(endYear);
     };
     FilterBarComponent.prototype.convertDateToHashMap = function (date) {
         var dateString = Object(_angular_common__WEBPACK_IMPORTED_MODULE_2__["formatDate"])(date, 'yyyy-MM-dd', 'en');
@@ -955,8 +960,7 @@ var FilterBarComponent = /** @class */ (function () {
         };
     };
     FilterBarComponent.prototype.combineToDate = function (dateHashMap, time) {
-        var date = new Date(dateHashMap.year, dateHashMap.month - 1, dateHashMap.day, +time.substr(0, 2), +time.substr(3, 2));
-        return date;
+        return new Date(dateHashMap.year, dateHashMap.month - 1, dateHashMap.day, +time.substr(0, 2), +time.substr(3, 2), +time.substr(6, 2));
     };
     FilterBarComponent.prototype.activeHover = function (className) {
     };
@@ -971,10 +975,11 @@ var FilterBarComponent = /** @class */ (function () {
                 this.selectedDevices.splice(index, 1);
             }
         }
+        this.store.dispatch(new store_actions_sensors__WEBPACK_IMPORTED_MODULE_7__["SelectSensorsAction"](this.selectedDevices));
     };
     FilterBarComponent.prototype.selectLast = function () {
         var _this = this;
-        this.modalService.init(_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_9__["TimeSelectorComponent"], { supportedType: this.supportedType }, {
+        this.modalService.init(_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_8__["TimeSelectorComponent"], { supportedType: this.supportedType }, {
             onUpdated: function (rawValue) {
                 _this.analyseTime(rawValue.time, rawValue.type);
                 _this.modalService.destroy();
@@ -985,18 +990,64 @@ var FilterBarComponent = /** @class */ (function () {
         });
     };
     FilterBarComponent.prototype.analyseTime = function (time, type) {
-        var fromDate = moment__WEBPACK_IMPORTED_MODULE_10__().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
-        var toDate = moment__WEBPACK_IMPORTED_MODULE_10__().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type).toDate();
-        if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
-            var startDate = this.convertDateToHashMap(fromDate);
-            var endDate = this.convertDateToHashMap(toDate);
-            this.form.controls['startDate'].setValue(startDate);
-            this.form.controls['endDate'].setValue(endDate);
+        var fromDate = moment__WEBPACK_IMPORTED_MODULE_9__().subtract(time, type).startOf(type === 'weeks' ? 'isoWeeks' : type);
+        var toDate = moment__WEBPACK_IMPORTED_MODULE_9__().subtract(1, type).endOf(type === 'weeks' ? 'isoWeeks' : type);
+        if (time === 0) {
+            this.store.dispatch(new store_actions_filter__WEBPACK_IMPORTED_MODULE_10__["SelectCurrentPeriodAction"](true));
+            toDate = moment__WEBPACK_IMPORTED_MODULE_9__();
         }
         else {
-            this.form.controls['startTime'].setValue(fromDate.getHours() + ':' + fromDate.getMinutes() + ':' + fromDate.getSeconds());
-            this.form.controls['endTime'].setValue(toDate.getHours() + ':' + toDate.getMinutes() + ':' + toDate.getSeconds());
+            this.store.dispatch(new store_actions_filter__WEBPACK_IMPORTED_MODULE_10__["SelectCurrentPeriodAction"](false));
         }
+        if (type !== 'seconds' && type !== 'minutes' && type !== 'hours') {
+            var startDate = this.convertDateToHashMap(fromDate.toDate());
+            var endDate = this.convertDateToHashMap(toDate.toDate());
+            this.form.controls['startDate'].setValue(startDate);
+            this.form.controls['endDate'].setValue(endDate);
+            this.form.controls['startTime'].setValue('00:00:00');
+            if (time !== 0) {
+                this.form.controls['endTime'].setValue('23:59:59');
+            }
+            else {
+                this.updateEndTime();
+            }
+        }
+        else {
+            toDate = fromDate.clone().add(time - 1, type).endOf(type);
+            this.form.controls['startTime'].setValue(this.handleTime(fromDate.toDate()));
+            this.form.controls['endTime'].setValue(this.handleTime(toDate.toDate()));
+        }
+    };
+    FilterBarComponent.prototype.updateEndTime = function () {
+        var toDate = moment__WEBPACK_IMPORTED_MODULE_9__();
+        this.form.controls['endTime'].setValue(this.handleTime(toDate.toDate()));
+    };
+    FilterBarComponent.prototype.convertToTwoNumber = function (num) {
+        return num < 10 ? '0' + num : num;
+    };
+    FilterBarComponent.prototype.handleTime = function (date) {
+        return this.convertToTwoNumber(date.getHours()) + ':' + this.convertToTwoNumber(date.getMinutes()) + ':' + this.convertToTwoNumber(date.getSeconds());
+    };
+    FilterBarComponent.prototype.unsubscribeAll = function () {
+        if (this.subscriptionUpdateEndTime) {
+            this.subscriptionUpdateEndTime.unsubscribe();
+        }
+        if (this.subscriptionSelectCurrent) {
+            this.subscriptionSelectCurrent.unsubscribe();
+        }
+    };
+    FilterBarComponent.prototype.checkCurrent = function (startTime, endTime) {
+        this.isFormValid = startTime.valueOf() < endTime.valueOf();
+        var now = new Date();
+        if (this.isFormValid && now.valueOf() - endTime.valueOf() < 300000) {
+            this.store.dispatch(new store_actions_filter__WEBPACK_IMPORTED_MODULE_10__["SelectCurrentPeriodAction"](true));
+        }
+        else {
+            this.store.dispatch(new store_actions_filter__WEBPACK_IMPORTED_MODULE_10__["SelectCurrentPeriodAction"](false));
+        }
+    };
+    FilterBarComponent.prototype.compareFn = function (sensor1, sensor2) {
+        return sensor1 && sensor2 ? sensor1.id === sensor2.id : sensor1 === sensor2;
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
@@ -1008,8 +1059,8 @@ var FilterBarComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./filter-bar.component.html */ "./src/app/modules/home/components/filter-bar/filter-bar.component.html"),
             styles: [__webpack_require__(/*! ./filter-bar.component.scss */ "./src/app/modules/home/components/filter-bar/filter-bar.component.scss")]
         }),
-        __metadata("design:paramtypes", [_shared_services_modal_service__WEBPACK_IMPORTED_MODULE_4__["ModalService"],
-            _ngrx_store__WEBPACK_IMPORTED_MODULE_6__["Store"]])
+        __metadata("design:paramtypes", [_shared_services_modal_service__WEBPACK_IMPORTED_MODULE_3__["ModalService"],
+            _ngrx_store__WEBPACK_IMPORTED_MODULE_5__["Store"]])
     ], FilterBarComponent);
     return FilterBarComponent;
 }());
@@ -1025,7 +1076,7 @@ var FilterBarComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"!isLoading\" class=\"row mt-4 mx-3 graph-wrapper\">\n    <ngx-charts-line-chart\n            class=\"mt-3\"\n            [results]=\"results\"\n            [xAxis]=\"showXAxis\"\n            [yAxis]=\"showYAxis\"\n            [legend]=\"showLegend\"\n            [showXAxisLabel]=\"showXAxisLabel\"\n            [showYAxisLabel]=\"showYAxisLabel\"\n            [xAxisLabel]=\"xAxisLabel\"\n            [yAxisLabel]=\"yAxisLabel\"\n            [roundDomains]=\"roundDomains\"\n            [autoScale]=\"autoScale\"\n            [xAxisTickFormatting]=\"isLessThan3Days ? axisFormatTime : (isLessThan1Month ? axisFormatDate : axisFormatMonth)\">\n        <!--<ng-template #tooltipTemplate let-model=\"model\">-->\n        <!--<div >{{model.series}}</div>-->\n        <!--<div >{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</div>-->\n        <!--<div >{{model.value}}</div>-->\n        <!--</ng-template>-->\n        <ng-template #tooltipTemplate let-model=\"model\">\n            <div class=\"area-tooltip-container\">\n                <!--<div *ngFor=\"let tooltipItem of model | json \" class=\"tooltip-item\" style=\"text-align: center;\">-->\n                <a style=\" font-size: 1.2em; color: deepskyblue;\">{{model.series}}</a><br/>\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.2em;\"><br />{{model.name | date: 'HH:mm'}}</a>-->\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.3em; font-weight: 600;\"><br />&#183;</a><br />-->\n                <!--<a style=\" font-size: 1.2em; font-weight: 600;\">{{model.name | date: 'dd.MM.yyyy'}} &#183; </a>-->\n                <a>{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yyyy' }}</a><br/>\n                <a style=\" font-size: 1em; font-weight: 600;\">{{model.value | number: '1.5'}}</a>\n                <!--</div>-->\n            </div>\n        </ng-template>\n\n        <!--<ng-template #seriesTooltipTemplate let-model=\"model\">-->\n\n\n        <!--</ng-template>-->\n    </ngx-charts-line-chart>\n\n</div>\n\n"
+module.exports = "<div *ngIf=\"!isLoading\" class=\"row mt-4 mx-3 graph-wrapper\">\n    <ngx-charts-line-chart\n            class=\"mt-3\"\n            [results]=\"results\"\n            [xAxis]=\"showXAxis\"\n            [yAxis]=\"showYAxis\"\n            [legend]=\"showLegend\"\n            [showXAxisLabel]=\"showXAxisLabel\"\n            [showYAxisLabel]=\"showYAxisLabel\"\n            [yAxisLabel]=\"yAxisLabel\"\n            [roundDomains]=\"roundDomains\"\n            [autoScale]=\"autoScale\"\n            [xAxisTickFormatting]=\"isLessThan3Days ? axisFormatTime : (isLessThan1Month ? axisFormatDate : axisFormatMonth)\">\n        <!--<ng-template #tooltipTemplate let-model=\"model\">-->\n        <!--<div >{{model.series}}</div>-->\n        <!--<div >{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yy' }}</div>-->\n        <!--<div >{{model.value}}</div>-->\n        <!--</ng-template>-->\n        <ng-template #tooltipTemplate let-model=\"model\">\n            <div class=\"area-tooltip-container\">\n                <!--<div *ngFor=\"let tooltipItem of model | json \" class=\"tooltip-item\" style=\"text-align: center;\">-->\n                <a style=\" font-size: 1.2em; color: deepskyblue;\">{{model.series}}</a><br/>\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.2em;\"><br />{{model.name | date: 'HH:mm'}}</a>-->\n                <!--<a *ngIf=\"isLessThan3Days\" style=\" font-size: 1.3em; font-weight: 600;\"><br />&#183;</a><br />-->\n                <!--<a style=\" font-size: 1.2em; font-weight: 600;\">{{model.name | date: 'dd.MM.yyyy'}} &#183; </a>-->\n                <a>{{model.name | date: isLessThan3Days ? 'MMM dd HH:mm' : 'MMM dd yyyy' }}</a><br/>\n                <a style=\" font-size: 1em; font-weight: 600;\">{{model.value | number: '1.5'}}</a>\n                <!--</div>-->\n            </div>\n        </ng-template>\n\n        <!--<ng-template #seriesTooltipTemplate let-model=\"model\">-->\n\n\n        <!--</ng-template>-->\n    </ngx-charts-line-chart>\n\n</div>\n\n"
 
 /***/ }),
 
@@ -1036,7 +1087,7 @@ module.exports = "<div *ngIf=\"!isLoading\" class=\"row mt-4 mx-3 graph-wrapper\
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".graph-wrapper {\n  overflow: scroll;\n  height: calc(100vh - 81px - 100px - 100px); }\n  .graph-wrapper ngx-charts-legend {\n    margin-left: 20px !important; }\n"
+module.exports = ".graph-wrapper {\n  overflow: scroll;\n  height: calc(100vh - 81px - 70px - 100px); }\n  .graph-wrapper ngx-charts-legend {\n    margin-left: 20px !important; }\n"
 
 /***/ }),
 
@@ -1054,6 +1105,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_sensor_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/sensor.service */ "./src/app/modules/home/services/sensor.service.ts");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 /* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../constants/constants */ "./src/app/modules/home/constants/constants.ts");
+/* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
+/* harmony import */ var store_reducers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! store/reducers */ "./src/app/store/reducers/index.ts");
+/* harmony import */ var store_actions_graph__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! store/actions/graph */ "./src/app/store/actions/graph.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1067,12 +1121,18 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
+
 var GraphSummaryComponent = /** @class */ (function () {
-    function GraphSummaryComponent(sensorService) {
+    function GraphSummaryComponent(sensorService, store, cd) {
         this.sensorService = sensorService;
+        this.store = store;
+        this.cd = cd;
         this.results = [];
         this.isLoading = true;
         this.isLoaded = false;
+        this.isLoadedAgain = false;
         this.showXAxis = true;
         this.showYAxis = true;
         this.showLegend = true;
@@ -1094,10 +1154,66 @@ var GraphSummaryComponent = /** @class */ (function () {
     };
     GraphSummaryComponent.prototype.drawGraph = function (selectedDevices, from, to) {
         var _this = this;
+        this.unsubscribeAll();
         this.isLoading = true;
         this.isLoaded = false;
         this.isLessThan3Days = false;
         this.results = [];
+        this.store.dispatch(new store_actions_graph__WEBPACK_IMPORTED_MODULE_6__["GraphLoadingAction"]());
+        this.loadGraph(selectedDevices, from, to);
+        // if (!this.isLoadedAgain) {
+        this.subscription = this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_4__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_5__["getAutoUpdate"])).subscribe(function (autoUpdate) {
+            if (autoUpdate) {
+                _this.subscriptionPeriod = _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_4__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_5__["period"])).subscribe(function (endTime) {
+                    _this.subscriptionUpdatingGraph = _this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_4__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_5__["isUpdatingGraph"])).subscribe(function (isUpdating) {
+                        if (_this.oldEndTime < endTime) {
+                            console.log('updateing');
+                            _this.updateGraph(selectedDevices, endTime);
+                        }
+                    });
+                });
+            }
+            else {
+                if (_this.subscriptionPeriod) {
+                    _this.subscriptionPeriod.unsubscribe();
+                }
+                if (_this.subscriptionUpdatingGraph) {
+                    _this.subscriptionUpdatingGraph.unsubscribe();
+                }
+            }
+        });
+        // } else {
+        //     if (this.subscription) {
+        //         this.subscription.unsubscribe();
+        //         this.isLoadedAgain = false;
+        //     }
+        // }
+        // this.subscription = this.store.pipe(select(isReloadingGraph)).subscribe(isReloading => {
+        //     if (!isReloading) {
+        //         this.subscriptionLoadedGraph = this.store.pipe(select(isLoadedGraph)).subscribe(isLoaded => {
+        //             if (isLoaded) {
+        //                 this.store.dispatch(new GraphUpdatingAction());
+        //                 this.store.pipe(select(isUpdatingGraph)).subscribe(isUpdating => {
+        //                     this.store.pipe(select(period)).subscribe(interval => {
+        //                         if (!isUpdating) {
+        //                             this.updateGraph(selectedDevices, interval[0], interval[1]);
+        //                         }
+        //                     });
+        //                 });
+        //             } else {
+        //                 this.loadGraph(selectedDevices, from, to);
+        //             }
+        //         });
+        //
+        //     } else {
+        //         this.loadGraph(selectedDevices, from, to);
+        //     }
+        // });
+        this.isLessThan3Days = to - from <= 86340000 * 3;
+        this.isLessThan1Month = to - from <= 86340000 * 38;
+    };
+    GraphSummaryComponent.prototype.loadGraph = function (selectedDevices, from, to) {
+        var _this = this;
         var _loop_1 = function (i) {
             var params = {
                 action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_MEASUREMENT"],
@@ -1121,6 +1237,10 @@ var GraphSummaryComponent = /** @class */ (function () {
                     _this.results.push(newSensor);
                     if (i === selectedDevices.length - 1) {
                         _this.isLoading = false;
+                        _this.oldEndTime = +JSON.parse(JSON.stringify(to));
+                        _this.isLoaded = true;
+                        _this.isLoadedAgain = true;
+                        _this.store.dispatch(new store_actions_graph__WEBPACK_IMPORTED_MODULE_6__["GraphLoadedAction"]());
                     }
                 });
             }, 2000);
@@ -1128,8 +1248,47 @@ var GraphSummaryComponent = /** @class */ (function () {
         for (var i = 0; i < selectedDevices.length; i++) {
             _loop_1(i);
         }
-        this.isLessThan3Days = to - from <= 86340000 * 3;
-        this.isLessThan1Month = to - from <= 86340000 * 38;
+    };
+    GraphSummaryComponent.prototype.updateGraph = function (selectedDevices, to) {
+        // console.log('updateGraph', to, selectedDevices.length, this.results);
+        var _this = this;
+        var _loop_2 = function (i) {
+            var params = {
+                action: _constants_constants__WEBPACK_IMPORTED_MODULE_3__["GET_MEASUREMENT"],
+                id: selectedDevices[i][0],
+                from: +JSON.parse(JSON.stringify(this_1.oldEndTime)),
+                to: to,
+                count: 2
+            };
+            setTimeout(function () {
+                var index = _this.results.findIndex(function (sensor) { return params.id === sensor.id; });
+                console.log(params.id, _this.results);
+                if (index >= 0) {
+                    console.log('123');
+                    _this.sensorService.getData(params).subscribe(function (res) {
+                        var _a;
+                        var series = res.map(function (s) { return ({
+                            name: s.timestamp,
+                            value: s.value
+                        }); });
+                        series.sort(function (a, b) { return a.name < b.name ? 1 : (a.name > b.name ? 1 : 0); });
+                        // this.results[index].series.pop();
+                        (_a = _this.results[index].series).push.apply(_a, series);
+                        if (i === selectedDevices.length - 1) {
+                            // this.isLoading = false;
+                            _this.oldEndTime = +JSON.parse(JSON.stringify(to));
+                            _this.results = _this.results.slice();
+                            _this.store.dispatch(new store_actions_graph__WEBPACK_IMPORTED_MODULE_6__["GraphUpdatedAction"]());
+                            // this.cd.detectChanges();
+                        }
+                    });
+                }
+            }, 2000);
+        };
+        var this_1 = this;
+        for (var i = 0; i < selectedDevices.length; i++) {
+            _loop_2(i);
+        }
     };
     GraphSummaryComponent.prototype.ngAfterViewInit = function () {
         setTimeout(function (_) {
@@ -1145,13 +1304,24 @@ var GraphSummaryComponent = /** @class */ (function () {
     GraphSummaryComponent.prototype.axisFormatDate = function (val) {
         return Object(_angular_common__WEBPACK_IMPORTED_MODULE_2__["formatDate"])(new Date(val), 'dd MMM', 'en');
     };
+    GraphSummaryComponent.prototype.unsubscribeAll = function () {
+        if (this.subscriptionPeriod) {
+            this.subscriptionPeriod.unsubscribe();
+        }
+        if (this.subscriptionUpdatingGraph) {
+            this.subscriptionUpdatingGraph.unsubscribe();
+        }
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+    };
     GraphSummaryComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-graph-summary',
             template: __webpack_require__(/*! ./graph-summary.component.html */ "./src/app/modules/home/components/graph-summary/graph-summary.component.html"),
             styles: [__webpack_require__(/*! ./graph-summary.component.scss */ "./src/app/modules/home/components/graph-summary/graph-summary.component.scss")]
         }),
-        __metadata("design:paramtypes", [_services_sensor_service__WEBPACK_IMPORTED_MODULE_1__["SensorService"]])
+        __metadata("design:paramtypes", [_services_sensor_service__WEBPACK_IMPORTED_MODULE_1__["SensorService"], _ngrx_store__WEBPACK_IMPORTED_MODULE_4__["Store"], _angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"]])
     ], GraphSummaryComponent);
     return GraphSummaryComponent;
 }());
@@ -1178,7 +1348,7 @@ module.exports = "<div [formGroup]=\"form\">\n    <div class=\"header text-cente
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.row {\n  margin-right: 0;\n  margin-left: 0; }\n"
+module.exports = ".cancel-button {\n  background-color: #cc1c35;\n  color: white; }\n\n.save-button {\n  background-color: #009688;\n  color: white; }\n\n.save-button:disabled {\n    background: #6a6a6a; }\n\nbutton {\n  width: 100px;\n  height: 35px;\n  border: none;\n  border-radius: 3px;\n  box-shadow: 0 0 0.75rem #e4e4e4; }\n\n.header {\n  font-size: 30px;\n  font-weight: bold; }\n\n.form-control {\n  border-radius: 0.25rem !important; }\n\n.row {\n  margin-right: 0;\n  margin-left: 0; }\n"
 
 /***/ }),
 
@@ -1212,11 +1382,12 @@ var TimeSelectorComponent = /** @class */ (function () {
     }
     TimeSelectorComponent.prototype.ngOnInit = function () {
         this.form = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
-            time: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](0, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(0)]),
+            time: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](1, [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].min(1), _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]),
             type: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required])
         });
     };
     TimeSelectorComponent.prototype.isFormValid = function () {
+        console.log('valid', this.form.invalid);
         return !this.form.invalid;
     };
     TimeSelectorComponent.prototype.close = function () {
@@ -1328,15 +1499,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _swimlane_ngx_charts__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_swimlane_ngx_charts__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _services_sensor_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./services/sensor.service */ "./src/app/modules/home/services/sensor.service.ts");
 /* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
-/* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
-/* harmony import */ var _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./components/time-selector/time-selector.component */ "./src/app/modules/home/components/time-selector/time-selector.component.ts");
+/* harmony import */ var _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/time-selector/time-selector.component */ "./src/app/modules/home/components/time-selector/time-selector.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
 
 
 
@@ -1363,27 +1532,20 @@ var HomeModule = /** @class */ (function () {
                 _swimlane_ngx_charts__WEBPACK_IMPORTED_MODULE_9__["NgxChartsModule"],
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_11__["BrowserAnimationsModule"],
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_11__["NoopAnimationsModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatFormFieldModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatSelectModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatDatepickerModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatNativeDateModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatIconModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatSlideToggleModule"],
-                _angular_material__WEBPACK_IMPORTED_MODULE_12__["MatButtonToggleModule"]
             ],
             declarations: [
                 _pages_home_page_component__WEBPACK_IMPORTED_MODULE_3__["HomePageComponent"],
                 _components_edit_edit_component__WEBPACK_IMPORTED_MODULE_4__["EditComponent"],
                 _components_filter_bar_filter_bar_component__WEBPACK_IMPORTED_MODULE_5__["FilterBarComponent"],
                 _components_graph_summary_graph_summary_component__WEBPACK_IMPORTED_MODULE_6__["GraphSummaryComponent"],
-                _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_13__["TimeSelectorComponent"]
+                _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_12__["TimeSelectorComponent"]
             ],
             providers: [
                 _services_sensor_service__WEBPACK_IMPORTED_MODULE_10__["SensorService"]
             ],
             entryComponents: [
                 _components_edit_edit_component__WEBPACK_IMPORTED_MODULE_4__["EditComponent"],
-                _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_13__["TimeSelectorComponent"]
+                _components_time_selector_time_selector_component__WEBPACK_IMPORTED_MODULE_12__["TimeSelectorComponent"]
             ]
         })
     ], HomeModule);
@@ -1401,7 +1563,7 @@ var HomeModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-page mx-3\">\n    <app-filter-bar (onChangedValue)=\"onChangedValue($event)\">\n    </app-filter-bar>\n    <app-graph-summary></app-graph-summary>\n</div>\n"
+module.exports = "<div class=\"main-page mx-3  my-3\">\n    <app-filter-bar (onChangedValue)=\"onChangedValue($event)\">\n    </app-filter-bar>\n    <app-graph-summary></app-graph-summary>\n</div>\n"
 
 /***/ }),
 
@@ -1412,7 +1574,7 @@ module.exports = "<div class=\"main-page mx-3\">\n    <app-filter-bar (onChanged
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".main-page {\n  min-height: calc(100vh - 81px - 100px); }\n"
+module.exports = ".main-page {\n  min-height: calc(100vh - 115px - 70px - 10px); }\n"
 
 /***/ }),
 
@@ -1439,6 +1601,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var moment_min_locales_min__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! moment/min/locales.min */ "./node_modules/moment/min/locales.min.js");
 /* harmony import */ var moment_min_locales_min__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(moment_min_locales_min__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+/* harmony import */ var store_reducers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! store/reducers */ "./src/app/store/reducers/index.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1448,6 +1612,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
+
 
 
 
@@ -1468,28 +1634,33 @@ var HomePageComponent = /** @class */ (function () {
         setTimeout(function () {
             _this.getAllSensors();
         }, 500);
-        // Observable
-        //     .interval(5000)
-        //     .takeWhile(() => true)
-        //     .subscribe(() =>
-        //         setTimeout(() => {
-        //             this.getAllSensors();
-        //         }, 500)
-        //     );
-        // interval(60 * 60 * 1000)
-        //     .pipe(
-        //         tap(() => {
-        //             setTimeout(() => {
-        //                 this.getAllSensors();
-        //             }, 500);
-        // })
-        // )
-        // .subscribe();
+        this.store.pipe(Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_3__["select"])(store_reducers__WEBPACK_IMPORTED_MODULE_10__["getAutoUpdate"])).subscribe(function (autoUpdate) {
+            console.log(autoUpdate);
+            if (autoUpdate) {
+                setTimeout(function () {
+                    _this.getAllSensors();
+                }, 500);
+                _this.subscription = rxjs__WEBPACK_IMPORTED_MODULE_9__["Observable"]
+                    .interval(1000)
+                    .takeWhile(function () { return true; })
+                    .subscribe(function () {
+                    console.log('123');
+                    setTimeout(function () {
+                        _this.getAllSensors();
+                    }, 500);
+                });
+            }
+            else {
+                if (_this.subscription) {
+                    _this.subscription.unsubscribe();
+                }
+            }
+        });
     };
     HomePageComponent.prototype.onChangedValue = function (data) {
-        this.from = this.convertToDate(data['startDate'], data['startTime']).valueOf();
-        this.to = this.convertToDate(data['endDate'], data['endTime']).valueOf();
-        this.graphSummaryComponent.drawGraph(data.selectedDevices, this.from, this.to);
+        var from = this.convertToDate(data['startDate'], data['startTime']).valueOf();
+        var to = this.convertToDate(data['endDate'], data['endTime']).valueOf();
+        this.graphSummaryComponent.drawGraph(data.selectedDevices, from, to);
     };
     HomePageComponent.prototype.convertToDate = function (date, time) {
         var year = date.year;
@@ -1647,6 +1818,62 @@ var LoadingSpinnerComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [])
     ], LoadingSpinnerComponent);
     return LoadingSpinnerComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/shared/custom-material.module.ts":
+/*!**************************************************!*\
+  !*** ./src/app/shared/custom-material.module.ts ***!
+  \**************************************************/
+/*! exports provided: CustomMaterialModule */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CustomMaterialModule", function() { return CustomMaterialModule; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material */ "./node_modules/@angular/material/esm5/material.es5.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+var CustomMaterialModule = /** @class */ (function () {
+    function CustomMaterialModule() {
+    }
+    CustomMaterialModule = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"])({
+            imports: [
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatFormFieldModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSelectModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatDatepickerModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatNativeDateModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatIconModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSlideToggleModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatButtonToggleModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatCheckboxModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatChipsModule"]
+            ],
+            exports: [
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatFormFieldModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSelectModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatDatepickerModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatNativeDateModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatIconModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatSlideToggleModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatButtonToggleModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatCheckboxModule"],
+                _angular_material__WEBPACK_IMPORTED_MODULE_1__["MatChipsModule"]
+            ]
+        })
+    ], CustomMaterialModule);
+    return CustomMaterialModule;
 }());
 
 
@@ -1817,12 +2044,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _components_loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/loading-spinner/loading-spinner.component */ "./src/app/shared/components/loading-spinner/loading-spinner.component.ts");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _custom_material_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./custom-material.module */ "./src/app/shared/custom-material.module.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -1837,7 +2066,8 @@ var SharedModule = /** @class */ (function () {
                 _angular_common__WEBPACK_IMPORTED_MODULE_1__["CommonModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormsModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["ReactiveFormsModule"],
-                _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClientModule"]
+                _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClientModule"],
+                _custom_material_module__WEBPACK_IMPORTED_MODULE_5__["CustomMaterialModule"]
             ],
             declarations: [
                 _components_loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_3__["LoadingSpinnerComponent"]
@@ -1847,7 +2077,8 @@ var SharedModule = /** @class */ (function () {
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormsModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["ReactiveFormsModule"],
                 _components_loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_3__["LoadingSpinnerComponent"],
-                _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClientModule"]
+                _angular_common_http__WEBPACK_IMPORTED_MODULE_4__["HttpClientModule"],
+                _custom_material_module__WEBPACK_IMPORTED_MODULE_5__["CustomMaterialModule"]
             ]
         })
     ], SharedModule);
@@ -1858,11 +2089,138 @@ var SharedModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/store/actions/filter.ts":
+/*!*****************************************!*\
+  !*** ./src/app/store/actions/filter.ts ***!
+  \*****************************************/
+/*! exports provided: SELECT_CURRENT_PERIOD, UPDATE_END_TIME, SelectCurrentPeriodAction, UpdateEndTimeAction */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SELECT_CURRENT_PERIOD", function() { return SELECT_CURRENT_PERIOD; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_END_TIME", function() { return UPDATE_END_TIME; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SelectCurrentPeriodAction", function() { return SelectCurrentPeriodAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateEndTimeAction", function() { return UpdateEndTimeAction; });
+var SELECT_CURRENT_PERIOD = 'filter/SELECT_CURRENT_PERIOD';
+var UPDATE_END_TIME = 'filter/UPDATE_END_TIME';
+var SelectCurrentPeriodAction = /** @class */ (function () {
+    function SelectCurrentPeriodAction(payload) {
+        this.payload = payload;
+        this.type = SELECT_CURRENT_PERIOD;
+    }
+    return SelectCurrentPeriodAction;
+}());
+
+var UpdateEndTimeAction = /** @class */ (function () {
+    function UpdateEndTimeAction(payload) {
+        this.payload = payload;
+        this.type = UPDATE_END_TIME;
+    }
+    return UpdateEndTimeAction;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/store/actions/graph.ts":
+/*!****************************************!*\
+  !*** ./src/app/store/actions/graph.ts ***!
+  \****************************************/
+/*! exports provided: GRAPH_LOADED, GRAPH_LOADING, GRAPH_UPDATING, GRAPH_UPDATED, GRAPH_PERIOD, GraphLoadingAction, GraphLoadedAction, GraphUpdatingAction, GraphUpdatedAction, GraphPeriodAction */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GRAPH_LOADED", function() { return GRAPH_LOADED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GRAPH_LOADING", function() { return GRAPH_LOADING; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GRAPH_UPDATING", function() { return GRAPH_UPDATING; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GRAPH_UPDATED", function() { return GRAPH_UPDATED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GRAPH_PERIOD", function() { return GRAPH_PERIOD; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GraphLoadingAction", function() { return GraphLoadingAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GraphLoadedAction", function() { return GraphLoadedAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GraphUpdatingAction", function() { return GraphUpdatingAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GraphUpdatedAction", function() { return GraphUpdatedAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GraphPeriodAction", function() { return GraphPeriodAction; });
+var GRAPH_LOADED = 'graph/GRAPH_LOADED';
+var GRAPH_LOADING = 'graph/GRAPH_LOADING';
+var GRAPH_UPDATING = 'graph/GRAPH_UPDATING';
+var GRAPH_UPDATED = 'graph/GRAPH_UPDATED';
+var GRAPH_PERIOD = 'graph/GRAPH_PERIOD';
+var GraphLoadingAction = /** @class */ (function () {
+    function GraphLoadingAction(payload) {
+        this.payload = payload;
+        this.type = GRAPH_LOADING;
+    }
+    return GraphLoadingAction;
+}());
+
+var GraphLoadedAction = /** @class */ (function () {
+    function GraphLoadedAction(payload) {
+        this.payload = payload;
+        this.type = GRAPH_LOADED;
+    }
+    return GraphLoadedAction;
+}());
+
+var GraphUpdatingAction = /** @class */ (function () {
+    function GraphUpdatingAction(payload) {
+        this.payload = payload;
+        this.type = GRAPH_UPDATING;
+    }
+    return GraphUpdatingAction;
+}());
+
+var GraphUpdatedAction = /** @class */ (function () {
+    function GraphUpdatedAction(payload) {
+        this.payload = payload;
+        this.type = GRAPH_UPDATED;
+    }
+    return GraphUpdatedAction;
+}());
+
+var GraphPeriodAction = /** @class */ (function () {
+    function GraphPeriodAction(payload) {
+        this.payload = payload;
+        this.type = GRAPH_PERIOD;
+    }
+    return GraphPeriodAction;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/store/actions/header.ts":
+/*!*****************************************!*\
+  !*** ./src/app/store/actions/header.ts ***!
+  \*****************************************/
+/*! exports provided: AUTO_UPDATE, AutoUpdateAction */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AUTO_UPDATE", function() { return AUTO_UPDATE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AutoUpdateAction", function() { return AutoUpdateAction; });
+var AUTO_UPDATE = 'header/AUTO_UPDATE';
+var AutoUpdateAction = /** @class */ (function () {
+    function AutoUpdateAction(payload) {
+        this.payload = payload;
+        this.type = AUTO_UPDATE;
+    }
+    return AutoUpdateAction;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/store/actions/sensors.ts":
 /*!******************************************!*\
   !*** ./src/app/store/actions/sensors.ts ***!
   \******************************************/
-/*! exports provided: UPDATE_SENSORS, CLEAR_SENSORS, SENSORS_LOADING, SENSORS_LOAD_SUCCESS, SENSORS_LOAD_FAIL, SELECT_SENSORS, UpdateSensorsSAction, SelectSensorsAction, SensorsLoadingAction, SensorsLoadedSuccessAction, SensorsLoadedFailAction, ClearSensorsAction */
+/*! exports provided: UPDATE_SENSORS, CLEAR_SENSORS, SENSORS_LOADING, SENSORS_LOAD_SUCCESS, SENSORS_LOAD_FAIL, SELECT_SENSORS, UpdateSensorsAction, SelectSensorsAction, SensorsLoadingAction, SensorsLoadedSuccessAction, SensorsLoadedFailAction, ClearSensorsAction */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1873,7 +2231,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SENSORS_LOAD_SUCCESS", function() { return SENSORS_LOAD_SUCCESS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SENSORS_LOAD_FAIL", function() { return SENSORS_LOAD_FAIL; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SELECT_SENSORS", function() { return SELECT_SENSORS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateSensorsSAction", function() { return UpdateSensorsSAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateSensorsAction", function() { return UpdateSensorsAction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SelectSensorsAction", function() { return SelectSensorsAction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorsLoadingAction", function() { return SensorsLoadingAction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SensorsLoadedSuccessAction", function() { return SensorsLoadedSuccessAction; });
@@ -1888,12 +2246,12 @@ var SELECT_SENSORS = 'main/SELECT_SENSORS';
 /**
  * Update Sensors Action
  */
-var UpdateSensorsSAction = /** @class */ (function () {
-    function UpdateSensorsSAction(payload) {
+var UpdateSensorsAction = /** @class */ (function () {
+    function UpdateSensorsAction(payload) {
         this.payload = payload;
         this.type = UPDATE_SENSORS;
     }
-    return UpdateSensorsSAction;
+    return UpdateSensorsAction;
 }());
 
 /**
@@ -1946,11 +2304,155 @@ var ClearSensorsAction = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/store/reducers/filter.ts":
+/*!******************************************!*\
+  !*** ./src/app/store/reducers/filter.ts ***!
+  \******************************************/
+/*! exports provided: reducer, isCurrent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducer", function() { return reducer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCurrent", function() { return isCurrent; });
+/* harmony import */ var _actions_filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/filter */ "./src/app/store/actions/filter.ts");
+
+var initialState = {
+    isCurrent: false,
+    endTime: []
+};
+function reducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case _actions_filter__WEBPACK_IMPORTED_MODULE_0__["SELECT_CURRENT_PERIOD"]: {
+            return Object.assign({}, state, {
+                isCurrent: action.payload,
+            });
+        }
+        case _actions_filter__WEBPACK_IMPORTED_MODULE_0__["UPDATE_END_TIME"]: {
+            return Object.assign({}, state, {
+                endTime: action.payload,
+            });
+        }
+        default: {
+            return state;
+        }
+    }
+}
+var isCurrent = function (state) { return state.isCurrent; };
+
+
+/***/ }),
+
+/***/ "./src/app/store/reducers/graph.ts":
+/*!*****************************************!*\
+  !*** ./src/app/store/reducers/graph.ts ***!
+  \*****************************************/
+/*! exports provided: reducer, isLoading, isLoaded, isUpdating, isUpdated, period */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducer", function() { return reducer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLoading", function() { return isLoading; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLoaded", function() { return isLoaded; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUpdating", function() { return isUpdating; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUpdated", function() { return isUpdated; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "period", function() { return period; });
+/* harmony import */ var _actions_graph__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/graph */ "./src/app/store/actions/graph.ts");
+
+var initialState = {
+    isLoading: true,
+    isLoaded: false,
+    isUpdating: false,
+    isUpdated: false,
+    endTime: 0,
+};
+function reducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case _actions_graph__WEBPACK_IMPORTED_MODULE_0__["GRAPH_LOADING"]: {
+            return Object.assign({}, state, {
+                isLoading: true,
+                isLoaded: false
+            });
+        }
+        case _actions_graph__WEBPACK_IMPORTED_MODULE_0__["GRAPH_LOADED"]: {
+            return Object.assign({}, state, {
+                isLoading: false,
+                isLoaded: true,
+            });
+        }
+        case _actions_graph__WEBPACK_IMPORTED_MODULE_0__["GRAPH_UPDATING"]: {
+            return Object.assign({}, state, {
+                isUpdating: true,
+                isUpdated: false,
+            });
+        }
+        case _actions_graph__WEBPACK_IMPORTED_MODULE_0__["GRAPH_UPDATED"]: {
+            return Object.assign({}, state, {
+                isUpdating: false,
+                isUpdated: true,
+            });
+        }
+        case _actions_graph__WEBPACK_IMPORTED_MODULE_0__["GRAPH_PERIOD"]: {
+            return Object.assign({}, state, {
+                endTime: action.payload
+            });
+        }
+        default: {
+            return state;
+        }
+    }
+}
+var isLoading = function (state) { return state.isLoading; };
+var isLoaded = function (state) { return state.isLoaded; };
+var isUpdating = function (state) { return state.isUpdating; };
+var isUpdated = function (state) { return state.isUpdated; };
+var period = function (state) { return state.endTime; };
+
+
+/***/ }),
+
+/***/ "./src/app/store/reducers/header.ts":
+/*!******************************************!*\
+  !*** ./src/app/store/reducers/header.ts ***!
+  \******************************************/
+/*! exports provided: reducer, getAutoUpdate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducer", function() { return reducer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAutoUpdate", function() { return getAutoUpdate; });
+/* harmony import */ var _actions_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/header */ "./src/app/store/actions/header.ts");
+
+var initialState = {
+    autoUpdate: false,
+};
+function reducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case _actions_header__WEBPACK_IMPORTED_MODULE_0__["AUTO_UPDATE"]: {
+            return Object.assign({}, state, {
+                autoUpdate: action.payload,
+            });
+        }
+        default: {
+            return state;
+        }
+    }
+}
+var getAutoUpdate = function (state) { return state.autoUpdate; };
+
+
+/***/ }),
+
 /***/ "./src/app/store/reducers/index.ts":
 /*!*****************************************!*\
   !*** ./src/app/store/reducers/index.ts ***!
   \*****************************************/
-/*! exports provided: reducers, logger, productionReducer, reducer, getSensorslState, getSelectedSensors, getSensors, metaReducers */
+/*! exports provided: reducers, logger, productionReducer, reducer, getSensorsState, getHeaderState, getFilterState, getGraphState, getSelectedSensors, getSensors, getAutoUpdate, isCurrentTime, isLoadedGraph, isLoadingGraph, isUpdatingGraph, isUpdatedGraph, period, metaReducers */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1959,18 +2461,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logger", function() { return logger; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "productionReducer", function() { return productionReducer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reducer", function() { return reducer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSensorslState", function() { return getSensorslState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSensorsState", function() { return getSensorsState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getHeaderState", function() { return getHeaderState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFilterState", function() { return getFilterState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getGraphState", function() { return getGraphState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSelectedSensors", function() { return getSelectedSensors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSensors", function() { return getSensors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAutoUpdate", function() { return getAutoUpdate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCurrentTime", function() { return isCurrentTime; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLoadedGraph", function() { return isLoadedGraph; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLoadingGraph", function() { return isLoadingGraph; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUpdatingGraph", function() { return isUpdatingGraph; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isUpdatedGraph", function() { return isUpdatedGraph; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "period", function() { return period; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "metaReducers", function() { return metaReducers; });
 /* harmony import */ var _ngrx_store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @ngrx/store */ "./node_modules/@ngrx/store/fesm5/store.js");
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ "./src/environments/environment.ts");
 /* harmony import */ var _sensors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sensors */ "./src/app/store/reducers/sensors.ts");
+/* harmony import */ var _header__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./header */ "./src/app/store/reducers/header.ts");
+/* harmony import */ var _filter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filter */ "./src/app/store/reducers/filter.ts");
+/* harmony import */ var _graph__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./graph */ "./src/app/store/reducers/graph.ts");
+
+
+
 
 
 
 var reducers = {
     sensors: _sensors__WEBPACK_IMPORTED_MODULE_2__["reducer"],
+    header: _header__WEBPACK_IMPORTED_MODULE_3__["reducer"],
+    filter: _filter__WEBPACK_IMPORTED_MODULE_4__["reducer"],
+    graph: _graph__WEBPACK_IMPORTED_MODULE_5__["reducer"],
 };
 function logger(reduce) {
     return function (state, action) {
@@ -1992,9 +2513,19 @@ function reducer(state, action) {
     //     return developmentReducer(state, action);
     //   }
 }
-var getSensorslState = function (state) { return state.sensors; };
-var getSelectedSensors = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getSensorslState, _sensors__WEBPACK_IMPORTED_MODULE_2__["getSelectedSensors"]);
-var getSensors = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getSensorslState, _sensors__WEBPACK_IMPORTED_MODULE_2__["getSensors"]);
+var getSensorsState = function (state) { return state.sensors; };
+var getHeaderState = function (state) { return state.header; };
+var getFilterState = function (state) { return state.filter; };
+var getGraphState = function (state) { return state.graph; };
+var getSelectedSensors = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getSensorsState, _sensors__WEBPACK_IMPORTED_MODULE_2__["getSelectedSensors"]);
+var getSensors = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getSensorsState, _sensors__WEBPACK_IMPORTED_MODULE_2__["getSensors"]);
+var getAutoUpdate = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getHeaderState, _header__WEBPACK_IMPORTED_MODULE_3__["getAutoUpdate"]);
+var isCurrentTime = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getFilterState, _filter__WEBPACK_IMPORTED_MODULE_4__["isCurrent"]);
+var isLoadedGraph = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getGraphState, _graph__WEBPACK_IMPORTED_MODULE_5__["isLoaded"]);
+var isLoadingGraph = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getGraphState, _graph__WEBPACK_IMPORTED_MODULE_5__["isLoading"]);
+var isUpdatingGraph = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getGraphState, _graph__WEBPACK_IMPORTED_MODULE_5__["isUpdating"]);
+var isUpdatedGraph = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getGraphState, _graph__WEBPACK_IMPORTED_MODULE_5__["isUpdated"]);
+var period = Object(_ngrx_store__WEBPACK_IMPORTED_MODULE_0__["createSelector"])(getGraphState, _graph__WEBPACK_IMPORTED_MODULE_5__["period"]);
 // export const metaReducers: MetaReducer<State>[] = !environment.production ? [] : [];
 var metaReducers = !environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].production
     ? []
@@ -2036,7 +2567,7 @@ function reducer(state, action) {
             return Object.assign({}, state, {
                 loading: false,
                 loaded: true,
-                sensors: action.payload,
+                sensors: JSON.parse(JSON.stringify(action.payload)),
                 selectedSensors: []
             });
         }

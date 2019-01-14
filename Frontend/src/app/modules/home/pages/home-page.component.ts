@@ -1,8 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {GraphSummaryComponent} from '../components/graph-summary/graph-summary.component';
 import {SensorService} from '../services/sensor.service';
-import {Store} from '@ngrx/store';
+import {select, Store} from '@ngrx/store';
 import * as fromRoot from 'store/reducers';
+import {getAutoUpdate} from 'store/reducers';
 import {SensorsLoadedFailAction, SensorsLoadedSuccessAction, SensorsLoadingAction} from 'store/actions/sensors';
 
 import 'rxjs-compat/add/observable/interval';
@@ -10,7 +11,7 @@ import 'rxjs-compat/add/operator/takeWhile';
 import * as moment from 'moment';
 
 import 'moment/min/locales.min';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-homepage',
@@ -32,29 +33,29 @@ export class HomePageComponent implements OnInit {
         setTimeout(() => {
             this.getAllSensors();
         }, 500);
-        // this.store.pipe(select(getAutoUpdate)).subscribe(autoUpdate => {
-        //     console.log(autoUpdate);
-        //     if (autoUpdate) {
-        //         setTimeout(() => {
-        //             this.getAllSensors();
-        //         }, 500);
-        //         this.subscription = Observable
-        //             .interval(1000)
-        //             .takeWhile(() => true)
-        //             .subscribe(() => {
-        //                     console.log('123');
-        //                     setTimeout(() => {
-        //                         this.getAllSensors();
-        //                     }, 500);
-        //                 }
-        //             );
-        //
-        //     } else {
-        //         if (this.subscription) {
-        //             this.subscription.unsubscribe();
-        //         }
-        //     }
-        // });
+        this.store.pipe(select(getAutoUpdate)).subscribe(autoUpdate => {
+            console.log(autoUpdate);
+            if (autoUpdate) {
+                setTimeout(() => {
+                    this.getAllSensors();
+                }, 500);
+                this.subscription = Observable
+                    .interval(1000)
+                    .takeWhile(() => true)
+                    .subscribe(() => {
+                            console.log('123');
+                            setTimeout(() => {
+                                this.getAllSensors();
+                            }, 500);
+                        }
+                    );
+
+            } else {
+                if (this.subscription) {
+                    this.subscription.unsubscribe();
+                }
+            }
+        });
     }
 
     onChangedValue(data) {
