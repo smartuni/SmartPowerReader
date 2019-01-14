@@ -159,13 +159,13 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
                 id: selectedDevices[i][0],
                 from: +JSON.parse(JSON.stringify(this.oldEndTime)),
                 to: to,
-                count: 2
+                count: 1
             };
             setTimeout(() => {
                 const index = this.results.findIndex(sensor => params.id === sensor.id);
                 console.log(params.id, this.results);
                 if (index >= 0) {
-                    console.log('123');
+                    // console.log('123');
                     this.sensorService.getData(params).subscribe(res => {
                         const series = res.map(s => ({
                             name: s.timestamp,
