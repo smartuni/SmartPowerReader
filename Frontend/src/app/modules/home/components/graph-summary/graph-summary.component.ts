@@ -157,9 +157,9 @@ export class GraphSummaryComponent implements OnInit, AfterViewInit {
             const params = {
                 action: GET_MEASUREMENT,
                 id: selectedDevices[i][0],
-                from: +JSON.parse(JSON.stringify(this.oldEndTime)),
-                to: to + 1,
-                count: 1
+                from: +JSON.parse(JSON.stringify(this.oldEndTime)) - 1000,
+                to: to,
+                count: 2
             };
             setTimeout(() => {
                 const index = this.results.findIndex(sensor => params.id === sensor.id);
